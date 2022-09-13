@@ -10,15 +10,16 @@ export default function TipoConta() {
         </Head>
         
         <div className={styles.servicosContainer}>
-            <div>        
-                <Link href={"/cadastrocliente"}>
+            <h1 className={styles.titulo}>Escolha o tipo de conta</h1>
+            <div>       
+                <Link href={"/signupcliente"}>
                     <button>
                         <a>Contratar Serviços</a>
                     </button>
                 </Link>
             </div>
             <div>        
-                <Link href={"/cadastroprofissional"}>
+                <Link href={"/signupprofissional"}>
                     <button>
                         <a>Cadastrar meus serviços</a>
                     </button>

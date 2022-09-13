@@ -2,7 +2,6 @@ import {InputHTMLAttributes, TextareaHTMLAttributes} from 'react'
 import styles from './styles.module.css';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement>{}
-
 interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement>{}
 
 export function Input({...rest}: InputProps){

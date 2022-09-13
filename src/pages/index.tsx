@@ -17,6 +17,11 @@ export default function Home() {
                 <a>Começar</a>
             </button>
         </Link>
+        <Link href={"/signin"}>
+            <button>
+                <a>Entrar</a>
+            </button>
+        </Link>
       </div>
      
     </>
