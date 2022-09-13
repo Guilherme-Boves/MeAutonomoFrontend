@@ -1,0 +1,8 @@
+.servicosContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1.5rem;
+    flex-direction: column;
+    min-height: 100vh;
+}
