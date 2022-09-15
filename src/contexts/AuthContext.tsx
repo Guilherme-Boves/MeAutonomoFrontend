@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState } from 'react';
+import { createContext, ReactNode, useState, useEffect } from 'react';
 
 import { api } from '../services/apiClient';
 import { destroyCookie, setCookie, parseCookies } from 'nookies';
@@ -18,7 +18,7 @@ type AuthContextData = {
 type UserProps = {
     id: string;
     nome: string;
-    email: string;    
+    email: string;
 }
 
 type SignInProps = {
@@ -65,6 +65,29 @@ export function AuthProvider({ children }: AuthProviderProps){
     const [user, setUser] = useState<UserProps>()
     const isAuthenticated = !!user;
 
+    useEffect(() => {
+
+        // Pegando token no cookie
+        const { '@meautonomo.token': token } = parseCookies(); 
+
+        if(token){
+            api.get('/userinfo').then(response => {
+                const { id, nome, email } = response.data;
+
+                setUser({
+                    id,
+                    nome,
+                    email
+                })
+            })
+            .catch(() => {
+                //Se der erro, deslogamos o user
+                signOut();
+            })
+        }
+
+    }, [])
+
     async function signIn({ email, password }: SignInProps){
         try{
             const response = await api.post('/session',{
@@ -90,12 +113,15 @@ export function AuthProvider({ children }: AuthProviderProps){
             
             const decodedJwt = jsonWebTokenService.decode(token)
             
-            if(decodedJwt.role == "CLIENTE"){
+            if(decodedJwt.role === "CLIENTE"){
                 toast.success("Logado com sucesso!")
-                Router.push('/dashboardcliente')
-            } else if(decodedJwt.role == "PROFISSIONAL") {
+                Router.push('/dashboard/cliente')
+            } else if(decodedJwt.role === "PROFISSIONAL") {
                 toast.success("Logado com sucesso!")
-                Router.push('/dashboardprofissional')
+                Router.push('/dashboard/profissional')
+            } else if(decodedJwt.role === "ADMIN") {
+                toast.success("Logado com sucesso!")
+                Router.push('/dashboard/admin')
             }
             
         }catch(err){

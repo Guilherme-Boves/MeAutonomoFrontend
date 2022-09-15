@@ -1,9 +1,11 @@
 import Head from 'next/head'
 import styles from './styles.module.css'
 import Link from 'next/link';
-import { Input } from '../../components/ui/Input';
+import { ButtonSignOut } from '../../../components/ui/ButtonSignOut';
+import { canSSRCliente } from '../../../utils/canSSRCliente';
 
 export default function DashboardCliente() {
+    
     return (
       <>
         <Head>        
@@ -13,7 +15,7 @@ export default function DashboardCliente() {
         <div className={styles.container}>
             <div className={styles.containerOpcoes}>
                 <div>        
-                    <Link href={""}>
+                    <Link href={"/categoria/categorias"}>
                         <button>
                             <a>Contratar Serviços</a>
                         </button>
@@ -33,8 +35,18 @@ export default function DashboardCliente() {
                         </button>
                     </Link>
                 </div>
+                <div>
+                    <ButtonSignOut/>
+                </div>
             </div>
         </div>
       </>
     )
-  }
+}
+
+export const getServerSideProps = canSSRCliente(async (ctx) =>{
+    
+    return {
+        props: {}
+    }
+})

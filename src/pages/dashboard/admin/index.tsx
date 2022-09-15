@@ -1,9 +1,11 @@
 import Head from 'next/head'
 import styles from './styles.module.css'
 import Link from 'next/link';
-import { Input } from '../../components/ui/Input';
+import { ButtonSignOut } from '../../../components/ui/ButtonSignOut';
+import { canSSRAdmin } from '../../../utils/canSSRAdmin';
 
-export default function DashboardProfissional() {
+export default function DashboardAdmin() {
+    
     return (
       <>
         <Head>        
@@ -29,7 +31,7 @@ export default function DashboardProfissional() {
                 <div>        
                     <Link href={""}>
                         <button>
-                            <a>Gerenciar serviços prestados</a>
+                            <a>Gerenciar Serviços Prestados</a>
                         </button>
                     </Link>
                 </div>
@@ -41,14 +43,38 @@ export default function DashboardProfissional() {
                     </Link>
                 </div>
                 <div>        
-                    <Link href={""}>
+                    <Link href={"/categoria/cadastrar"}>
                         <button>
-                            <a>Publicar Serviço</a>
+                            <a>Gerenciar Categorias</a>
                         </button>
                     </Link>
+                </div>
+                <div>        
+                    <Link href={""}>
+                        <button>
+                            <a>Gerenciar Serviços</a>
+                        </button>
+                    </Link>
+                </div>
+                <div>        
+                    <Link href={""}>
+                        <button>
+                            <a>Gerenciar Usuários</a>
+                        </button>
+                    </Link>
+                </div>
+                <div>
+                    <ButtonSignOut/>
                 </div>
             </div>
         </div>
       </>
     )
-  }
+}
+
+export const getServerSideProps = canSSRAdmin(async (ctx) =>{
+    
+    return {
+        props: {}
+    }
+})

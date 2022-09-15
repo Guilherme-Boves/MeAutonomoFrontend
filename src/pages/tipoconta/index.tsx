@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import styles from './styles.module.css'
 import Link from 'next/link';
+import { canSSRGuest } from '../../utils/canSSRGuest';
 
 export default function TipoConta() {
     return (
@@ -28,4 +29,10 @@ export default function TipoConta() {
         </div>
       </>
     )
-  }
+}
+
+export const getServerSideProps = canSSRGuest(async (ctx) => {
+    return {
+        props: {}
+    }
+})

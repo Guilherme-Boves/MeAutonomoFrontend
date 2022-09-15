@@ -6,6 +6,7 @@ import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { AuthContext } from '../../contexts/AuthContext';
 import { toast } from 'react-toastify'
+import { canSSRGuest } from '../../utils/canSSRGuest';
 
 export default function SignUpProfissional() {
 
@@ -106,4 +107,10 @@ export default function SignUpProfissional() {
         </div>
       </>
     )
-  }
+}
+
+export const getServerSideProps = canSSRGuest(async (ctx) => {
+    return {
+        props: {}
+    }
+})

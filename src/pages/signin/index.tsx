@@ -3,10 +3,12 @@ import { FormEvent, useContext, useState } from 'react'
 import Head from 'next/head'
 import styles from './styles.module.css'
 import Link from 'next/link';
+import { GetServerSideProps } from 'next';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { AuthContext } from '../../contexts/AuthContext';
 import { toast } from 'react-toastify'
+import { canSSRGuest } from '../../utils/canSSRGuest';
 
 export default function SignIn() {
 
@@ -76,4 +78,10 @@ export default function SignIn() {
         </div>
       </>
     )
-  }
+}
+
+export const getServerSideProps = canSSRGuest(async (ctx) => {
+    return {
+        props: {}
+    }
+})
