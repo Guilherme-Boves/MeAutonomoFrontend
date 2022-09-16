@@ -15,7 +15,7 @@ export function Button({ loading, children, ...rest}: ButtonProps){
         {...rest}
         >
             { loading ? (
-                <FaSpinner color='#FFF' size={16} className={styles.loading} />
+                <FaSpinner color='#FFF' size={16} />
             ) : (
                 <a className={styles.buttonText}>
                     {children}

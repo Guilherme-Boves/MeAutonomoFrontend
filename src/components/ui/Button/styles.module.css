@@ -3,9 +3,12 @@
     background-color: #FFD666;
     border: 0;
     padding: 0.4rem;
-    color: var(--white);
+    color: #fff;
     border-radius: 0.5rem;
     transition: filter 0.2s;
+    display: flex;    
+    justify-content: center;
+    align-item: center;
 
     /* &[disabled]{
         cursor: not-allowed;
@@ -21,6 +24,7 @@
 .buttonText{
     color: #8D734B;
 }
+
 
 /* @keyframes animate{
     from{
