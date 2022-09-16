@@ -7,6 +7,8 @@ import { setupAPIClient } from "../../services/api"
 import { Input } from "../../components/ui/Input"
 import { Button } from "../../components/ui/Button"
 import { canSSRAdmin } from "../../utils/canSSRAdmin"
+import { ReturnButton } from "../../components/ui/ReturnButton"
+import Link from "next/link"
 
 type ItemProps = {
     id: string;
@@ -100,6 +102,7 @@ export default function CadastrarTipoServico({ listaCategorias }: CategoriaProps
             </Head>
 
             <div>
+                <ReturnButton/>
                 <main className={styles.container}>
                     <h1 className={styles.title}>Novo Tipo de Serviço</h1>
 
