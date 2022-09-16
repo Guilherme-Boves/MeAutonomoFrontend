@@ -1,18 +1,32 @@
 import Head from "next/head"
 import { useState, ChangeEvent, FormEvent } from 'react'
-import { Button } from "../../../components/ui/Button"
-import { Input } from "../../../components/ui/Input"
-import { canSSRAdmin } from "../../../utils/canSSRAdmin"
 import styles from './styles.module.css'
 import { FiUpload } from "react-icons/fi"
 import { toast } from "react-toastify"
-import { setupAPIClient } from "../../../services/api"
+import { setupAPIClient } from "../../services/api"
+import { Input } from "../../components/ui/Input"
+import { Button } from "../../components/ui/Button"
+import { canSSRAdmin } from "../../utils/canSSRAdmin"
 
-export default function CadastrarCategoria(){
+type ItemProps = {
+    id: string;
+    nome: string;
+    imagem: string;
+}
 
-    const [nomeCategoria, setNomeCategoria] = useState('');
+interface CategoriaProps{
+    listaCategorias: ItemProps[];
+}
+
+
+export default function CadastrarTipoServico({ listaCategorias }: CategoriaProps){
+
+    const [nomeServico, setNomeServico] = useState('');
     const [avatarUrl, setAvatarUrl] = useState(''); //Armazendo uma URL para mostrar o Preview da imagem
     const [imageAvatar, setImageAvatar] = useState(null) //Armazendo o File para ser enviado para o banco de dados
+
+    const [categorias, setCategorias] = useState(listaCategorias || []) // UseState recebe a lista de categorias ou um array vazio
+    const [categoriaSelecionada, setCagoriaSelecionada] = useState(0)
 
     const [loading, setLoading] = useState(false)
 
@@ -42,49 +56,70 @@ export default function CadastrarCategoria(){
         try{
             const data = new FormData();
 
-            if(nomeCategoria === '' || imageAvatar === null){
+            if(nomeServico === '' || imageAvatar === null){
                 toast.error("Preencha todos os campos!");
                 return;
             }
 
             setLoading(true);
-            data.append('nome', nomeCategoria)
+
+            data.append('nome', nomeServico)            
             data.append('file', imageAvatar)
+            data.append('categoria_id', categorias[categoriaSelecionada].id)
 
             const apiClient = setupAPIClient();
-            await apiClient.post('/categoria', data);
+            await apiClient.post('/tiposervico', data);
 
 
-            toast.success('Categoria cadastrada com sucesso!');
+            toast.success('Serviço cadastrado com sucesso!');
 
         }catch(err){
             console.log(err);
             toast.error("Erro ao cadastrar");
         }
 
-        setNomeCategoria('');
+        setNomeServico('');
         setAvatarUrl('');
         setImageAvatar(null);
         setLoading(false);
+        setCagoriaSelecionada(0)
+    }
+
+    // Quando selecionar uma nova categoria na lista
+    function handleChangeCategoria(event){
+        //console.log("Posição da categoria selecionada: ", event.target.value)
+        //console.log("Categoria Selecionada: ", categorias[event.target.value])
+
+        setCagoriaSelecionada(event.target.value)
     }
 
     return(
         <>
             <Head>
-                <title>Cadastrar cotegoria</title>
+                <title>Cadastrar Tipo de Serviço</title>
             </Head>
 
             <div>
                 <main className={styles.container}>
-                    <h1 className={styles.title}>Nova Categoria</h1>
+                    <h1 className={styles.title}>Novo Tipo de Serviço</h1>
 
                     <form className={styles.form} onSubmit={handleRegister}>
                         <Input
                             type="text" 
-                            placeholder="Nome da categoria"                            
-                            value={nomeCategoria}
-                            onChange={(e) => setNomeCategoria(e.target.value)}
+                            placeholder="Nome do Tipo de Serviço"                            
+                            value={nomeServico}
+                            onChange={(e) => setNomeServico(e.target.value)}
                         />
+
+                        <select className={styles.select} value={categoriaSelecionada} onChange={handleChangeCategoria}>
+                            {categorias.map( (item, index) => {
+                                return(
+                                    <option key={item.id} value={index}>
+                                        {item.nome}
+                                    </option>
+                                )
+                            })}
+                        </select>
 
                         <label className={styles.label}>
                             <span className={styles.span}>
@@ -115,7 +150,14 @@ export default function CadastrarCategoria(){
 }
 
 export const getServerSideProps = canSSRAdmin(async (ctx) => {
+    
+    const apiClient = setupAPIClient(ctx);
+
+    const response = await apiClient.get('/categoria')
+    
     return {
-        props: {}
+        props: {
+            listaCategorias: response.data
+        }
     }
 })
