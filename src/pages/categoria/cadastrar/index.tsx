@@ -7,6 +7,7 @@ import styles from './styles.module.css'
 import { FiUpload } from "react-icons/fi"
 import { toast } from "react-toastify"
 import { setupAPIClient } from "../../../services/api"
+import { ReturnButton } from "../../../components/ui/ReturnButton"
 
 export default function CadastrarCategoria(){
 
@@ -75,6 +76,7 @@ export default function CadastrarCategoria(){
             </Head>
 
             <div>
+                <ReturnButton/>
                 <main className={styles.container}>
                     <h1 className={styles.title}>Nova Categoria</h1>
 

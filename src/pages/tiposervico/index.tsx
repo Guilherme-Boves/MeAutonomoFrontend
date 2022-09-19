@@ -16,7 +16,7 @@ type ItemProps = {
     imagem: string;
 }
 
-interface CategoriaProps{
+export interface CategoriaProps{
     listaCategorias: ItemProps[];
 }
 
