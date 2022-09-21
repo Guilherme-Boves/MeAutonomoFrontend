@@ -4,7 +4,8 @@ import Image from 'next/image';
 import { ReturnButton } from '../../../components/ui/ReturnButton';
 import { canSSRAuth } from '../../../utils/canSSRAuth';
 import { setupAPIClient } from '../../../services/api';
-import { CategoriaProps } from '../../tiposervico'
+import { CategoriaProps } from '../../cadastrartiposervico'
+import Link from 'next/link';
 
 
 export default function Categoria({ listaCategorias }: CategoriaProps){
@@ -18,15 +19,19 @@ export default function Categoria({ listaCategorias }: CategoriaProps){
             <div className={styles.container}>
                 <div className={styles.carrossel}>
                     
-                    {categorias.map((item, index) => {
+                    {categorias.map((item) => {
                        
                        const {id, nome, imagem} = item;
 
-                        return(                         
-                            <div className={styles.item} key={id}>
-                                <Image src={`http://localhost:3333/files/${imagem}`} alt={nome} width={250} height={250} />
-                                <span className={styles.nomeCategoria}>{nome}</span>
-                            </div>                            
+                        return(            
+                            <div key={id}>
+                                <Link href={`/contratar/categoria/${id}`}>
+                                    <a className={styles.item}>
+                                        <Image src={`http://localhost:3333/files/${imagem}`} alt={nome} width={250} height={250} />
+                                        <span className={styles.nome}>{nome}</span>
+                                    </a>
+                                </Link>  
+                            </div>                                       
                         );
                     })}
 

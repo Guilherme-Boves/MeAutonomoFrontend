@@ -35,7 +35,7 @@
     object-fit: cover;
 }
 
-.container .carrossel .item .nomeCategoria {
+.container .carrossel .item .nome {
     margin-top: 10px;
     font-weight: 500;
     color: #fff;
