@@ -1,5 +1,4 @@
-import React from 'react'
-import { useState } from 'react';
+import React, { useState } from 'react'
 import styles from './styles.module.css'
 import Image from 'next/image';
 import { ReturnButton } from '../../../components/ui/ReturnButton';
