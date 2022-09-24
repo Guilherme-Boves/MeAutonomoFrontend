@@ -1,4 +1,4 @@
-.button{
+/* .button{
     max-width: 600px;
     background-color: #FFD666;
     border: 0;
@@ -10,7 +10,7 @@
     justify-content: center;
     align-item: center;
 
-    /* &[disabled]{
+    &[disabled]{
         cursor: not-allowed;
         svg{
             animation: animate 2s infinite;
@@ -18,7 +18,7 @@
     }
     &:hover{
         filter: brightness(1.08);
-    } */
+    } 
 }
 
 .buttonText{
@@ -26,11 +26,11 @@
 }
 
 
-/* @keyframes animate{
+ @keyframes animate{
     from{
         transform: rotate(0deg);
     }
     to{
         transform: rotate(360deg);
     }
-} */
+}  */

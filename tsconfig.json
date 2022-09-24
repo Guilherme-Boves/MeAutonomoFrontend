@@ -23,7 +23,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "src/components/Logo/index.jsx"  ],
   "exclude": [
     "node_modules"
   ]

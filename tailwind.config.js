@@ -1,12 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './src/**/*.jsx'
+    './src/**/*.tsx'
   ],
   theme: {
     extend: {
       backgroundImage: {
-        fundo: 'url(/src/assets/Fundo.png)'
+        fundo: "url(/Images/fundo.png)"
       },
       fontFamily: {
         sans: 'Nunito, sans-serif',
@@ -15,3 +15,4 @@ module.exports = {
   },
   plugins: [],
 }
+  
