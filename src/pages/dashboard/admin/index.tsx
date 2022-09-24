@@ -15,7 +15,7 @@ export default function DashboardAdmin() {
         <div className={styles.container}>
             <div className={styles.containerOpcoes}>
                 <div>        
-                    <Link href={""}>
+                    <Link href={"/contratar/categoria"}>
                         <button>
                             <a>Contratar Serviços</a>
                         </button>
@@ -50,7 +50,7 @@ export default function DashboardAdmin() {
                     </Link>
                 </div>
                 <div>        
-                    <Link href={"/tiposervico"}>
+                    <Link href={"/cadastrartiposervico"}>
                         <button>
                             <a>Gerenciar Serviços</a>
                         </button>

@@ -15,7 +15,7 @@ export default function DashboardCliente() {
         <div className={styles.container}>
             <div className={styles.containerOpcoes}>
                 <div>        
-                    <Link href={"/categoria/categorias"}>
+                    <Link href={"/contratar/categoria"}>
                         <button>
                             <a>Contratar Serviços</a>
                         </button>

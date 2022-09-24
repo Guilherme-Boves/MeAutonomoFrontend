@@ -15,7 +15,7 @@ export default function DashboardProfissional() {
         <div className={styles.container}>
             <div className={styles.containerOpcoes}>
                 <div>        
-                    <Link href={""}>
+                    <Link href={"/contratar/categoria"}>
                         <button>
                             <a>Contratar Serviços</a>
                         </button>
