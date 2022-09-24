@@ -1,0 +1,80 @@
+.container{
+    background-color: rgba(255,255,255, 0.75);
+    max-width: 900px;
+    margin-left: 500px;    
+    min-height: 50vh;
+    padding-bottom: 20rem;
+    display: flex;
+    justify-content: center; 
+    border-radius: 8px;
+}
+
+.containerNomeTipoServicoBtnContratar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.containerImagem{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    width: 270px;
+    height: 270px;
+    background-color: #fff;
+}
+
+.containerMap{
+    display: flex;
+    justify-content: center; 
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.Profnome{
+    font-weight: bold;
+    margin-top: 0.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.containerDescricao{
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    background-color: #FFF;
+    padding: 5rem 10rem 5rem 10rem;
+    border-radius: 2rem;
+}
+
+.containerServicoAgenda{
+    display: flex;
+    justify-content: space-between;
+}
+
+.containerServicosPrestados{
+    margin-top: 1rem;
+    background-color: #FFF;
+    padding: 3rem 3rem 3rem 3rem;
+    margin-right: 2rem;
+    border-radius: 2rem;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.itemsServicosPrestados{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.containerAgenda{
+    margin-top: 1rem;
+    background-color: #FFF;
+    padding: 2rem 2rem 2rem 2rem;
+    border-radius: 2rem;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}

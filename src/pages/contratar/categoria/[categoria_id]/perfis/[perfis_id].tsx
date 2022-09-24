@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react'
 import { ReturnButton } from '../../../../../components/ui/ReturnButton';
 import { setupAPIClient } from '../../../../../services/api';
@@ -7,9 +8,12 @@ import { canSSRAuth } from '../../../../../utils/canSSRAuth'
 import styles from '../../styles.module.css'
 
 type ItemProps = {    
-    user:{
-        id: string;
-        nome: string;
+    publicacao:{
+        user:{
+            id: string;
+            nome: string;
+            imagem: string;
+        }
     }
 }
 
@@ -19,8 +23,12 @@ interface ListPerfisProps {
 
 export default function Perfis({ listPerfis }: ListPerfisProps) {
 
-    const [perfis, setPerfis] = useState(listPerfis || []);
+    const router = useRouter();
+    const categoria_id = router.query.categoria_id;
+    const tipoServico_id = router.query.perfis_id;
 
+    const [perfis, setPerfis] = useState(listPerfis || []);
+    
     return(
 
         <div className={styles.body}>
@@ -29,13 +37,13 @@ export default function Perfis({ listPerfis }: ListPerfisProps) {
                 <div className={styles.carrossel}>
                     {perfis.map((item) => {
 
-                        const {id, nome} = item.user
+                        const {id, nome, imagem} = item.publicacao.user;
 
                         return(                            
                             <div key={id}>
-                                <Link href={``}>
+                                <Link href={`/contratar/categoria/${categoria_id}/perfis/${tipoServico_id}/perfil/${id}`}>
                                     <a className={styles.item}>
-                                        <Image src={``} alt={`Foto do Profissional`} width={250} height={250} />
+                                        <Image src={`http://localhost:3333/files/${imagem}`} alt={`Foto do Profissional`} width={250} height={250} />
                                         <div className={styles.nome}>{nome}</div>
                                     </a>
                                 </Link>
@@ -55,7 +63,7 @@ export const getServerSideProps = canSSRAuth(async (ctx) => {
 
     const api = setupAPIClient(ctx);
 
-    const response = await api.get(`publicarservico?tipoDoServico_id=${tipoDoServicoId}`)
+    const response = await api.get(`perfis?tipoDoServico_id=${tipoDoServicoId}`)
 
     return{
         props: {

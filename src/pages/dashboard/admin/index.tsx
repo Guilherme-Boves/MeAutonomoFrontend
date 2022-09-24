@@ -29,7 +29,7 @@ export default function DashboardAdmin() {
                     </Link>
                 </div>
                 <div>        
-                    <Link href={""}>
+                    <Link href={"/gerenciarservicos"}>
                         <button>
                             <a>Gerenciar Serviços Prestados</a>
                         </button>

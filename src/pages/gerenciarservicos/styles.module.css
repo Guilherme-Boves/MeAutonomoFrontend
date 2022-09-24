@@ -1,0 +1,28 @@
+.container {
+    max-width: 720px;
+    height: 750px;
+    background-color: #fff;
+    margin-left: 450px;
+    border-radius: 20px;
+   
+}
+
+.containertitle{
+    font-size: 20px;
+    padding-left: 3rem;
+    padding-top: 4rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+}
+
+.novoServico{
+    padding-right: 3rem;
+}
+
+.publicacoes{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+}
