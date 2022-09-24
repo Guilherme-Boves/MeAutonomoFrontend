@@ -1,29 +1,23 @@
-import styles from '../styles/Home.module.css'
 import Head from 'next/head'
 import Image from "next/image";
 import Link from 'next/link';
+import { Body } from '../components/BodyHome';
+import { Navbar } from '../components/NavBarHome/Navbar';
+import VideoHome from '../components/VideoHome';
 
 export default function Home() {
-  return (
-    <>
+  return(
+   <>
       <Head>        
-        <title>MeAutonomo</title>
+         <title>MeAutonomo</title>
       </Head>
 
-      <div className={styles.container}>        
-        <Link href={"/tipoconta"}>
-            <button>
-                <a>Começar</a>
-            </button>
-        </Link>
-        <Link href={"/signin"}>
-            <button>
-                <a>Entrar</a>
-            </button>
-        </Link>
+      <div>
+          <Navbar/>
+          <Body/>
+          <VideoHome/>
       </div>
-     
-    </>
+   </>
   )
 }
 
