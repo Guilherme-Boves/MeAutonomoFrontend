@@ -2,9 +2,9 @@
     max-width: 720px;
     height: 750px;
     background-color: #fff;
-    margin-left: 450px;
+    margin-left: 550px;
     border-radius: 20px;
-   
+    margin-top: 3rem;
 }
 
 .containertitle{
@@ -25,4 +25,88 @@
     justify-content: center;
     align-items: center;
     min-height: 50vh;
+}
+
+
+/* ------------------------ publicacao_id */ 
+
+.titulo{
+    font-size: 20px;
+    padding-left: 3rem;
+    padding-top: 4rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+}
+
+.form{
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 0;
+}
+
+.select{
+    margin-left: 3rem;
+    margin-bottom: 1rem;
+    height: 50px;
+    width: 85%;
+    border: 0;
+    border-radius: 0.5rem;
+    background-color: #1d1d2e;
+    color: #fff;
+    padding: 1rem;
+}
+
+.descricao{
+    margin-top: 0.5rem;
+    border-radius: 0.3rem;
+    margin-bottom: 1rem;
+    margin-left: 3rem;
+    min-height: 120px;
+    resize: none;
+    padding: 0.5rem;
+    width: 85%;
+    color: #fff;
+    background-color: #1d1d2e;    
+}
+
+.inputContainer{
+    display: flex;
+    justify-content: space-between;    
+    max-width: 92%;
+}
+
+.input{
+    margin-top: 0.5rem;
+    border-radius: 0.3rem;
+    margin-bottom: 1rem;
+    margin-left: 3rem;
+    padding: 0.5rem;
+    width: 100%;
+    color: #fff;
+    background-color: #1d1d2e;    
+}
+
+.botoes{
+    display: flex;
+    width: 92%;
+}
+
+/* ----------------- Items */
+
+.items {
+    display: flex;
+    justify-content: space-between;
+    width: 85%;
+    margin-left: 3rem;
+}
+
+/* ----------- Styles do map do arquivo Index */
+
+.servicosContainer {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 1rem;
 }

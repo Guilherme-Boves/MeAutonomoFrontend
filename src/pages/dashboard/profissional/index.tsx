@@ -29,7 +29,7 @@ export default function DashboardProfissional() {
                     </Link>
                 </div>
                 <div>        
-                    <Link href={""}>
+                    <Link href={"/gerenciarservicos"}>
                         <button>
                             <a>Gerenciar serviços prestados</a>
                         </button>
