@@ -65,7 +65,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
     const [horario, setHorario] = useState('');
 
     const [itemId, setItemId] = useState<ItemPublicacao>();
-    const [itemIdDelete, setItemIdDelete] = useState('');
+    const [itemIdAux, setitemIdAux] = useState('');
 
     const [servicos, setServicos] = useState<Servicos[]>([]);
     const [agendas, setAgendas] = useState<Agendas[]>([]);
@@ -101,26 +101,61 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
 
 
     async function handleCadastarPrimeirasInfos(){
-        
+
         const publicacao_id = router.query.publicacao_id
+
+        if(descricao === ''){
+            toast.warning('Preencha todos os campos!')
+            return;
+        }
+
+        if(publicacao_id === ''){
+            console.log('Não foi encontrado o ID da publicação!')
+            return;
+        }
+
+        if(tipoServico[tipoServicoSelecionada].id === ''){
+            toast.warning('Selecione o tipo de serviço!')
+            return;
+        }        
         
         const api = setupAPIClient();
 
-        const response = await api.post('/publicarservico/add', {
-            descricao: descricao,
-            publicacao_id: publicacao_id,
-            tipoDoServico_id: tipoServico[tipoServicoSelecionada].id
-        })
-
-        
-        const idItem = response.data
-        setItemId(idItem.id)
-        setItemIdDelete(idItem.id)
+        try{
+            const response = await api.post('/publicarservico/add', {
+                descricao: descricao,
+                publicacao_id: publicacao_id,
+                tipoDoServico_id: tipoServico[tipoServicoSelecionada].id
+            })
+            
+            const idItem = response.data
+            setItemId(idItem.id)
+            setitemIdAux(idItem.id)
+            setPagina((paginaAtual) => paginaAtual + 1)
+        } catch(err){
+            toast.error(`Você já têm uma publicação como: ${tipoServico[tipoServicoSelecionada].nome}`)
+            return;
+        }
     }
 
     async function handleUpdateInfos(item_id: string){
         
         const publicacao_id = router.query.publicacao_id
+
+        if(descricao === ''){
+            toast.warning('Preencha todos os campos!')
+            return;
+        }
+
+        if(publicacao_id === ''){
+            console.log('Não foi encontrado o ID da publicação!')
+            return;
+        }
+
+        if(tipoServico[tipoServicoSelecionada].id === ''){
+            toast.warning('Selecione o tipo de serviço!')
+            return;
+        }      
         
         const api = setupAPIClient();
 
@@ -131,7 +166,9 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
             tipoDoServico_id: tipoServico[tipoServicoSelecionada].id
         })
 
-        setItemIdDelete(item_id)
+        setitemIdAux(item_id)
+        
+        setPagina((paginaAtual) => paginaAtual + 1)
 
     }
     
@@ -204,6 +241,16 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
     async function handleAddServicoPrestado(e: FormEvent){
         e.preventDefault();
 
+        if(nomeServico === ''){
+            toast.warning('Preencha todos os campos (Nome do serviço e Preço)');
+            return;
+        }
+        
+        if(preco === ''){
+            toast.warning('Preencha todos os campos (Nome do serviço e Preço)');
+            return;
+        }
+
         const api = setupAPIClient();
         
         setLoadingServicos(true)
@@ -228,9 +275,23 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
 
         e.preventDefault();
 
+        if(dia === ''){
+            toast.warning('Preencha todos os campos (Dia, Mês e Horário)');
+            return;
+        }
+        
+        if(mes === ''){
+            toast.warning('Preencha todos os campos (Dia, Mês e Horário)');
+            return;
+        }
+
+        if(horario === ''){
+            toast.warning('Preencha todos os campos (Dia, Mês e Horário)');
+            return;
+        }
+
         const api = setupAPIClient();
 
-        
         setLoadingAgenda(true)
         await api.post('/agenda', {
             dia: dia,
@@ -276,8 +337,8 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
             })
         }
 
-        if(itemIdDelete != ''){
-            handleDeleteItem(itemIdDelete)
+        if(itemIdAux != ''){
+            handleDeleteItem(itemIdAux)
         }
         
         await api.delete('/publicarservico', {
@@ -476,14 +537,11 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                             if(pagina === 1){
                                 handlePublicar();
                             } else {
-                                if(itemIdDelete != ''){
-                                    handleUpdateInfos(itemIdDelete);
-                                    setPagina((paginaAtual) => paginaAtual + 1)
+                                if(itemIdAux != ''){
+                                    handleUpdateInfos(itemIdAux);
                                 } else {
                                     handleCadastarPrimeirasInfos();
-                                    setPagina((paginaAtual) => paginaAtual + 1)
                                 }
-                                
                             }
                         }}
                     >
