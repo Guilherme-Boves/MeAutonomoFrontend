@@ -29,7 +29,7 @@ export default function DashboardCliente() {
                     </Link>
                 </div>
                 <div>        
-                    <Link href={""}>
+                    <Link href={"/perfil/cliente"}>
                         <button>
                             <a>Gerenciar meu perfil</a>
                         </button>

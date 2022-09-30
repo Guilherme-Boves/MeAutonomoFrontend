@@ -36,7 +36,7 @@ export default function DashboardProfissional() {
                     </Link>
                 </div>
                 <div>        
-                    <Link href={""}>
+                    <Link href={"/perfil/profissional"}>
                         <button>
                             <a>Gerenciar meu perfil</a>
                         </button>
