@@ -82,13 +82,20 @@
     margin-bottom: 1rem;
 }
 
+.DadosInfos{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+}
+
 .DadosContaSubTitle{
     font-size: 16px;
 }
 
 .cardDadosPessoais{
     margin-top: 1rem;
-    height: 220px;
+    height: 265px;
     width: 90%;
     border: 2px solid #D3E2E5;
     border-radius: 20px;
@@ -123,4 +130,21 @@
     width: 100%;
     border: 1px solid;
     color: #1d1d2e;
+}
+
+.button{
+    display: flex;    
+    justify-content: center;
+    align-items: center;
+    background-color: #29B6D1;
+    margin-top: 2rem;
+    height: 36px;
+    width: 90%;
+    border-radius: 16px;
+    color: #fff;
+    transition: 0.5s;
+}
+
+.button:hover{
+    background-color: #30dcff;
 }
