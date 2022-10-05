@@ -1,16 +1,19 @@
 import React from 'react';
+import '@vime/core/themes/default.css'
+import dynamic from 'next/dynamic'
+
+const Player = dynamic(() => import('../Player'), {
+  ssr: false,
+})
 
 export default function VideoHome(){
   return (
-    <section className='bg-white py-12 lg:pb-12 lg:mt-32 relative min-h-[584px]'>
-      <div className='container mx-auto'>
-        <div className='lg:absolute lg:-top-32 lg:left-0 lg:right-0'>
-          {/* video */}
-          <div className='hidden w-full max-w-[790px] mx-auto lg:flex justify-center'>
-            video
+    <section className='bg-white mt-16 relative min-h-[500px]'>
+        <div className='absolute -top-32 left-0 right-0'>
+          <div className='h-full w-full max-w-[1100px] max-h-[60vh] aspect-video mx-auto'>
+            <Player/>
           </div>
         </div>
-      </div>
     </section>
   )
 }
