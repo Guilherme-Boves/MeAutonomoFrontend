@@ -4,9 +4,9 @@ import Typed from 'react-typed'
 
 export function Body(){
     return(
-        <div className="mt-12">
+        <div className="mt-14">
             <div className="flex flex-col">
-                <div className="max-w-[1280px] mt-[-96px] w-full min-h-[748px] mx-auto text-center flex flex-col justify-center">
+                <div className="max-w-[1280px] mt-[-96px] w-full min-h-[650px] mx-auto text-center flex flex-col justify-center">
                     <h1 className="text-8xl font-extrabold text-white">
                         Uma nova forma de 
                     </h1>
