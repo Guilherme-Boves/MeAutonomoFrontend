@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { canSSRAuth } from '../../../../../../../utils/canSSRAuth';
 import { setupAPIClient } from '../../../../../../../services/api';
 import Image from 'next/image';
 import styles from './styles.module.css'
 import { ReturnButton } from '../../../../../../../components/ui/ReturnButton';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { AuthContext } from '../../../../../../../contexts/AuthContext';
 
 type ItemProps = {
     id: string;
@@ -46,8 +48,29 @@ interface PerfilProps {
 
 export default function Perfil({ perfilProf }: PerfilProps){
 
+    const user = useContext(AuthContext)
     const [perfil, setPerfil] = useState(perfilProf || []) 
-    
+
+    const router = useRouter();
+    const categoria_id = router.query.categoria_id;
+    const tipoServico_id = router.query.perfis_id;
+    const perfil_id = router.query.perfil_id;
+
+    async function handleCriarContrato(){
+
+        const user_id = user.user.id
+        
+        const api = setupAPIClient();
+
+        const response = await api.post('/contrato', {
+            user_id: user_id
+        }) 
+
+        const { id } = response.data
+        
+        router.push(`/contratar/categoria/${categoria_id}/perfis/${tipoServico_id}/perfil/${perfil_id}/contrato/${id}`)
+    }
+
     return(
         
         <>
@@ -79,11 +102,11 @@ export default function Perfil({ perfilProf }: PerfilProps){
                                     <h1 className={styles.Profnome}> { item.publicacao.user.nome }</h1>
                                     <h1>{ item.tipoDoServico.nome }</h1>
 
-                                    <Link href={``}>
-                                        <a>
+                                    <div>
+                                        <button onClick={handleCriarContrato}>
                                             Contratar
-                                        </a>
-                                    </Link>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className={styles.containerDescricao}>
