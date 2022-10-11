@@ -9,15 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "@emotion/react": "^11.10.4",
-    "@emotion/styled": "^11.10.4",
-    "@mui/material": "^5.10.8",
-    "antd": "^4.23.4",
-=======
     "@vime/core": "^5.3.3",
     "@vime/react": "^5.3.3",
->>>>>>> 9362914373535825783301a1aa9234d4937a4cbb
+    "antd": "^4.23.5",
     "axios": "^0.27.2",
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^3.1.2",

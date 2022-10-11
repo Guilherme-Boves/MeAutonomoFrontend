@@ -166,7 +166,7 @@ export default function Contrato({ perfilProf }: PerfilProps){
                                                 {item.servicosPrestadosProf.map((item)=> {
                                                     
                                                     return(
-                                                        <Select.Option key={item.id}>{item.nome}</Select.Option>
+                                                        <Select.Option key={item.id}>{item.nome} - R${item.preco}</Select.Option>
                                                     )
                                                 })}
                                             </Select>
