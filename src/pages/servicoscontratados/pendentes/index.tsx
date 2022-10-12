@@ -1,12 +1,18 @@
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import React, { useState } from "react";
 import { ReturnButton } from "../../../components/ui/ReturnButton";
 import { setupAPIClient } from "../../../services/api";
-import { canSSRCliente } from "../../../utils/canSSRCliente";
+import { canSSRAuth } from "../../../utils/canSSRAuth";
 import styles from '../styles.module.css'
-import 'antd/dist/antd.css';
-import { Popconfirm } from 'antd';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogTitle from '@mui/material/DialogTitle';
 import { toast } from "react-toastify";
+
+import jsonWebTokenService from 'jsonwebtoken'
+import { parseCookies } from 'nookies';
+
 
 type ItemProps = {
     id: string;
@@ -55,6 +61,18 @@ interface ListServicos {
 
 export default function ServicosPendentes({ listServicos }: ListServicos){
 
+    const [servicos, setServicos] = useState(listServicos || [])
+    const [open, setOpen] = useState(false);
+    const [role, setRole] = useState('');
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     async function handleFinalizar(contrato_id, agenda_id) {
         
         const api = setupAPIClient();
@@ -77,121 +95,155 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
         }
     }
 
-    const [servicos, setServicos] = useState(listServicos || [])
+    useEffect(() => {
+
+        function loadRole() {
+            
+            const { '@meautonomo.token': token } = parseCookies();
+            const decodedJwt = jsonWebTokenService.decode(token)
+                
+            if(decodedJwt.role === "CLIENTE"){
+                return(
+                    setRole("CLIENTE")
+                )
+            } else if(decodedJwt.role === "PROFISSIONAL") {
+                return(                
+                    setRole("PROFISSIONAL")
+                )
+            }
+        } 
+
+        loadRole()
+
+    }, [])
 
     return(
         <>
-            <div style={{backgroundColor: '#29B6D1'}}>
-                <ReturnButton/>
-                <div>
-                    <Link href={'/servicoscontratados/finalizados'}>
-                        <a style={{color: 'black'}}>
-                            Servicos Finalizados
-                        </a>
-                    </Link>
-                </div>
-                <div className={styles.container}>            
-                    <div className={styles.itemContainer}>
-                        <h1 className={styles.title}>Serviços Pendentes</h1>
-                        {servicos.length === 0 ? (
-                            <>
-                                Nenhum serviço pendente
-                            </>
-                        ) : (
-                            <></>
-                        )}
-                        <div>
-                            {servicos.map((item) => {
-                                const nome = item.user.nome                            
-                                return(
-                                    <div key={item.id} className={styles.card}>
-                                        {item.item.map((item) => {
+            <ReturnButton/>
+            <div>
+                <Link href={'/servicoscontratados/finalizados'}>
+                    <a style={{color: 'black'}}>
+                        Servicos Finalizados
+                    </a>
+                </Link>
+            </div>
+            <div className={styles.container}>            
+                <div className={styles.itemContainer}>
+                    <h1 className={styles.title}>Serviços Pendentes</h1>
+                    {servicos.length === 0 ? (
+                        <>
+                            Nenhum serviço pendente
+                        </>
+                    ) : (
+                        <></>
+                    )}
+                    <div>
+                        {servicos.map((item) => {
+                            const nomeCliente = item.user.nome                            
+                            return(
+                                <div key={item.id} className={styles.card}>
+                                    {item.item.map((item) => {
 
-                                            let contrato_id = item.contrato_id
-                                            
-                                            return(
-                                                <div key={item.id}>
-                                                    {item.agendas.map((item) => {
+                                        let contrato_id = item.contrato_id
+
+                                        const nomeProfissional = item.publicacao.user.nome
+                                        
+                                        return(
+                                            <div key={item.id}>
+                                                {item.agendas.map((item) => {
+                                                    return(
+                                                        <div key={item.id}>
+                                                            <h1 className={styles.cardTitle}>{item.agendas.dia} de {item.agendas.mes} - {item.agendas.horario}h </h1>
+                                                        </div>
+                                                    )
+                                                })}
+
+                                                <div>
+                                                    {
+                                                        role === "CLIENTE" ? (
+                                                            <h2 className={styles.subTitle}>Nome do Profissional: {nomeProfissional}</h2>
+                                                        ) : (
+                                                            <h2 className={styles.subTitle}>Nome do Cliente: {nomeCliente}</h2> 
+                                                        )
+                                                    }                                                    
+                                                </div>
+                                                
+                                                <div className={styles.titleServicoPrestado}>
+                                                    <h2 className={styles.subTitle}>Serviço prestado: </h2>
+                                                    
+                                                    {item.servicos.map((item) => {
                                                         return(
-                                                            <div key={item.id}>
-                                                                <h1 className={styles.cardTitle}>{item.agendas.dia} de {item.agendas.mes} - {item.agendas.horario}h </h1>
+                                                            <div key={item.id}>                                                                
+                                                                <h1 style={{marginLeft:'0.2rem'}}>{item.servicos.nome}, </h1>                                                                
                                                             </div>
                                                         )
                                                     })}
-
-                                                    <div>
-                                                        <h2 className={styles.subTitle}>Nome do cliente: {nome}</h2>
-                                                    </div>
-                                                    
-                                                    <div className={styles.titleServicoPrestado}>
-                                                        <h2 className={styles.subTitle}>Serviço prestado: </h2>
-                                                        
-                                                        {item.servicos.map((item) => {
-                                                            return(
-                                                                <div key={item.id}>                                                                
-                                                                    <h1 style={{marginLeft:'0.2rem'}}>{item.servicos.nome}, </h1>                                                                
-                                                                </div>
-                                                            )
-                                                        })}
-                                                    </div>
-
-                                                    <div className={styles.titleServicoPrestado}>
-                                                        <h2 className={styles.subTitle}>Valor total: R$ </h2>
-
-                                                        {item.servicos.map((item) => {
-                                                            
-                                                            //let precos = parseFloat(item.servicos.preco)
-
-                                                            //console.log(precos.reduce((total, produto) => total + produto.preco));
-                                                            
-                                                            return(
-                                                                <div key={item.id}>                                                                
-                                                                    <h1 style={{marginLeft:'0.2rem'}}>{item.servicos.preco}</h1>                                                                
-                                                                </div>                                                            
-                                                            )
-                                                            
-                                                        })}
-                                                    </div> 
-
-                                                    {item.agendas.map((item) => {
-                                                        let agenda_id = item.agenda_id
-
-                                                        return(
-                                                            <div className={styles.buttonContainer} key={item.id}>
-                                                                <Popconfirm 
-                                                                    title={'Você tem certeza que deseja finalizar esse serviço?'}   
-                                                                    className={styles.buttonFinalizar}                                     
-                                                                    onConfirm={(e) => handleFinalizar(contrato_id, agenda_id)}                                                                                    
-                                                                >
-                                                                    Finalizar serviço
-                                                                </Popconfirm>                                        
-                                                            </div>    
-                                                        )
-                                                    })}                                   
                                                 </div>
-                                            )
-                                        })}
-                                    </div>
-                                )
-                            })}                        
-                        </div>
 
+                                                <div className={styles.titleServicoPrestado}>
+                                                    <h2 className={styles.subTitle}>Valor total: R$ </h2>
+
+                                                    {item.servicos.map((item) => {
+                                                        return(
+                                                            <div key={item.id}>                                                                                                                                
+                                                                <h1 style={{marginLeft:'0.2rem'}}>{item.servicos.preco}</h1>  
+                                                            </div>   
+                                                        )
+                                                    })}
+                                                </div> 
+
+                                                {item.agendas.map((item) => {
+                                                    let agenda_id = item.agenda_id
+
+                                                    return(
+                                                        <div className={styles.buttonFinalizarContainer} key={item.id}>
+                                                            <Button variant="outlined" onClick={handleClickOpen} className={styles.buttonFinalizar}>
+                                                                    Finalizar servico
+                                                            </Button>
+
+                                                            <Dialog
+                                                                open={open}
+                                                                onClose={handleClose}                                                                    
+                                                            >
+                                                                <DialogTitle>
+                                                                    {"Você tem certeza que deseja finalizar esse serviço?"}
+                                                                </DialogTitle>     
+
+                                                                <DialogActions>
+                                                                    <Button onClick={handleClose}>
+                                                                        Cancelar
+                                                                    </Button>
+                                                                    <Button onClick={(e) => handleFinalizar(contrato_id, agenda_id)} autoFocus>
+                                                                        Confirmar
+                                                                    </Button>
+                                                                </DialogActions>
+                                                            </Dialog>
+                                                        </div>    
+                                                    )
+                                                })}                                   
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            )
+                        })}                        
                     </div>
+
                 </div>
             </div>
         </>
     )
 }
 
-export const getServerSideProps = canSSRCliente(async (ctx) => {
+export const getServerSideProps = canSSRAuth(async (ctx) => {
     
     const api = setupAPIClient(ctx);
-
+    
     const response = await api.get('/servicos/pendentes');
     
     return {
         props: {
-            listServicos: response.data
+            listServicos: response.data,
         }
     }
 })

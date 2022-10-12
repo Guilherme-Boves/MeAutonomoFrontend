@@ -1,4 +1,21 @@
 
+.containerButtonRetornarPagina{
+    background-color: #fff;
+    width: 1.8rem;
+    margin: 1rem;    
+}
+
+.buttonRetornarPagina{
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all 0.7s;
+}
+
+.buttonRetornarPagina:hover{
+    opacity: 1;
+    transform: scale(1.1)
+}
+
 .container{    
     display: flex;
     justify-content: center;
@@ -10,6 +27,7 @@
     height: 800px;
     max-width: 1200px;
     background-color: #D3E2E5;
+    
 }
 
 .title{
@@ -37,7 +55,7 @@
 .buttonContainer{
     display: flex;
     justify-content: flex-end;
-    margin-top: 6.5rem;
+    margin-top: 4.0rem;
 }
 
 .button{

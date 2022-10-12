@@ -4,7 +4,6 @@ import { setupAPIClient } from '../../../../../../../services/api';
 import Image from 'next/image';
 import styles from './styles.module.css'
 import { ReturnButton } from '../../../../../../../components/ui/ReturnButton';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { AuthContext } from '../../../../../../../contexts/AuthContext';
 
@@ -76,8 +75,6 @@ export default function Perfil({ perfilProf }: PerfilProps){
         <>
             <ReturnButton/>
             <div className={styles.container}>
-
-            
                 <div>
                     {perfil.map((item, index)=> {
 

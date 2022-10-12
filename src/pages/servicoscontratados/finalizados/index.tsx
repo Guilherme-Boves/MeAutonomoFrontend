@@ -1,9 +1,12 @@
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ReturnButton } from "../../../components/ui/ReturnButton";
 import { setupAPIClient } from "../../../services/api";
-import { canSSRCliente } from "../../../utils/canSSRCliente";
 import styles from '../styles.module.css'
+
+import jsonWebTokenService from 'jsonwebtoken'
+import { parseCookies } from 'nookies';
+import { canSSRAuth } from "../../../utils/canSSRAuth";
 
 type ItemProps = {
     id: string;
@@ -53,6 +56,46 @@ interface ListServicos {
 export default function ServicosFinalizados({ listServicos }: ListServicos){
 
     const [servicos, setServicos] = useState(listServicos || [])
+    const [role, setRole] = useState('');
+
+    // function NomePessoa(nomeCliente, nomeProfissional){
+        
+    //     const { '@meautonomo.token': token } = parseCookies();
+    //     const decodedJwt = jsonWebTokenService.decode(token)
+            
+    //     if(decodedJwt.role === "CLIENTE"){
+    //         return(
+    //             <h1 className={styles.subTitle}>Nome do Profissional: {nomeProfissional}</h1>
+    //         )
+    //     } else if(decodedJwt.role === "PROFISSIONAL") {
+    //         return(                
+    //             <h1 className={styles.subTitle}>Nome do Profissional: {nomeCliente}</h1>
+    //         )
+    //     }
+    // }
+
+    useEffect(() => {
+
+        function loadRole() {
+            
+            const { '@meautonomo.token': token } = parseCookies();
+            const decodedJwt = jsonWebTokenService.decode(token)
+                
+            if(decodedJwt.role === "CLIENTE"){
+                return(
+                    setRole("CLIENTE")
+                )
+            } else if(decodedJwt.role === "PROFISSIONAL") {
+                return(                
+                    setRole("PROFISSIONAL")
+                )
+            }
+        } 
+
+        loadRole()
+        
+
+    }, [])
 
     return(
         <>
@@ -76,10 +119,13 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
                     )}
                     <div>
                         {servicos.map((item) => {
-                            const nome = item.user.nome
+                            const nomeCliente = item.user.nome
                             return(
                                 <div key={item.id} className={styles.card}>
                                     {item.item.map((item) => {
+
+                                        const nomeProfissional = item.publicacao.user.nome
+
                                         return(
                                             <div key={item.id}>
                                                 {item.agendas.map((item) => {
@@ -90,7 +136,13 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
                                                     )
                                                 })}
                                                 <div>
-                                                    <h2 className={styles.subTitle}>Nome do cliente: {nome}</h2>
+                                                    {
+                                                        role === "CLIENTE" ? (
+                                                            <h2 className={styles.subTitle}>Nome do Profissional: {nomeProfissional}</h2>
+                                                        ) : (
+                                                            <h2 className={styles.subTitle}>Nome do Profissional: {nomeCliente}</h2> 
+                                                        )
+                                                    }                                                    
                                                 </div>
                                                 
                                                 <div className={styles.titleServicoPrestado}>
@@ -137,7 +189,7 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
     )
 }
 
-export const getServerSideProps = canSSRCliente(async (ctx) => {
+export const getServerSideProps = canSSRAuth(async (ctx) => {
     
     const api = setupAPIClient(ctx);
 

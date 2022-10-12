@@ -1,15 +1,17 @@
-import React, { useContext, useState } from "react";
-import { ReturnButton } from "../../../../../../../../../components/ui/ReturnButton";
-import styles from './styles.module.css'
+import React, { useState } from "react";
+import { useRouter } from "next/router";
 import { canSSRAuth } from "../../../../../../../../../utils/canSSRAuth";
 import { setupAPIClient } from "../../../../../../../../../services/api";
-import 'antd/dist/antd.css';
-import { Select } from 'antd';
-import { useRouter } from "next/router";
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import styles from './styles.module.css'
+import jsonWebTokenService from 'jsonwebtoken'
+import { parseCookies } from 'nookies';
+import { FiArrowLeft } from 'react-icons/fi'
 import { toast } from "react-toastify";
 import { FiThumbsUp } from "react-icons/fi"
-import jsonWebTokenService from 'jsonwebtoken'
-import {parseCookies } from 'nookies';
 
 type ItemProps = {
     id: string;
@@ -49,28 +51,23 @@ interface PerfilProps {
     perfilProf: ItemProps[];
 }
 
-type ServicoProps = {
-    id: string;
-}
-
 export default function Contrato({ perfilProf }: PerfilProps){
     
     const router = useRouter();
     const [pagina, setPagina] = useState(0)
     const [perfil, setPerfil] = useState(perfilProf || []);
-    const [servicos, setServicos] = useState<ServicoProps[] | []>([]);
-    const [agendas, setAgendas] = useState([]);
-    
-   
-    const handleServico = (servico) => {                                             
-        setServicos(servico)        
-    }
+    const [servicos, setServicos] = useState<string[] | []>([]);
+    const [agenda, setAgenda] = useState('');
+  
+    const handleChangeServico = (event: SelectChangeEvent<typeof servicos>) => {
+        setServicos(event.target.value as string[]);
+    };
 
-    const handleAgenda = (agenda) => {                                             
-        setAgendas(agenda)        
-    }
+    const handleChangeAgenda = (event: SelectChangeEvent) => {
+        setAgenda(event.target.value as string);        
+      };
 
-    function handleRetornar(){
+    function handleRetornarMenuPrincipal(){
 
         const { '@meautonomo.token': token } = parseCookies();
         const decodedJwt = jsonWebTokenService.decode(token)
@@ -84,6 +81,21 @@ export default function Contrato({ perfilProf }: PerfilProps){
         }
     }
 
+    async function handleDeleteContrato(){
+        
+        const contrato_id = router.query.contrato_id
+
+        const api = setupAPIClient();
+
+        await api.delete('/contrato', {
+            params:{
+                contrato_id
+            }
+        })
+        
+        router.back()
+    }
+
     async function handleContratar(){
 
         if(servicos.length === 0){
@@ -91,8 +103,8 @@ export default function Contrato({ perfilProf }: PerfilProps){
             return;
         }
 
-        if(agendas.length === 0){
-            toast.warn('Selecione 1 ou mais horários')
+        if(agenda === undefined){
+            toast.warn('Selecione um horário')
             return;
         }
         
@@ -107,11 +119,11 @@ export default function Contrato({ perfilProf }: PerfilProps){
                 publicacao_id: publicacaoId[0]
             })
 
-            const { id } = response.data
+            const { createItemContrato } = response.data
+            const { id } = createItemContrato
+
             let i = 0;
-        
             while(i < servicos.length){
-                console.log('entro servico')
                 await api.post('/contrato/addservico', {
                     itemContrato_id: id,
                     servico_id: servicos[i]
@@ -119,15 +131,10 @@ export default function Contrato({ perfilProf }: PerfilProps){
                 i++;
             }
 
-            i = 0;
-            while(i < agendas.length){
-                console.log('entro agenda')
-                await api.post('/contrato/addagenda', {
-                    itemContrato_id: id,
-                    agenda_id: agendas[i]
-                })                
-                i++;
-            }
+            await api.post('/contrato/addagenda', {
+                itemContrato_id: id,
+                agenda_id: agenda
+            })    
 
             toast.success('Contrato realizado com sucesso!')
             setPagina((paginaAtual) => paginaAtual + 1)
@@ -142,34 +149,39 @@ export default function Contrato({ perfilProf }: PerfilProps){
         if(pagina === 0){
             return(
                 <>
-                    <ReturnButton/>
+                    <div onClick={handleDeleteContrato} className={styles.containerButtonRetornarPagina}>
+                        <FiArrowLeft size={28} className={styles.buttonRetornarPagina} />
+                    </div>
+
                     <div className={styles.container}>
                         <h1 className={styles.title}>Escolha os serviços desejados e horários</h1>
                         <div className={styles.cardContainer}>
                             <h1 className={styles.cardTitle}>Serviços Prestados</h1>
-                            <div >
-                                                                    
+                            <div>                              
                                 {perfil.map((item) => {
 
                                     return(
                                         <div key={item.id}>
-                                            <Select
-                                                mode="multiple"
-                                                allowClear
-                                                style={{
-                                                    width: '50%',
-                                                }}
-                                                placeholder="Selecione um ou mais serviços"
-                                                defaultValue={[]}
-                                                onChange={handleServico}
-                                            >
-                                                {item.servicosPrestadosProf.map((item)=> {
-                                                    
-                                                    return(
-                                                        <Select.Option key={item.id}>{item.nome} - R${item.preco}</Select.Option>
-                                                    )
-                                                })}
-                                            </Select>
+                                            <FormControl sx={{ minWidth: 300, marginTop: '2rem' }} size="medium">
+                                                <InputLabel id="demo-multiple-name-label">Serviços</InputLabel>
+                                                    <Select
+                                                        labelId="demo-multiple-name-label"
+                                                        id="demo-multiple-name"
+                                                        label={'Serviços'}                                                        
+                                                        multiple                                                        
+                                                        value={servicos}
+                                                        onChange={handleChangeServico}
+                                                    >
+                                                    {item.servicosPrestadosProf.map((item) => (
+                                                        <MenuItem
+                                                            key={item.id}
+                                                            value={item.id}                                                    
+                                                        >
+                                                            {item.nome}                                                    
+                                                        </MenuItem>
+                                                    ))} 
+                                                    </Select>
+                                            </FormControl>
                                         </div>
                                     )
                                 })}
@@ -178,27 +190,29 @@ export default function Contrato({ perfilProf }: PerfilProps){
 
                         <div className={styles.cardContainer}>
                             <h1 className={styles.cardTitle}>Agenda Disponível</h1>
-                                                
                             <div>        
                                 {perfil.map((item) => {
                                     return(
                                         <div key={item.id}>
-                                            <Select
-                                                mode="multiple"
-                                                allowClear
-                                                style={{
-                                                    width: '50%',
-                                                }}
-                                                placeholder="Selecione um ou mais horários"
-                                                defaultValue={[]}
-                                                onChange={handleAgenda}
-                                            >
-                                                {item.agenda.map((item)=> {                                        
-                                                    return(
-                                                        <Select.Option key={item.id} value={item.id}>{item.dia} de {item.mes} - {item.horario}h</Select.Option>
-                                                    )
-                                                })}
-                                            </Select>
+                                            <FormControl sx={{ minWidth: 300, marginTop: '2rem' }} size="medium">
+                                                <InputLabel id="demo-multiple-name-label">Agenda</InputLabel>
+                                                <Select
+                                                    labelId="demo-multiple-name-label"
+                                                    id="demo-multiple-name"      
+                                                    label={'Agenda'}                                                                                                      
+                                                    value={agenda}                                                    
+                                                    onChange={handleChangeAgenda}
+                                                    >
+                                                    {item.agenda.map((item) => (
+                                                        <MenuItem
+                                                            key={item.id}
+                                                            value={item.id}                                                    
+                                                        >
+                                                            {item.dia} de {item.mes} - {item.horario}h                                                  
+                                                        </MenuItem>
+                                                    ))} 
+                                                </Select>
+                                            </FormControl>   
                                         </div>
                                     )
                                 })}
@@ -210,7 +224,7 @@ export default function Contrato({ perfilProf }: PerfilProps){
                                 </button>                        
                             </div>
                         </div>
-                    </div>
+                    </div>                    
                 </>
             )
             
@@ -220,7 +234,7 @@ export default function Contrato({ perfilProf }: PerfilProps){
                 <div className={styles.contratoRealizado}>
                     <FiThumbsUp size={40} style={{marginBottom: '1rem'}}/>
                     Contrato Realizado com Sucesso!
-                    <button className={styles.buttonRetornar} onClick={handleRetornar}>
+                    <button className={styles.buttonRetornar} onClick={handleRetornarMenuPrincipal}>
                         Retornar para o menu principal
                     </button>
                 </div>
@@ -228,8 +242,7 @@ export default function Contrato({ perfilProf }: PerfilProps){
         }
     }
     
-    return(
- 
+    return ( 
         <>
             <div>
                 {PageDisplay()}
