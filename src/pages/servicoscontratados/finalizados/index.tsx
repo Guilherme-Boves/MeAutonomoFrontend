@@ -58,22 +58,6 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
     const [servicos, setServicos] = useState(listServicos || [])
     const [role, setRole] = useState('');
 
-    // function NomePessoa(nomeCliente, nomeProfissional){
-        
-    //     const { '@meautonomo.token': token } = parseCookies();
-    //     const decodedJwt = jsonWebTokenService.decode(token)
-            
-    //     if(decodedJwt.role === "CLIENTE"){
-    //         return(
-    //             <h1 className={styles.subTitle}>Nome do Profissional: {nomeProfissional}</h1>
-    //         )
-    //     } else if(decodedJwt.role === "PROFISSIONAL") {
-    //         return(                
-    //             <h1 className={styles.subTitle}>Nome do Profissional: {nomeCliente}</h1>
-    //         )
-    //     }
-    // }
-
     useEffect(() => {
 
         function loadRole() {
@@ -161,11 +145,7 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
                                                     <h2 className={styles.subTitle}>Valor total: R$ </h2>
 
                                                     {item.servicos.map((item) => {
-                                                        
-                                                        //let precos = parseFloat(item.servicos.preco)
-
-                                                        //console.log(precos.reduce((total, produto) => total + produto.preco));
-                                                        
+                                                                                                                
                                                         return(
                                                             <div key={item.id}>                                                                
                                                                 <h1 style={{marginLeft:'0.2rem'}}>{item.servicos.preco}</h1>                                                                
