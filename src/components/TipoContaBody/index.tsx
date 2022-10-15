@@ -9,16 +9,16 @@ export function TipoContaBody() {
         </Head>
         
         <div className=" bg-fundo bg-cover bg-no-repeat bg-current w-screen h-screen flex flex-row justify-center items-center ">
-            <div className="w-[710px] h-[670px] mx-auto text-center flex flex-col justify-center border-collapse rounded-xl shadow-xl bg-gradient-to-b from-[#15B6D6] to-[#15D6D6] ">
-                <h1 className="text-4xl font-extrabold text-white p-10">
+            <div className="w-[710px] h-[670px] 2xl:w-[850px] 2xl:h-[800px] mx-auto text-center flex flex-col justify-center border-collapse rounded-xl shadow-xl bg-gradient-to-b from-[#15B6D6] to-[#15D6D6] ">
+                <h1 className="text-4xl 2xl:text-5xl font-extrabold text-white p-10">
                     O que você deseja?
                 </h1>
 
                 <div className='grid grid-cols-2 mx-auto space-x-3 p-4'>
 
-                    <Link href={"/signupprofissional"}>
+                    <Link href={"/signupcliente"}>
                         <a href="">
-                            <div className="w-72 rounded-2xl overflow-hidden shadow-lg">
+                            <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
                     
                             <div className=" bg-[rgb(255,255,255,0.7)] w-full max-h-full">
                                 <img src="/images/tipoConta1.png" alt="" />
@@ -36,9 +36,9 @@ export function TipoContaBody() {
                         </a>
                     </Link>
 
-                    <Link href={"/signupcliente"}>
+                    <Link href={"/signupprofissional"}>
                         <a href="">
-                            <div className="w-72 rounded-2xl overflow-hidden shadow-lg">
+                            <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
                                 
                                 <div className=" bg-[rgb(255,255,255,0.7)] w-full max-h-full">
                                     <img src="/images/tipoConta2.png" alt="" />

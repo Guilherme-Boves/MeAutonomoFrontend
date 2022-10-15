@@ -1,13 +1,10 @@
-import { Player as VimePlayer, Youtube, DefaultUi, ClickToPlay, Spinner, Poster, MuteControl } from '@vime/react'
+import { DefaultUi, Player as Video, Youtube} from '@vime/react'
 
-const Player = () => (
-  <VimePlayer theme="dark">
-    <Youtube videoId="fU5yNrvXCh8"/>
-    <ClickToPlay/>
-    <Spinner/>
-    <Poster/>
+export default function Player(){
+  return(
+    <Video autoplay muted >
+     <Youtube videoId="4E8JSdbLXbQ"/>
+   </Video>
+  )
+}
 
-  </VimePlayer>
-)
-
-export default Player
