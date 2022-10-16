@@ -22,7 +22,7 @@ export default function DashboardAdmin() {
                     </Link>
                     </div>
                 <div>        
-                    <Link href={""}>
+                    <Link href={"/servicoscontratados/pendentes"}>
                         <button>
                             <a>Serviços contratados</a>
                         </button>

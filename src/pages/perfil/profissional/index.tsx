@@ -6,6 +6,7 @@ import styles from '../styles.module.css'
 import { FiUpload } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { canSSRProf } from "../../../utils/canSSRProf";
+import MaskedInput from "../../../components/ui/MaskedInput";
 
 type ItemUserProps = {
     id: string;
@@ -33,13 +34,23 @@ export default function PerfilProfissional({ userData }: UserProps){
     const [nomeUsuario, setNomeUsuario] = useState(user.nome);
     const [telefone, setTelefone] = useState(user.telefone);
     const [endereco, setEndereco] = useState(user.endereco);
+    const [imagem, setImagem] = useState(user.imagem);
     const [cnpj, setCnpj] = useState('');
     
-    const [avatarUrl, setAvatarUrl] = useState(''); //Armazendo uma URL para mostrar o Preview da imagem
-
     let splitedData = user.dataNascimento.split('T')
     let newDate = splitedData[0].split('-')
     let dataFormatada = `${newDate[2]}/${newDate[1]}/${newDate[0]}`
+
+    function containsNumbers(str){        
+        const regexNome = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$/;
+        return regexNome.test(str);
+    }
+
+    const onlyNumbers = (str) => str.replace(/[^0-9]/g, '') // Retira a máscara, deixando apenas os números
+
+    function handleRetiraMascara(value) {        
+        return onlyNumbers(value)
+    }
 
     async function handleFile(e: ChangeEvent<HTMLInputElement>){
        
@@ -54,17 +65,18 @@ export default function PerfilProfissional({ userData }: UserProps){
         }
 
         if(image.type === 'image/jpeg' || image.type === 'image/png'){
-
-            //setImageAvatar(image) // Armazendo a imagem no useState para enviar para o banco de dados                    
-            setAvatarUrl(URL.createObjectURL(e.target.files[0])) // Armazenando a imagem no useState para fazer o preview da imagem
-
+            
             try{
                 const data = new FormData();
 
                 data.append('file', image)
 
                 const api = setupAPIClient();
-                await api.put('/user/upload/imagem', data)
+                const response = await api.put('/user/upload/imagem', data)
+
+                const {imagem} = response.data
+                setImagem(imagem)
+
                 toast.success('Imagem atualizada com sucesso!')
             } catch(err){
                 toast.error('Falha ao atualizar a imagem')
@@ -76,18 +88,32 @@ export default function PerfilProfissional({ userData }: UserProps){
     async function handleSalvarInformacoes(e: FormEvent) {
         e.preventDefault();
 
-        if(nomeUsuario === '') {
-            toast.warn('O nome não pode estar vazio!')
+        if(nomeUsuario === user.nome && telefone === user.telefone && endereco === user.endereco && descricaoSobreMim === ''){
+            // Se o usuário não inserir informações novas, a função será finalizada.
+            console.log('encerrou')
             return;
         }
 
-        if(telefone === '') {
-            toast.warn('Telefone inválido!')
+        // Map necessário para validar se a descrição está vazia ou não.
+        // Se o usuário não alterar nenhum caracter da Textarea, a useState "descricaoSobreMim" ficará vazia, mesmo se o Textarea da tela possuir um texto        
+        var descricao = '';
+        user.userProfissional.map((item) => {
+            descricao = item.descricaoSobreMim            
+        })
+        console.log(descricao)
+
+        if(nomeUsuario === '' || telefone === '' || endereco === '' || descricao === '') {
+            toast.warn('Campos de Nome, Telefone, Email e Descrição não podem ser vazios')
             return;
         }
 
-        if(endereco === '') {
-            toast.warn('O endereço não pode estar vazio!')
+        if(!containsNumbers(nomeUsuario)){ // Verificando se o nome possui números ou caracteres inválidos.
+            toast.error("Nome inválido")
+            return;
+        }
+
+        if(telefone.length < 11){
+            toast.error("Telefone incompleto")
             return;
         }
 
@@ -102,8 +128,7 @@ export default function PerfilProfissional({ userData }: UserProps){
                 descricaoSobreMim: descricaoSobreMim,
             })
         } catch(err){
-            toast.error('Ops! Erro inesperado, favor contatar o suporte!')
-            console.log(err)
+            toast.error('Ops! Erro inesperado, favor contatar o suporte! ' + err)            
         }
 
         toast.success('Dados atualizados com sucesso!');
@@ -114,29 +139,30 @@ export default function PerfilProfissional({ userData }: UserProps){
         <div>
             <ReturnButton/>
             <div className={styles.container}>
-                <div className={styles.imagemContainer}>                    
-                    <label className={styles.label}>
+                <div className={styles.imagemContainer}>
+                    {imagem === '' || imagem === null ? (
+                        <label className={styles.label}>
                         <span className={styles.span}>
                             <FiUpload size={25} />
                         </span>
 
                         <input type="file" accept="image/png, image/jpeg"  className={styles.input} onChange={handleFile}/>
-
-                        {avatarUrl === '' ? (
-                            <Image className={styles.preview} src={`http://localhost:3333/files/${user.imagem}`} alt={'Imagem de perfil do usuário'} width={250} height={250} />        
-                        ) : (
-                            avatarUrl && (
-                                <Image
-                                    className={styles.preview}
-                                    src={avatarUrl}
-                                    alt="Foto de Perfil"
-                                    width={250}
-                                    height={250}
-                                />
-                            )
-                        )}
+                        
                     </label>
-                    
+                    ) : (
+                        <div>
+                            <label className={styles.label}>
+                                <span className={styles.span}>
+                                    <FiUpload size={25} />
+                                </span>
+
+                                <input type="file" accept="image/png, image/jpeg"  className={styles.input} onChange={handleFile}/>
+                                
+                                <Image className={styles.preview} src={`http://localhost:3333/files/${imagem}`} alt={'Imagem de perfil do usuário'} width={250} height={250} />     
+                                
+                            </label>
+                        </div>
+                    )}
                 </div>
 
                 <h1 className={styles.nome}>{user.nome}</h1>
@@ -150,8 +176,7 @@ export default function PerfilProfissional({ userData }: UserProps){
                             <h1 className={styles.DadosContaTitle}>Dados da Conta</h1>
                             <div className={styles.DadosInfos}>
                                 <h2 className={styles.DadosContaSubTitle} style={{marginBottom:'1rem'}}>Nome de Usuário: </h2>
-                                <input 
-
+                                <input
                                     value={nomeUsuario}
                                     onChange={(e) => setNomeUsuario(e.target.value)}
                                 />
@@ -159,8 +184,7 @@ export default function PerfilProfissional({ userData }: UserProps){
 
                             <div className={styles.DadosInfos}>
                                 <h2 className={styles.DadosContaSubTitle}>Email: </h2>
-                                <input 
-                                    
+                                <input
                                     disabled={true}
                                     value={user.email}
                                 />
@@ -172,8 +196,7 @@ export default function PerfilProfissional({ userData }: UserProps){
                             <h1 className={styles.DadosPessoaisTitle}>Dados Pessoais</h1>
                             <div className={styles.DadosInfos}>
                                 <h2 className={styles.DadosPessoaisSubTitle}>Nome Completo: </h2>
-                                <input 
-
+                                <input
                                     value={nomeUsuario}
                                     onChange={(e) => setNomeUsuario(e.target.value)}
                                 />
@@ -188,30 +211,32 @@ export default function PerfilProfissional({ userData }: UserProps){
                                         
                                         <div className={styles.DadosInfos}>
                                             <h2 className={styles.DadosPessoaisSubTitle}>CNPJ: </h2>
-                                            <input 
-
+                                            <MaskedInput
+                                                style={{marginBottom:"0", padding:"0"}}         
+                                                mask={"99.999.999/9999-99"}
                                                 disabled={true}
-                                                value={item.cnpj}
+                                                value={item.cnpj}                                                
+                                                onChange={() => {}}
                                             />
                                         </div>
                                     </div>
                                 )
                             })}
-                            
-                            
+                                                        
                             <div className={styles.DadosInfos}>
                                 <h2 className={styles.DadosPessoaisSubTitle}>Telefone: </h2>
-                                    <input 
-
+                                    <MaskedInput
+                                        style={{marginBottom:"0", padding:"0"}}                                       
+                                        mask={"(99) 99999-9999"}
+                                        maskChar={''}
                                         value={telefone}
-                                        onChange={(e) => setTelefone(e.target.value)}
+                                        onChange={(e) => setTelefone(handleRetiraMascara(e.target.value))}                                        
                                     />
                             </div>
 
                             <div className={styles.DadosInfos}>
                                 <h2 className={styles.DadosPessoaisSubTitle}>Data de Nascimento: </h2>
-                                    <input 
-
+                                    <input
                                         disabled={true}
                                         value={dataFormatada}
                                     />
@@ -219,14 +244,12 @@ export default function PerfilProfissional({ userData }: UserProps){
 
                             <div className={styles.DadosInfos}>
                                 <h2 className={styles.DadosPessoaisSubTitle}>Endereço: </h2>
-                                    <input 
-
+                                    <input
                                         value={endereco}
                                         onChange={(e) => setEndereco(e.target.value)}
                                     />
                             </div>
                             
-
                         </div>
 
                         <div className={styles.cardSobreMim}>
@@ -260,7 +283,6 @@ export default function PerfilProfissional({ userData }: UserProps){
                             
                         </div>
                     
-
                         <div className={styles.button}>
                             <button type="submit">
                                 Salvar
@@ -272,9 +294,6 @@ export default function PerfilProfissional({ userData }: UserProps){
             </div>
         </div>
     )
-
-
-
 }
 
 export const getServerSideProps = canSSRProf(async (ctx) => {

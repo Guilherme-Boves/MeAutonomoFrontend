@@ -6,6 +6,7 @@ import styles from '../styles.module.css'
 import { FiUpload } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { canSSRCliente } from "../../../utils/canSSRCliente";
+import MaskedInput from "../../../components/ui/MaskedInput";
 
 type ItemUserProps = {
     id: string;
@@ -31,13 +32,23 @@ export default function PerfilCliente({ userData }: UserProps){
     const [nomeUsuario, setNomeUsuario] = useState(user.nome);
     const [telefone, setTelefone] = useState(user.telefone);
     const [endereco, setEndereco] = useState(user.endereco);
+    const [imagem, setImagem] = useState(user.imagem);
     const [cpf, setCpf] = useState('');
-
-    const [avatarUrl, setAvatarUrl] = useState(''); //Armazendo uma URL para mostrar o Preview da imagem
 
     let splitedData = user.dataNascimento.split('T')
     let newDate = splitedData[0].split('-')
     let dataFormatada = `${newDate[2]}/${newDate[1]}/${newDate[0]}`
+
+    function containsNumbers(str){        
+        const regexNome = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$/;
+        return regexNome.test(str);
+    }
+
+    const onlyNumbers = (str) => str.replace(/[^0-9]/g, '') // Retira a máscara, deixando apenas os números
+
+    function handleRetiraMascara(value) {        
+        return onlyNumbers(value)
+    }
 
     async function handleFile(e: ChangeEvent<HTMLInputElement>){
        
@@ -52,16 +63,18 @@ export default function PerfilCliente({ userData }: UserProps){
         }
 
         if(image.type === 'image/jpeg' || image.type === 'image/png'){
-                 
-            setAvatarUrl(URL.createObjectURL(e.target.files[0])) // Armazenando a imagem no useState para fazer o preview da imagem
-
+            
             try{
                 const data = new FormData();
 
                 data.append('file', image)
 
                 const api = setupAPIClient();
-                await api.put('/user/upload/imagem', data)
+                const response = await api.put('/user/upload/imagem', data)
+
+                const {imagem} = response.data
+                setImagem(imagem)
+
                 toast.success('Imagem atualizada com sucesso!')
             } catch(err){
                 toast.error('Falha ao atualizar a imagem')
@@ -73,18 +86,23 @@ export default function PerfilCliente({ userData }: UserProps){
     async function handleSalvarInformacoes(e: FormEvent) {
         e.preventDefault();
 
-        if(nomeUsuario === '') {
-            toast.warn('O nome não pode estar vazio!')
+        if(nomeUsuario === user.nome && telefone === user.telefone && endereco === user.endereco){
+            // Se o usuário não inserir informações novas, a função será finalizada.            
             return;
         }
 
-        if(telefone === '') {
-            toast.warn('Telefone inválido!')
+        if(nomeUsuario === '' || telefone === '' || endereco === '') {
+            toast.warn('Campos de Nome, Telefone e Email não podem ser vazios')
             return;
         }
 
-        if(endereco === '') {
-            toast.warn('O endereço não pode estar vazio!')
+        if(!containsNumbers(nomeUsuario)){ // Verificando se o nome possui números ou caracteres inválidos.
+            toast.error("Nome inválido")
+            return;
+        }
+
+        if(telefone.length < 11){
+            toast.error("Telefone incompleto")
             return;
         }
         
@@ -110,47 +128,30 @@ export default function PerfilCliente({ userData }: UserProps){
         <div>
             <ReturnButton/>
             <div className={styles.container} style={{height:'970px'}}>
-                <div className={styles.imagemContainer}>                    
-                    <label className={styles.label}>
+                <div className={styles.imagemContainer}>
+                    {imagem === '' || imagem === null ? (
+                        <label className={styles.label}>
                         <span className={styles.span}>
                             <FiUpload size={25} />
                         </span>
 
                         <input type="file" accept="image/png, image/jpeg"  className={styles.input} onChange={handleFile}/>
-
-                        {/* {avatarUrl === '' ? (
-                            avatarUrl.matchAll(`https://ui-avatars.com/api/?background=3700B3&color=FFFFFF&name=${user.nome}`) ? (
-                                <Image className={styles.preview} src={user.imagem} alt={'Imagem de perfil do usuário'} width={250} height={250} />            
-                            ) : (
-                                <Image className={styles.preview} src={`http://localhost:3333/files/${user.imagem}`} alt={'Imagem de perfil do usuário'} width={250} height={250} />        
-                            )
-                        ) : (
-                            avatarUrl && (
-                                <Image
-                                    className={styles.preview}
-                                    src={avatarUrl}
-                                    alt="Foto de Perfil"
-                                    width={250}
-                                    height={250}
-                                />
-                            )
-                        )} */}
-
-                        {avatarUrl === '' ? (
-                            <Image className={styles.preview} src={`http://localhost:3333/files/${user.imagem}`} alt={'Imagem de perfil do usuário'} width={250} height={250} />        
-                        ) : (
-                            avatarUrl && (
-                                <Image
-                                    className={styles.preview}
-                                    src={avatarUrl}
-                                    alt="Foto de Perfil"
-                                    width={250}
-                                    height={250}
-                                />
-                            )
-                        )}
+                        
                     </label>
-                    
+                    ) : (
+                        <div>
+                            <label className={styles.label}>
+                                <span className={styles.span}>
+                                    <FiUpload size={25} />
+                                </span>
+
+                                <input type="file" accept="image/png, image/jpeg"  className={styles.input} onChange={handleFile}/>
+                                
+                                <Image className={styles.preview} src={`http://localhost:3333/files/${imagem}`} alt={'Imagem de perfil do usuário'} width={250} height={250} />     
+                                
+                            </label>
+                        </div>
+                    )}
                 </div>
 
                 <h1 className={styles.nome}>{user.nome}</h1>
@@ -164,8 +165,7 @@ export default function PerfilCliente({ userData }: UserProps){
                             <h1 className={styles.DadosContaTitle}>Dados da Conta</h1>
                             <div className={styles.DadosInfos}>
                                 <h2 className={styles.DadosContaSubTitle} style={{marginBottom:'1rem'}}>Nome de Usuário: </h2>
-                                <input 
-
+                                <input
                                     value={nomeUsuario}
                                     onChange={(e) => setNomeUsuario(e.target.value)}
                                 />
@@ -173,8 +173,7 @@ export default function PerfilCliente({ userData }: UserProps){
 
                             <div className={styles.DadosInfos}>
                                 <h2 className={styles.DadosContaSubTitle}>Email: </h2>
-                                <input 
-                                    
+                                <input
                                     disabled={true}
                                     value={user.email}
                                 />
@@ -186,8 +185,7 @@ export default function PerfilCliente({ userData }: UserProps){
                             <h1 className={styles.DadosPessoaisTitle}>Dados Pessoais</h1>
                             <div className={styles.DadosInfos}>
                                 <h2 className={styles.DadosPessoaisSubTitle}>Nome Completo: </h2>
-                                <input 
-
+                                <input
                                     value={nomeUsuario}
                                     onChange={(e) => setNomeUsuario(e.target.value)}
                                 />
@@ -202,8 +200,10 @@ export default function PerfilCliente({ userData }: UserProps){
                                         
                                         <div className={styles.DadosInfos}>
                                             <h2 className={styles.DadosPessoaisSubTitle}>CPF: </h2>
-                                            <input 
-
+                                            <MaskedInput
+                                                style={{marginBottom:"0", padding:"0"}}
+                                                onChange={() => {}}
+                                                mask={'999.999.999-99'}
                                                 disabled={true}
                                                 value={item.cpf}
                                             />
@@ -215,17 +215,18 @@ export default function PerfilCliente({ userData }: UserProps){
                             
                             <div className={styles.DadosInfos}>
                                 <h2 className={styles.DadosPessoaisSubTitle}>Telefone: </h2>
-                                    <input 
-
-                                        value={telefone}
-                                        onChange={(e) => setTelefone(e.target.value)}
+                                    <MaskedInput
+                                        style={{marginBottom:"0", padding:"0"}}                                       
+                                        mask={"(99) 99999-9999"}
+                                        maskChar={''}
+                                        onChange={(e) => setTelefone(handleRetiraMascara(e.target.value))}
+                                        value={telefone}                                        
                                     />
                             </div>
 
                             <div className={styles.DadosInfos}>
                                 <h2 className={styles.DadosPessoaisSubTitle}>Data de Nascimento: </h2>
                                     <input 
-
                                         disabled={true}
                                         value={dataFormatada}
                                     />
@@ -233,8 +234,7 @@ export default function PerfilCliente({ userData }: UserProps){
 
                             <div className={styles.DadosInfos}>
                                 <h2 className={styles.DadosPessoaisSubTitle}>Endereço: </h2>
-                                    <input 
-
+                                    <input
                                         value={endereco}
                                         onChange={(e) => setEndereco(e.target.value)}
                                     />

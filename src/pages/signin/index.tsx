@@ -20,11 +20,21 @@ export default function SignIn() {
 
     const [loading, setLoading] = useState(false);
 
+    function validaEmail(str){
+        const regexEmail = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
+        return regexEmail.test(str)
+    }
+
     async function handleLogin(e: FormEvent) {
         e.preventDefault();
         
         if(email === '' || password === ''){
             toast.error("Preencha todos os campos!")
+            return;
+        }
+
+        if(!validaEmail(email)){
+            toast.error("Email inválido")
             return;
         }
 
@@ -34,7 +44,12 @@ export default function SignIn() {
             email,
             password
         }
-        await signIn(data)
+        try{
+            await signIn(data)
+        } catch(err){
+            toast.error("Erro inesperado, favor contatar o suporte!")
+            setLoading(false);
+        }
 
         setLoading(false);
     }
@@ -73,8 +88,8 @@ export default function SignIn() {
                 <form onSubmit={handleLogin} action="" className="flex flex-col gap-5 w-2/3 ml-auto mr-auto  ">
                     <Input 
                         className="bg-white rounded-lg px-5 h-14 font-bold text-[rgba(77,111,128,0.75)] shadow-md"
-                        placeholder="E-mail, CNPJ ou CPF" 
-                        type="text" 
+                        placeholder="E-mail" 
+                        type="email" 
                         value={email}
                         onChange={ (e) => setEmail(e.target.value)}
                     />

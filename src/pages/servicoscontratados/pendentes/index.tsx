@@ -84,8 +84,7 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
                 agenda_id: agenda_id
             })
 
-            toast.success('Serviço Finalizado com sucesso!')
-            console.log(response.data)            
+            toast.success('Serviço Finalizado com sucesso!')                        
             
             const listaAtualizada = await api.get('/servicos/pendentes')
             setServicos(listaAtualizada.data)

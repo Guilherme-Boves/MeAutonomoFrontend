@@ -16,7 +16,7 @@ export function TipoContaBody() {
 
                 <div className='grid grid-cols-2 mx-auto space-x-3 p-4'>
 
-                    <Link href={"/signupcliente"}>
+                    <Link href={"/signup/cliente"}>
                         <a href="">
                             <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
                     
@@ -36,7 +36,7 @@ export function TipoContaBody() {
                         </a>
                     </Link>
 
-                    <Link href={"/signupprofissional"}>
+                    <Link href={"/signup/profissional"}>
                         <a href="">
                             <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
                                 

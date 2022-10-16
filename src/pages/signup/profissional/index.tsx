@@ -1,34 +1,103 @@
-import { FormEvent, useState, useContext } from 'react';
+import { FormEvent, useState, useContext, isValidElement } from 'react';
 import Head from 'next/head'
-import styles from './styles.module.css'
 import Link from 'next/link';
-import { Input } from '../../components/ui/Input';
-import { Button } from '../../components/ui/Button';
-import { AuthContext } from '../../contexts/AuthContext';
+import { Input } from '../../../components/ui/Input';
+import { Button } from '../../../components/ui/Button';
+import { AuthContext } from '../../../contexts/AuthContext';
 import { toast } from 'react-toastify'
-import { canSSRGuest } from '../../utils/canSSRGuest';
-import { Logo } from '../../components/Logo';
-import { AsideSignups } from '../../components/AsideSignups';
+import { canSSRGuest } from '../../../utils/canSSRGuest';
+import { Logo } from '../../../components/Logo';
+import { AsideSignups } from '../../../components/AsideSignups';
 import { FiArrowLeft } from 'react-icons/fi';
+import MaskedInput from '../../../components/ui/MaskedInput';
 
-export default function SignUpCliente() {
+export default function SignUpProfissional() {
 
-    const { signUpC } = useContext(AuthContext);
+    const { signUpP } = useContext(AuthContext);
 
     const [email, setEmail] = useState('')
     const [nome, setNome] = useState('')
     const [password, setPassword] = useState('')
-    const [cpf, setCpf] = useState('')
+    const [cnpj, setCnpj] = useState('')
     const [telefone, setTelefone] = useState('')
-    const [dataNascimento, setDataNascimento] = useState('')
+    let [dataNascimento, setDataNascimento] = useState('')
 
     const [loading, setLoading] = useState(false);
+
+    const onlyNumbers = (str) => str.replace(/[^0-9]/g, '') // Retira a máscara, deixando apenas os números
+    
+    function handleRetiraMascara(value) {        
+        return onlyNumbers(value)
+    }
+
+    function containsNumbers(str){        
+        const regexNome = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$/;
+        return regexNome.test(str);
+    }
+
+    function validaEmail(str){
+        const regexEmail = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
+        return regexEmail.test(str)
+    }
+
+    function validaSenha(str){
+        /*
+            (?=.*?[A-Z]) : Pelo menos 1 letra maiúscula
+            (?=.*?[a-z]) : Pelo menos 1 letra minúscula
+            (?=.*?[0-9]) : Pelo menos 1 dígito
+            (?=.*?[#?!@$ %^&*-]) : Pelo menos 1 caracter especial ou espaço
+            .{8,} : Mínimo de 8 caracteres
+        */
+        const regexSenha = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/;
+        return regexSenha.test(str);
+    }
 
     async function handleSignUp(e: FormEvent) {
         e.preventDefault();
 
-        if(email === '' || nome === '' || password === '' || cpf === '' || telefone === '' || dataNascimento === ''){
+        if (email === '' || nome === '' || password === '' || cnpj === '' || telefone === '' || dataNascimento === '') {
             toast.error("Preencha todos os campos!")
+            return;
+        }
+
+        if(!validaEmail(email)){
+            toast.error("Email inválido")
+            return;
+        }
+       
+        if(!containsNumbers(nome)){ // Verificando se o nome possui números ou caracteres inválidos.
+            toast.error("Nome inválido")
+            return;
+        }
+        
+        if(!validaSenha(password)){ // Verificando se a senha é válida
+            toast.error("A senha deve conter no mínimo 1 letra minúscula e maiúscula, 1 dígito, 1 caracter especial e no mínimo 8 caracteres!");
+            return;
+        }
+
+        if(cnpj.length < 14){
+            toast.error("CNPJ inválido")
+            return;
+        }
+
+        if(telefone.length < 11){
+            toast.error("Telefone incompleto")
+            return;
+        }
+
+        let anoAtual = new Date().getFullYear();
+        let splittedDate = dataNascimento.split('-')
+        let anoAniversarioUsuario = Number(splittedDate[0])
+        dataNascimento = `${splittedDate[2]}/${splittedDate[1]}/${splittedDate[0]}`
+
+        if(anoAniversarioUsuario > anoAtual){ // Verificando se a data de nascimento é maior que o ano atual
+            toast.error("Insira uma data válida!")
+            return;
+        } else if(anoAniversarioUsuario < (anoAtual - 120)){ // Verificando se a data de nascimento é menor que 120 anos
+            toast.error("Insira uma data válida!")
+            return;
+        } else if(anoAniversarioUsuario > (anoAtual - 18)){ // Verificando se o usuário é maior de 18 anos
+            toast.error("Você deve ser maior de 18 anos para realizar o cadastro!")
             return;
         }
 
@@ -38,19 +107,35 @@ export default function SignUpCliente() {
             email,
             nome,
             password,
-            cpf,
+            cnpj,
             telefone,
             dataNascimento
-         }
-
-        await signUpC(data)
-
+        }
+        
+        try{            
+            await signUpP(data)
+        }
+        catch(err){
+            console.log("Ops, erro inesperado! Contatar o suporte! ", err)
+            setLoading(false)
+        }
+        setLoading(false)
     }
 
     const [formStep, setFormStep] = useState(0)
     
     const completeFormStep = () => {
+
+        if(email === '' || nome === '' || password === ''){
+            toast.error("Preencha todos os campos!")
+            return;
+        }
+
         setFormStep(val => val + 1)
+    }
+
+    const goToPreviousStep = () => {
+        setFormStep(val => val -1)
     }
 
     const renderButton = () => {
@@ -68,7 +153,7 @@ export default function SignUpCliente() {
         } else {
             return (          
                 <Button 
-                    // onClick={completeFormStep}
+                    onClick={handleSignUp}
                     type="submit" 
                     loading={loading}
                     className="w-[100%] ml-auto mr-auto text-lg mb-6 mx-auto h-14 flex items-center justify-center bg-[#FFD666] text-[#8D734B] rounded-lg font-extrabold gap-2 shadow-lg hover:bg-yellow-200 transition-colors">
@@ -76,10 +161,6 @@ export default function SignUpCliente() {
                 </Button>
             )
         } 
-    }
-
-    const goToPreviousStep = () => {
-        setFormStep(val => val -1)
     }
 
     return (
@@ -112,13 +193,13 @@ export default function SignUpCliente() {
 
                         <div>
                             <p className="text-base font-bold py-3 text-white">
-                                Encontre o serviço desejado com eficácia e rapidez!
+                                Amplie suas oportunidades e conquiste mais clientes!
                             </p>
                         </div>
 
                         <div>
                             <p className="text-base font-bold pb-3 text-white">
-                                Contrate agora mesmo.
+                                Tudo de graça.
                             </p>
                         </div>
 
@@ -138,7 +219,7 @@ export default function SignUpCliente() {
                                     <Input 
                                         className="bg-white rounded-lg px-5 h-14 2xl:my-2 font-bold text-[rgba(77,111,128,0.75)] shadow-md"
                                         placeholder="E-mail" 
-                                        type="text" 
+                                        type="email" 
                                         value={email}
                                         onChange={ (e) => setEmail(e.target.value)}
                                     />
@@ -163,35 +244,38 @@ export default function SignUpCliente() {
                             
                             {formStep === 1 &&(
                                 <section className='flex flex-col gap-5 w-full ml-auto mr-auto'>
-                                    <Input 
+                                    <MaskedInput 
                                         className="bg-white rounded-lg px-5 h-14 2xl:my-2 font-bold text-[rgba(77,111,128,0.75)] shadow-md" 
-                                        placeholder="CPF"
-                                        type="text"
-                                        value={cpf}
-                                        onChange={ (e) => setCpf(e.target.value)}
+                                        placeholder="CNPJ"
+                                        mask={"99.999.999/9999-99"}                        
+                                        maskChar={''}
+                                        value={cnpj}
+                                        onChange={ (e) => setCnpj(handleRetiraMascara(e.target.value))}
                                     />
 
-                                    <Input 
+                                    <MaskedInput 
                                         className="bg-white rounded-lg px-5 h-14 font-bold text-[rgba(77,111,128,0.75)] shadow-md" 
                                         placeholder="Telefone"
-                                        type="text"
+                                        mask={"(99) 99999-9999"}
+                                        maskChar={''}                                        
                                         value={telefone}
-                                        onChange={ (e) => setTelefone(e.target.value)}
+                                        onChange={ (e) => setTelefone(handleRetiraMascara(e.target.value))}
                                     />
 
                                     <Input 
                                         className="bg-white rounded-lg px-5 h-14 2xl:my-2 font-bold text-[rgba(77,111,128,0.75)] shadow-md" 
                                         placeholder="Data de Nascimento"
-                                        type="text"
+                                        type="date"
                                         value={dataNascimento}
                                         onChange={ (e) => setDataNascimento(e.target.value)}
                                     />
                                 </section>
                             )}
-                            <div className='my-2'>
-                                {renderButton()}
-                            </div>
                         </form> 
+
+                        <div className='my-2 flex flex-col gap-5 w-2/3 ml-auto mr-auto mt-5'>
+                            {renderButton()}
+                        </div>
 
                         <div className="h-full w-full py-0">
                             <div className="mx-auto flex justify-center space-x-5">
@@ -232,4 +316,4 @@ export const getServerSideProps = canSSRGuest(async (ctx) => {
     return {
         props: {}
     }
-}) 
+})

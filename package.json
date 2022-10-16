@@ -23,6 +23,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.4.0",
+    "react-input-mask": "^2.0.4",
     "react-toastify": "^9.0.8",
     "react-typed": "^1.2.0"
   },

@@ -55,8 +55,8 @@ export function signOut(){
     try {
         destroyCookie(undefined, '@meautonomo.token')
         Router.push('/')
-    } catch {
-        console.log('erro ao deslogar')
+    } catch(err) {
+        toast.error("Erro ao deslogar" + err)
     }
 }
 
@@ -125,8 +125,8 @@ export function AuthProvider({ children }: AuthProviderProps){
             }
             
         }catch(err){
-            toast.error("Erro ao acessar!")
-            console.log("ERRO AO ACESSAR ", err)
+            const { error } = err.response.data
+            toast.error(error)            
         }
     }
 
@@ -147,8 +147,8 @@ export function AuthProvider({ children }: AuthProviderProps){
             
             Router.push('/signin')
         }catch(err){
-            toast.error("Erro ao acessar!")
-            console.log("ERRO AO CADASTRAR ", err)
+            const {error} = err.response.data
+            toast.error(error)
         }
     }
 
@@ -169,8 +169,8 @@ export function AuthProvider({ children }: AuthProviderProps){
             
             Router.push('/signin')
         }catch(err){
-            toast.error("Erro ao acessar!")
-            console.log("ERRO AO CADASTRAR ", err)
+            const {error} = err.response.data
+            toast.error(error)
         }
     }
 
