@@ -50,7 +50,7 @@ export default function DashboardAdmin() {
                     </Link>
                 </div>
                 <div>        
-                    <Link href={"/cadastrartiposervico"}>
+                    <Link href={"/tiposervico/cadastrar"}>
                         <button>
                             <a>Gerenciar Serviços</a>
                         </button>

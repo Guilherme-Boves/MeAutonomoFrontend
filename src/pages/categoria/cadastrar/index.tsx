@@ -17,6 +17,11 @@ export default function CadastrarCategoria(){
 
     const [loading, setLoading] = useState(false)
 
+    function containsNumbers(str){        
+        const regexNome = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$/;
+        return regexNome.test(str);
+    }
+
     function handleFile(e: ChangeEvent<HTMLInputElement>){
        
         if(!e.target.files){
@@ -48,6 +53,11 @@ export default function CadastrarCategoria(){
                 return;
             }
 
+            if(!containsNumbers(nomeCategoria)){ // Verificando se o nome da categoria possui números ou caracteres inválidos.
+                toast.error("Nome inválido")
+                return;
+            }
+
             setLoading(true);
             data.append('nome', nomeCategoria)
             data.append('file', imageAvatar)
@@ -55,12 +65,11 @@ export default function CadastrarCategoria(){
             const apiClient = setupAPIClient();
             await apiClient.post('/categoria', data);
 
-
             toast.success('Categoria cadastrada com sucesso!');
 
-        }catch(err){
-            console.log(err);
-            toast.error("Erro ao cadastrar");
+        }catch(err){  
+            const { error } = err.response.data          
+            toast.error(error);
         }
 
         setNomeCategoria('');

@@ -3,12 +3,11 @@ import { useState, ChangeEvent, FormEvent } from 'react'
 import styles from './styles.module.css'
 import { FiUpload } from "react-icons/fi"
 import { toast } from "react-toastify"
-import { setupAPIClient } from "../../services/api"
-import { Input } from "../../components/ui/Input"
-import { Button } from "../../components/ui/Button"
-import { canSSRAdmin } from "../../utils/canSSRAdmin"
-import { ReturnButton } from "../../components/ui/ReturnButton"
-import Link from "next/link"
+import { setupAPIClient } from "../../../services/api"
+import { Input } from "../../../components/ui/Input"
+import { Button } from "../../../components/ui/Button"
+import { canSSRAdmin } from "../../../utils/canSSRAdmin"
+import { ReturnButton } from "../../../components/ui/ReturnButton"
 
 type ItemProps = {
     id: string;
@@ -32,6 +31,11 @@ export default function CadastrarTipoServico({ listaCategorias }: CategoriaProps
 
     const [loading, setLoading] = useState(false)
 
+    function containsNumbers(str){        
+        const regexNome = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$/;
+        return regexNome.test(str);
+    }
+
     function handleFile(e: ChangeEvent<HTMLInputElement>){
        
         if(!e.target.files){
@@ -54,12 +58,22 @@ export default function CadastrarTipoServico({ listaCategorias }: CategoriaProps
 
     async function handleRegister(e: FormEvent) {
         e.preventDefault();
-        
+
+        if(categorias.length === 0){
+            toast.error("Categoria não selecionada")
+            return;
+        }
+
         try{
             const data = new FormData();
 
             if(nomeServico === '' || imageAvatar === null){
                 toast.error("Preencha todos os campos!");
+                return;
+            }
+
+            if(!containsNumbers(nomeServico)){ // Verificando se o nome do serviço possui números ou caracteres inválidos.
+                toast.error("Nome inválido")
                 return;
             }
 
@@ -76,8 +90,9 @@ export default function CadastrarTipoServico({ listaCategorias }: CategoriaProps
             toast.success('Serviço cadastrado com sucesso!');
 
         }catch(err){
-            console.log(err);
-            toast.error("Erro ao cadastrar");
+            const { error } = err.response.data
+            toast.error(error);
+            setLoading(false)
         }
 
         setNomeServico('');
@@ -114,15 +129,23 @@ export default function CadastrarTipoServico({ listaCategorias }: CategoriaProps
                             onChange={(e) => setNomeServico(e.target.value)}
                         />
 
-                        <select className={styles.select} value={categoriaSelecionada} onChange={handleChangeCategoria}>
-                            {categorias.map( (item, index) => {
-                                return(
-                                    <option key={item.id} value={index}>
-                                        {item.nome}
-                                    </option>
-                                )
-                            })}
-                        </select>
+                        {categorias.length === 0 ? (
+                            <select className={styles.select}>                                                                    
+                                <option>
+                                    {"Selecione uma categoria"}
+                                </option>    
+                            </select>
+                        ) : (
+                            <select className={styles.select} value={categoriaSelecionada} onChange={handleChangeCategoria}>
+                                {categorias.map( (item, index) => {
+                                    return(                                    
+                                        <option key={item.id} value={index}>
+                                            {item.nome}
+                                        </option>
+                                    )
+                                })}
+                            </select>
+                        )}
 
                         <label className={styles.label}>
                             <span className={styles.span}>

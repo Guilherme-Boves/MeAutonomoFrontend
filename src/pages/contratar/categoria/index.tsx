@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { ReturnButton } from '../../../components/ui/ReturnButton';
 import { canSSRAuth } from '../../../utils/canSSRAuth';
 import { setupAPIClient } from '../../../services/api';
-import { CategoriaProps } from '../../cadastrartiposervico'
+import { CategoriaProps } from '../../tiposervico/cadastrar'
 import Link from 'next/link';
 
 
