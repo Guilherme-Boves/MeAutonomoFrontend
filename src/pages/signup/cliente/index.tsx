@@ -1,5 +1,4 @@
 import { FormEvent, useState, useContext } from 'react';
-import Router from 'next/router'
 import Head from 'next/head'
 import styles from './styles.module.css'
 import Link from 'next/link';
@@ -12,6 +11,7 @@ import { Logo } from '../../../components/Logo';
 import { AsideSignups } from '../../../components/AsideSignups';
 import { FiArrowLeft } from 'react-icons/fi';
 import MaskedInput from '../../../components/ui/MaskedInput';
+import { retiraMascara, validaCadastroCliente} from '../../../utils/Functions';
 
 export default function SignUpCliente() {
 
@@ -26,81 +26,11 @@ export default function SignUpCliente() {
 
     const [loading, setLoading] = useState(false);
 
-    const onlyNumbers = (str) => str.replace(/[^0-9]/g, '') // Retira a máscara, deixando apenas os números
-    
-    function handleRetiraMascara(value) {        
-        return onlyNumbers(value)
-    }
-
-    function containsNumbers(str){        
-        const regexNome = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$/;
-        return regexNome.test(str);
-    }
-
-    function validaEmail(str){
-        const regexEmail = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
-        return regexEmail.test(str)
-    }
-
-    function validaSenha(str){
-        /*
-            (?=.*?[A-Z]) : Pelo menos 1 letra maiúscula
-            (?=.*?[a-z]) : Pelo menos 1 letra minúscula
-            (?=.*?[0-9]) : Pelo menos 1 dígito
-            (?=.*?[#?!@$ %^&*-]) : Pelo menos 1 caracter especial ou espaço
-            .{8,} : Mínimo de 8 caracteres
-        */
-        const regexSenha = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/;
-        return regexSenha.test(str);
-    }
-
     async function handleSignUp(e: FormEvent) {
         
         e.preventDefault();
 
-        if(email === '' || nome === '' || password === '' || cpf === '' || telefone === '' || dataNascimento === ''){
-            toast.error("Preencha todos os campos!")
-            return;
-        }
-
-        if(!validaEmail(email)){
-            toast.error("Email inválido")
-            return;
-        }
-       
-        if(!containsNumbers(nome)){ // Verificando se o nome possui números ou caracteres inválidos.
-            toast.error("Nome inválido")
-            return;
-        }
-        
-        if(!validaSenha(password)){ // Verificando se a senha é válida
-            toast.error("A senha deve conter no mínimo 1 letra minúscula e maiúscula, 1 dígito, 1 caracter especial e no mínimo 8 caracteres!");
-            return;
-        }
-
-        if(cpf.length < 11){
-            toast.error("CPF inválido")
-            return;
-        }
-
-        if(telefone.length < 11){
-            toast.error("Telefone incompleto")
-            return;
-        }
-
-        let anoAtual = new Date().getFullYear();
-        let splittedDate = dataNascimento.split('-')
-        let anoAniversarioUsuario = Number(splittedDate[0])
-        dataNascimento = `${splittedDate[2]}/${splittedDate[1]}/${splittedDate[0]}`
-
-        if(anoAniversarioUsuario > anoAtual){ // Verificando se a data de nascimento é maior que o ano atual
-            toast.error("Insira uma data válida!")
-            return;
-        } else if(anoAniversarioUsuario < (anoAtual - 120)){ // Verificando se a data de nascimento é menor que 120 anos
-            toast.error("Insira uma data válida!")
-            return;
-        } else if(anoAniversarioUsuario > (anoAtual - 18)){ // Verificando se o usuário é maior de 18 anos
-            toast.error("Você deve ser maior de 18 anos para realizar o cadastro!")
+        if(!validaCadastroCliente(nome, email, password, cpf, telefone, dataNascimento)){
             return;
         }
 
@@ -113,7 +43,7 @@ export default function SignUpCliente() {
             cpf,
             telefone,
             dataNascimento
-         }
+        }
 
         try{            
             await signUpC(data)
@@ -253,7 +183,7 @@ export default function SignUpCliente() {
                                         mask={"999.999.999-99"}
                                         maskChar={''}                                        
                                         value={cpf}
-                                        onChange={(e) => setCpf(handleRetiraMascara(e.target.value))}
+                                        onChange={(e) => setCpf(retiraMascara(e.target.value))}
                                     />
 
                                     <MaskedInput 
@@ -262,7 +192,7 @@ export default function SignUpCliente() {
                                         mask={"(99) 99999-9999"}
                                         maskChar={''}                                        
                                         value={telefone}
-                                        onChange={(e) => setTelefone(handleRetiraMascara(e.target.value))}
+                                        onChange={(e) => setTelefone(retiraMascara(e.target.value))}
                                     />
 
                                     <Input 

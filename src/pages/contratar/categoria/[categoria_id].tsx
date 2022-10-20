@@ -17,6 +17,7 @@ interface TipoServicoProps {
     listaTipoServico: ItemProps[];
 }
 
+// Neste componente será listado todos os tipos de serviços que pertencem a categoria escolhida pelo o usuário
 export default function TipoServico({ listaTipoServico }: TipoServicoProps ){
 
     const [tipoServico, setTipoServico] = useState(listaTipoServico || []);
@@ -29,12 +30,10 @@ export default function TipoServico({ listaTipoServico }: TipoServicoProps ){
                 <div className={styles.carrossel}>
 
                     {tipoServico.length === 0 ? (
-                        <div>Nenhum serviço encontrado</div>
+                        <h1>Nenhum serviço encontrado</h1>
                     ) : (
-
                         tipoServico.map((item) => {
-                            const {id, nome, imagem, categoria_id} = item;
-     
+                            const {id, nome, imagem, categoria_id} = item;     
                              return(
                                  <div key={id}>
                                      <Link href={`/contratar/categoria/${categoria_id}/perfis/${id}`}>

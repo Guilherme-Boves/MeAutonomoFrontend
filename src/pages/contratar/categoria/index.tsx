@@ -19,21 +19,23 @@ export default function Categoria({ listaCategorias }: CategoriaProps){
             <div className={styles.container}>
                 <div className={styles.carrossel}>
                     
-                    {categorias.map((item) => {
-                       
-                       const {id, nome, imagem} = item;
-
-                        return(            
-                            <div key={id}>
-                                <Link href={`/contratar/categoria/${id}`}>
-                                    <a className={styles.item}>
-                                        <Image src={`http://localhost:3333/files/${imagem}`} alt={nome} width={250} height={250} />
-                                        <span className={styles.nome}>{nome}</span>
-                                    </a>
-                                </Link>  
-                            </div>                                       
-                        );
-                    })}
+                    {categorias.length === 0 ? (
+                        <h1>Nenhuma categoria encontrada</h1>
+                    ) : (
+                        categorias.map((item) => {
+                            const {id, nome, imagem} = item;     
+                             return(            
+                                 <div key={id}>
+                                     <Link href={`/contratar/categoria/${id}`}>
+                                         <a className={styles.item}>
+                                             <Image src={`http://localhost:3333/files/${imagem}`} alt={nome} width={250} height={250} />
+                                             <span className={styles.nome}>{nome}</span>
+                                         </a>
+                                     </Link>  
+                                 </div>                                       
+                             );
+                         })
+                    )}
 
 
                 </div>

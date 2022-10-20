@@ -6,6 +6,7 @@ import { setupAPIClient } from '../../services/api';
 import { canSSRProf } from '../../utils/canSSRProf';
 import styles from './styles.module.css'
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
+import { DateFormat } from '../../utils/Functions';
 
 type PublicacaoProps = {
     id: string;
@@ -29,9 +30,7 @@ type PublicacaoProps = {
         }],
         agenda:[{
             id: string;
-            dia: string;
-            mes: string;
-            horario: string;
+            data: string;
             status: string;            
         }]
     }]
@@ -120,7 +119,7 @@ export default function GerenciarServicos({listPublicacoes}: list) {
                                                         {item.agenda.map((item)=>{
                                                             return(
                                                                 <div key={item.id}>
-                                                                    <div>{item.dia} / {item.mes} - {item.horario}h</div>
+                                                                    <div>{DateFormat(item.data)}</div>
                                                                 </div>
                                                             )
                                                         })}

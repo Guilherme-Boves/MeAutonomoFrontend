@@ -6,6 +6,7 @@ import styles from './styles.module.css'
 import { ReturnButton } from '../../../../../../../components/ui/ReturnButton';
 import { useRouter } from 'next/router';
 import { AuthContext } from '../../../../../../../contexts/AuthContext';
+import { DateFormat } from '../../../../../../../utils/Functions';
 
 type ItemProps = {
     id: string;
@@ -34,9 +35,7 @@ type ItemProps = {
     }],
     agenda: [{
         id: string;
-        dia: string;
-        mes: string;
-        horario: string;
+        data: string;
         status: boolean;
     }]
 }
@@ -45,6 +44,7 @@ interface PerfilProps {
     perfilProf: ItemProps[];
 }
 
+// Neste componente será exibido a página do perfil do usuário escolhido
 export default function Perfil({ perfilProf }: PerfilProps){
 
     const user = useContext(AuthContext)
@@ -57,13 +57,10 @@ export default function Perfil({ perfilProf }: PerfilProps){
 
     async function handleCriarContrato(){
 
-        const user_id = user.user.id
-        
         const api = setupAPIClient();
 
-        const response = await api.post('/contrato', {
-            user_id: user_id
-        }) 
+        //Não é necessário passar o ID do userCliente_id pois o sistema pega o ID automaticamente pelo token de quem está logado
+        const response = await api.post(`contrato?profissional_id=${perfil_id}`)
 
         const { id } = response.data
         
@@ -117,7 +114,6 @@ export default function Perfil({ perfilProf }: PerfilProps){
                                         { item.servicosPrestadosProf.map((item) => 
                                             {
                                                 return (
-                                                    
                                                     <div key={item.id} className={styles.itemsServicosPrestados}>                                                    
                                                         <h1>{item.nome} - R${item.preco}</h1>
                                                     </div>
@@ -128,16 +124,12 @@ export default function Perfil({ perfilProf }: PerfilProps){
 
                                     <div className={styles.containerAgenda}>
                                         <h1>Agenda</h1>
-                                        { item.agenda.map((item) => 
-                                            {
-                                                return (
-                                                    <div key={item.id}>
-
-                                                        <h1>{item.dia} de {item.mes} - {item.horario}h</h1>
-                                                        
-                                                    </div>
-                                                )
-                                            }) 
+                                        { item.agenda.map((item) => {
+                                            return (
+                                                <div key={item.id}>
+                                                    <h1>{DateFormat(item.data)}</h1>                                                    
+                                                </div>
+                                            )})
                                         }
                                     </div>
                                 </div>

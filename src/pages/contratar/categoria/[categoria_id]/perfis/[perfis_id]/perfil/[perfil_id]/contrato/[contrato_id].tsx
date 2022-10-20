@@ -12,6 +12,7 @@ import { parseCookies } from 'nookies';
 import { FiArrowLeft } from 'react-icons/fi'
 import { toast } from "react-toastify";
 import { FiThumbsUp } from "react-icons/fi"
+import { DateFormat } from "../../../../../../../../../utils/Functions";
 
 type ItemProps = {
     id: string;
@@ -40,9 +41,7 @@ type ItemProps = {
     }],
     agenda: [{
         id: string;
-        dia: string;
-        mes: string;
-        horario: string;
+        data: string;
         status: boolean;
     }]
 }
@@ -87,13 +86,18 @@ export default function Contrato({ perfilProf }: PerfilProps){
 
         const api = setupAPIClient();
 
-        await api.delete('/contrato', {
-            params:{
-                contrato_id
-            }
-        })
+        try{
+            await api.delete('/contrato', {
+                params:{
+                    contrato_id
+                }
+            })
+
+            router.back()
+        } catch(err){
+            console.log('Erro ao deletar contrato')
+        }       
         
-        router.back()
     }
 
     async function handleContratar(){
@@ -103,7 +107,7 @@ export default function Contrato({ perfilProf }: PerfilProps){
             return;
         }
 
-        if(agenda === undefined){
+        if(agenda === undefined || agenda === ''){
             toast.warn('Selecione um horário')
             return;
         }
@@ -140,7 +144,7 @@ export default function Contrato({ perfilProf }: PerfilProps){
             setPagina((paginaAtual) => paginaAtual + 1)
 
         } catch(err){
-            console.log('Ops! Erro inesperado: ' + err)
+            toast.error('Ops! Erro inesperado! Contate o suporte!')
         }
 
     }
@@ -177,7 +181,7 @@ export default function Contrato({ perfilProf }: PerfilProps){
                                                             key={item.id}
                                                             value={item.id}                                                    
                                                         >
-                                                            {item.nome}                                                    
+                                                            {item.nome} - R${item.preco}                                                    
                                                         </MenuItem>
                                                     ))} 
                                                     </Select>
@@ -208,7 +212,7 @@ export default function Contrato({ perfilProf }: PerfilProps){
                                                             key={item.id}
                                                             value={item.id}                                                    
                                                         >
-                                                            {item.dia} de {item.mes} - {item.horario}h                                                  
+                                                            {DateFormat(item.data)}
                                                         </MenuItem>
                                                     ))} 
                                                 </Select>

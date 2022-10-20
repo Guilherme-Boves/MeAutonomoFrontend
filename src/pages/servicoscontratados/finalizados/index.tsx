@@ -7,11 +7,17 @@ import styles from '../styles.module.css'
 import jsonWebTokenService from 'jsonwebtoken'
 import { parseCookies } from 'nookies';
 import { canSSRAuth } from "../../../utils/canSSRAuth";
+import { DateFormat } from "../../../utils/Functions";
 
 type ItemProps = {
     id: string;
-    user_id: string;
-    user:{
+    userCliente_id: string;
+    userProfissional_id: string;
+    userCliente:{
+        id: string;
+        nome: string;
+    },
+    userProfissional:{
         id: string;
         nome: string;
     },
@@ -33,7 +39,7 @@ type ItemProps = {
             servicos: {
                 id: string;
                 nome: string;
-                preco: string;                
+                preco: number;                
             }
         }],
         agendas: [{
@@ -41,9 +47,7 @@ type ItemProps = {
             agenda_id: string;
             agendas: {
                 id: string;
-                dia: string;
-                mes: string;
-                horario: string;
+                data: string;
             }
         }]
     }]
@@ -57,6 +61,7 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
 
     const [servicos, setServicos] = useState(listServicos || [])
     const [role, setRole] = useState('');
+    let valorTotal = 0;
 
     useEffect(() => {
 
@@ -103,19 +108,20 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
                     )}
                     <div>
                         {servicos.map((item) => {
-                            const nomeCliente = item.user.nome
+
+                            const nomeCliente = item.userCliente.nome 
+                            const nomeProfissional = item.userProfissional.nome
+                            
                             return(
                                 <div key={item.id} className={styles.card}>
                                     {item.item.map((item) => {
-
-                                        const nomeProfissional = item.publicacao.user.nome
 
                                         return(
                                             <div key={item.id}>
                                                 {item.agendas.map((item) => {
                                                     return(
                                                         <div key={item.id}>
-                                                            <h1 className={styles.cardTitle}>{item.agendas.dia} de {item.agendas.mes} - {item.agendas.horario}h </h1>
+                                                            <h1 className={styles.cardTitle}>{DateFormat(item.agendas.data)}</h1>
                                                         </div>
                                                     )
                                                 })}
@@ -124,7 +130,7 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
                                                         role === "CLIENTE" ? (
                                                             <h2 className={styles.subTitle}>Nome do Profissional: {nomeProfissional}</h2>
                                                         ) : (
-                                                            <h2 className={styles.subTitle}>Nome do Profissional: {nomeCliente}</h2> 
+                                                            <h2 className={styles.subTitle}>Nome do Cliente: {nomeCliente}</h2> 
                                                         )
                                                     }                                                    
                                                 </div>
@@ -144,15 +150,8 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
                                                 <div className={styles.titleServicoPrestado}>
                                                     <h2 className={styles.subTitle}>Valor total: R$ </h2>
 
-                                                    {item.servicos.map((item) => {
-                                                                                                                
-                                                        return(
-                                                            <div key={item.id}>                                                                
-                                                                <h1 style={{marginLeft:'0.2rem'}}>{item.servicos.preco}</h1>                                                                
-                                                            </div>                                                            
-                                                        )
-                                                        
-                                                    })}
+                                                    {valorTotal = item.servicos.reduce( (valorAnterior, valorAtual) => valorAnterior + Number(valorAtual.servicos.preco), 0)}
+                                                    
                                                 </div>
                                                 
                                             </div>

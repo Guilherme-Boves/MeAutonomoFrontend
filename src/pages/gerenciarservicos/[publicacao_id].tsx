@@ -33,9 +33,7 @@ type Servicos = {
 
 type Agendas = {
     id: string;
-    dia: string;
-    mes: string;
-    horario: string;
+    data: Date;
     item_id: string;
 }
  
@@ -60,9 +58,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
     const [nomeServico, setNomeServico] = useState('');
     const [preco, setPreco] = useState('');
 
-    const [dia, setDia] = useState('');
-    const [mes, setMes] = useState('');
-    const [horario, setHorario] = useState('');
+    let [dataAgenda, setDataAgenda] = useState('');
 
     const [itemId, setItemId] = useState<ItemPublicacao>();
     const [itemIdAux, setitemIdAux] = useState('');
@@ -73,20 +69,26 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
     const [loadingServicos, setLoadingServicos] = useState(false)
     const [loadingAgenda, setLoadingAgenda] = useState(false)
 
+    const [countServicos, setCountServicos] = useState(0)
+    const [countAgendas, setCountAgendas] = useState(0)
+    
+
     useEffect(() => {
         async function loadInfo() {
-            
+
             const api = setupAPIClient();
+            try{
+                const response = await api.get('/tiposervico',{
+                    params:{
+                        categoria_id: categorias[categoriaSelecionada].id
+                    }
+                })
 
-            const response = await api.get('/tiposervico',{
-                params:{
-                    categoria_id: categorias[categoriaSelecionada].id
-                }
-            })
-
-            setTipoServico(response.data)
+                setTipoServico(response.data)
+            } catch(err){ // catch necessário para não quebrar a aplicação, pois se não tiver nenhum serviço cadastrado, irá retornar erro.
+                return;
+            }
         }
-        
 
        loadInfo()
     }, [categorias, categoriaSelecionada])
@@ -99,10 +101,28 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
         setTipoServicoSelecionada(event.target.value)
     }
 
+    function containsNumbers(str){        
+        const regexNome = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$/;
+        return regexNome.test(str);
+    }
+
+    function isNumeric(str) {
+        return /^-?\d+$/.test(str);
+    }
 
     async function handleCadastarPrimeirasInfos(){
 
         const publicacao_id = router.query.publicacao_id
+
+        if(categorias.length === 0){
+            toast.error("Selecione uma categoria!")
+            return;
+        }
+
+        if(tipoServico.length === 0){
+            toast.error("Selecione um Serviço!")
+            return;
+        }
 
         if(descricao === ''){
             toast.warning('Preencha todos os campos!')
@@ -188,6 +208,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
         })
 
         setServicos(removeItemServico)
+        setCountServicos(-1);
         
     }
 
@@ -206,6 +227,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
         })
 
         setAgendas(removeItemAgenda)
+        setCountAgendas(-1);
     }
 
     async function handleDeleteItem(item_id: string) {
@@ -220,9 +242,18 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
 
     }
 
-
     async function handlePublicar() {
+
+        if(countServicos === 0){
+            toast.error("Adicione um serviço!")
+            return;
+        }
         
+        if(countAgendas === 0){
+            toast.error("Adicione uma agenda!")
+            return;
+        }
+
         const publicacao_id = router.query.publicacao_id
 
         const api = setupAPIClient();
@@ -251,6 +282,16 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
             return;
         }
 
+        if(!containsNumbers(nomeServico)){ // Verificando se o nome do serviço prestado possui números ou caracteres inválidos.
+            toast.error("Nome do serviço prestado inválido")
+            return;
+        }
+
+        if(!isNumeric(preco)){
+            toast.error("Preço inválido!")
+            return;
+        }
+
         const api = setupAPIClient();
         
         setLoadingServicos(true)
@@ -264,9 +305,11 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
             setLoadingServicos(false)
             setNomeServico('')
             setPreco('')
+
+            setCountServicos(+1);
+
         }).catch(function (error) {
-            setLoadingServicos(false)
-            console.log(error);
+            setLoadingServicos(false)            
         });
 
     }
@@ -275,43 +318,32 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
 
         e.preventDefault();
 
-        if(dia === ''){
-            toast.warning('Preencha todos os campos (Dia, Mês e Horário)');
+        if(dataAgenda === ''){
+            toast.warning('Informe uma data!');
             return;
         }
+
+        let splittedDate = dataAgenda.split('-')
+        dataAgenda = `${splittedDate[2]}/${splittedDate[1]}/${splittedDate[0]}`
         
-        if(mes === ''){
-            toast.warning('Preencha todos os campos (Dia, Mês e Horário)');
-            return;
-        }
-
-        if(horario === ''){
-            toast.warning('Preencha todos os campos (Dia, Mês e Horário)');
-            return;
-        }
-
         const api = setupAPIClient();
 
         setLoadingAgenda(true)
         await api.post('/agenda', {
-            dia: dia,
-            mes: mes,
-            horario: horario,
+            data: dataAgenda,
             item_id: itemId
         }).then(function (response) {
 
             setAgendas((oldArray => [...oldArray, response.data]))
             setLoadingAgenda(false)
-            setDia('')
-            setMes('')
-            setHorario('')
+            
+
+            setCountAgendas(+1);
 
         }).catch(function (error) {
             setLoadingAgenda(false)
             console.log(error);
         });
-        
-        
     }
 
     async function deletePublicacao() {
@@ -330,9 +362,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
         if(agendas.length > 0) {
             agendas.map((item) => {
                 handleDeleteItemAgenda(item.id)
-                setDia('')
-                setMes('')
-                setHorario('')
+                setDataAgenda('');                
                 setAgendas([])
             })
         }
@@ -355,25 +385,41 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
             return(
                 <form className={styles.form}>
                  
-                    <select className={styles.select} value={categoriaSelecionada} onChange={handleChangeCategoria}>
-                        {categorias.map( (item, index) => {
-                            return(
-                                <option key={item.id} value={index}>
-                                    {item.nome}
-                                </option>
-                            )
-                        })}
-                    </select>
+                    {categorias.length === 0 ? (
+                        <select className={styles.select}>                                                                    
+                            <option>
+                                {"Selecione uma categoria"}
+                            </option>    
+                        </select>
+                    ) : (
+                        <select className={styles.select} value={categoriaSelecionada} onChange={handleChangeCategoria}>
+                            {categorias.map( (item, index) => {
+                                return(
+                                    <option key={item.id} value={index}>
+                                        {item.nome}
+                                    </option>
+                                )
+                            })}
+                        </select>
+                    )}
 
-                    <select className={styles.select} value={tipoServicoSelecionada} onChange={handleChangeTipoServico}>
-                        {tipoServico.map( (item, index) => {
-                            return(
-                                <option key={item.id} value={index}>
-                                    {item.nome}
-                                </option>
-                            )
-                        })}
-                    </select>
+                    {tipoServico.length === 0 ? (
+                        <select className={styles.select}>                                                                    
+                            <option>
+                                {"Selecione um tipo de serviço"}
+                            </option>    
+                        </select>
+                    ) : (
+                        <select className={styles.select} value={tipoServicoSelecionada} onChange={handleChangeTipoServico}>
+                            {tipoServico.map( (item, index) => {
+                                return(
+                                    <option key={item.id} value={index}>
+                                        {item.nome}
+                                    </option>
+                                )
+                            })}
+                        </select>
+                    )}
                     
                     <h1 className={styles.titulo} style={{paddingTop:'1rem'}}>Descrição</h1>
                     
@@ -426,25 +472,9 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                         <div className={styles.inputContainer}>
                             <input className={styles.input}
                                 placeholder="Dia"
-                                type='text'
-                                value={dia}
-                                onChange={(e) => setDia(e.target.value)}        
-                            />
-
-                            <input 
-                                className={styles.input}
-                                placeholder="Mês"
-                                type='text'
-                                value={mes}
-                                onChange={(e) => setMes(e.target.value)}
-                            />
-
-                            <input 
-                                className={styles.input}
-                                placeholder="Horário"
-                                type='text'
-                                value={horario}
-                                onChange={(e) => setHorario(e.target.value)}
+                                type='date'
+                                value={dataAgenda}
+                                onChange={(e) => setDataAgenda(e.target.value)}        
                             />
 
                             <button 
@@ -465,7 +495,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                         servicos.map((item: Servicos) => {
                             return(
                                 <div key={item.id} className={styles.items}>
-                                    <h1>{item.nome}</h1>
+                                    <h1>{item.nome} - R${item.preco}</h1>
                                     <button onClick={e => handleDeleteItemServico(item.id)}>
                                         <FiTrash size={24}/>
                                     </button>
@@ -480,7 +510,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                         agendas.map((item: Agendas) => {
                             return(
                                 <div key={item.id} className={styles.items}>
-                                    <h1>{item.dia} / {item.mes} - {item.horario}h</h1>
+                                    <h1>COLOCAR O HORÁRIO FORMATADO</h1>
                                     <button onClick={e => handleDeleteItemAgenda(item.id)}>
                                         <FiTrash size={24}/>
                                     </button>
