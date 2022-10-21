@@ -74,7 +74,7 @@ export function validaCadastroCliente(nome: string, email: string, password: str
     if(!validaData(dataNascimento)){
         return;
     }
-
+    
     return true;
 }
 
@@ -139,6 +139,6 @@ export function validaData(data: string){
         toast.error("Você deve ser maior de 18 anos para realizar o cadastro!")
         return;
     }
-
+    
     return data; // Se a data for válida, retorna a data formatada => Entrada: 05/10/1997 / Saída: 1997/10/05
 }

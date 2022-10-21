@@ -10,7 +10,7 @@ import { Logo } from '../../../components/Logo';
 import { AsideSignups } from '../../../components/AsideSignups';
 import { FiArrowLeft } from 'react-icons/fi';
 import MaskedInput from '../../../components/ui/MaskedInput';
-import { retiraMascara, validaCadastroProfissional} from '../../../utils/Functions';
+import { retiraMascara, validaCadastroProfissional, validaData} from '../../../utils/Functions';
 
 export default function SignUpProfissional() {
 
@@ -32,6 +32,8 @@ export default function SignUpProfissional() {
             return;
         }
 
+        dataNascimento = validaData(dataNascimento)
+
         setLoading(true)
 
         let data = {
@@ -47,7 +49,7 @@ export default function SignUpProfissional() {
             await signUpP(data)
         }
         catch(err){
-            console.log("Ops, erro inesperado! Contatar o suporte! ", err)
+            toast.error("Ops, erro inesperado! Contatar o suporte! ", err)
             setLoading(false)
         }
         setLoading(false)

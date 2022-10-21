@@ -4,8 +4,15 @@ import { setupAPIClient } from "../../services/api";
 import { canSSRProf } from "../../utils/canSSRProf";
 import { FiTrash } from "react-icons/fi";
 
+import { TextField } from '@mui/material'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { ptBR } from 'date-fns/locale'
+
 import styles from './styles.module.css'
 import { toast } from "react-toastify";
+import { DateFormat } from "../../utils/Functions";
 
 type ItemCategoriaProps = {
     id: string;
@@ -33,7 +40,7 @@ type Servicos = {
 
 type Agendas = {
     id: string;
-    data: Date;
+    data: string;
     item_id: string;
 }
  
@@ -58,7 +65,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
     const [nomeServico, setNomeServico] = useState('');
     const [preco, setPreco] = useState('');
 
-    let [dataAgenda, setDataAgenda] = useState('');
+    const [dataAgenda, setDataAgenda] = useState(new Date())
 
     const [itemId, setItemId] = useState<ItemPublicacao>();
     const [itemIdAux, setitemIdAux] = useState('');
@@ -314,17 +321,21 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
 
     }
 
+    const handleChangeAgenda = (newValue) => {
+        setDataAgenda(newValue)
+    }
+
     async function handleAddAgenda(e: FormEvent){
 
         e.preventDefault();
 
-        if(dataAgenda === ''){
-            toast.warning('Informe uma data!');
-            return;
-        }
+        // if(dataAgenda === ''){
+        //     toast.warning('Informe uma data!');
+        //     return;
+        // }
 
-        let splittedDate = dataAgenda.split('-')
-        dataAgenda = `${splittedDate[2]}/${splittedDate[1]}/${splittedDate[0]}`
+        //let splittedDate = dataAgenda.split('-')
+        //dataAgenda = `${splittedDate[2]}/${splittedDate[1]}/${splittedDate[0]}`
         
         const api = setupAPIClient();
 
@@ -336,13 +347,13 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
 
             setAgendas((oldArray => [...oldArray, response.data]))
             setLoadingAgenda(false)
-            
 
             setCountAgendas(+1);
 
-        }).catch(function (error) {
+        }).catch(function (err) {
             setLoadingAgenda(false)
-            console.log(error);
+            const {error} = err.response.data;
+            toast.error(error);
         });
     }
 
@@ -362,7 +373,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
         if(agendas.length > 0) {
             agendas.map((item) => {
                 handleDeleteItemAgenda(item.id)
-                setDataAgenda('');                
+                //setDataAgenda('');                
                 setAgendas([])
             })
         }
@@ -470,13 +481,15 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                     <form className={styles.form} onSubmit={handleAddAgenda}>
                         <h1 className={styles.titulo} style={{paddingTop:'1rem'}}>Agenda</h1>
                         <div className={styles.inputContainer}>
-                            <input className={styles.input}
-                                placeholder="Dia"
-                                type='date'
-                                value={dataAgenda}
-                                onChange={(e) => setDataAgenda(e.target.value)}        
-                            />
-
+                            <LocalizationProvider adapterLocale={ ptBR } dateAdapter={AdapterDateFns}>
+                                <DateTimePicker
+                                    renderInput={(props) => <TextField placeholder={`${Date.now()}`} {...props} />}
+                                    label="DateTimePicker"                               
+                                    className={styles.datePicker}
+                                    value={dataAgenda}
+                                    onChange={handleChangeAgenda}
+                                />
+                            </LocalizationProvider>
                             <button 
                                 className={styles.input} 
                                 style={{
@@ -510,16 +523,15 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                         agendas.map((item: Agendas) => {
                             return(
                                 <div key={item.id} className={styles.items}>
-                                    <h1>COLOCAR O HORÁRIO FORMATADO</h1>
+                                    <h1>{DateFormat(item.data)}</h1>
                                     <button onClick={e => handleDeleteItemAgenda(item.id)}>
                                         <FiTrash size={24}/>
                                     </button>
                                 </div>
                                 )
                             })
-                        )}
+                        )}   
                 </div>
-                
             )
         }
     }

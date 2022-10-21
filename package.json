@@ -9,9 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@date-io/date-fns": "^2.16.0",
+    "@date-io/dayjs": "^2.16.0",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
+    "@mui/lab": "^5.0.0-alpha.104",
     "@mui/material": "^5.10.9",
+    "@mui/x-date-pickers": "^5.0.5",
     "@vime/core": "^5.3.3",
     "@vime/react": "^5.3.3",
     "antd": "^4.23.5",

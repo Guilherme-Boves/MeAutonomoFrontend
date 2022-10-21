@@ -11,7 +11,7 @@ import { Logo } from '../../../components/Logo';
 import { AsideSignups } from '../../../components/AsideSignups';
 import { FiArrowLeft } from 'react-icons/fi';
 import MaskedInput from '../../../components/ui/MaskedInput';
-import { retiraMascara, validaCadastroCliente} from '../../../utils/Functions';
+import { retiraMascara, validaCadastroCliente, validaData} from '../../../utils/Functions';
 
 export default function SignUpCliente() {
 
@@ -29,12 +29,14 @@ export default function SignUpCliente() {
     async function handleSignUp(e: FormEvent) {
         
         e.preventDefault();
-
+        
         if(!validaCadastroCliente(nome, email, password, cpf, telefone, dataNascimento)){
             return;
-        }
-
-        setLoading(true)
+        }        
+        
+        dataNascimento = validaData(dataNascimento)
+        
+        setLoading(false)
         
         let data = {
             email,
@@ -49,7 +51,7 @@ export default function SignUpCliente() {
             await signUpC(data)
         }
         catch(err){
-            console.log("Ops, erro inesperado! Contatar o suporte! ", err)
+            toast.error("Ops, erro inesperado! Contatar o suporte! ", err)
             setLoading(false)
         }
         setLoading(false)

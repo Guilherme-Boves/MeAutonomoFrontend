@@ -127,6 +127,12 @@
     width: 92%;
 }
 
+.datePicker{    
+    top: 1rem;
+    left: 3rem;
+    width: 100%;
+}
+
 /* ----------------- Items */
 
 .items {
