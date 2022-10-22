@@ -43,14 +43,14 @@ export default function DashboardAdmin() {
                     </Link>
                 </div>
                 <div>        
-                    <Link href={"/categoria/cadastrar"}>
+                    <Link href={"/categorias"}>
                         <button>
                             <a>Gerenciar Categorias</a>
                         </button>
                     </Link>
                 </div>
                 <div>        
-                    <Link href={"/tiposervico/cadastrar"}>
+                    <Link href={"/tiposervico"}>
                         <button>
                             <a>Gerenciar Serviços</a>
                         </button>

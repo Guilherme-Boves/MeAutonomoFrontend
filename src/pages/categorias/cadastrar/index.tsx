@@ -8,9 +8,11 @@ import { FiUpload } from "react-icons/fi"
 import { toast } from "react-toastify"
 import { setupAPIClient } from "../../../services/api"
 import { ReturnButton } from "../../../components/ui/ReturnButton"
+import { useRouter } from "next/router"
 
 export default function CadastrarCategoria(){
 
+    const router = useRouter();
     const [nomeCategoria, setNomeCategoria] = useState('');
     const [avatarUrl, setAvatarUrl] = useState(''); //Armazendo uma URL para mostrar o Preview da imagem
     const [imageAvatar, setImageAvatar] = useState(null) //Armazendo o File para ser enviado para o banco de dados
@@ -76,6 +78,7 @@ export default function CadastrarCategoria(){
         setAvatarUrl('');
         setImageAvatar(null);
         setLoading(false);
+        router.back();
     }
 
     return(

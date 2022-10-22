@@ -8,6 +8,8 @@ import { Input } from "../../../components/ui/Input"
 import { Button } from "../../../components/ui/Button"
 import { canSSRAdmin } from "../../../utils/canSSRAdmin"
 import { ReturnButton } from "../../../components/ui/ReturnButton"
+import { containsNumbers } from "../../../utils/Functions"
+import Router from "next/router"
 
 type ItemProps = {
     id: string;
@@ -30,11 +32,6 @@ export default function CadastrarTipoServico({ listaCategorias }: CategoriaProps
     const [categoriaSelecionada, setCagoriaSelecionada] = useState(0)
 
     const [loading, setLoading] = useState(false)
-
-    function containsNumbers(str){        
-        const regexNome = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$/;
-        return regexNome.test(str);
-    }
 
     function handleFile(e: ChangeEvent<HTMLInputElement>){
        
@@ -100,6 +97,7 @@ export default function CadastrarTipoServico({ listaCategorias }: CategoriaProps
         setImageAvatar(null);
         setLoading(false);
         setCagoriaSelecionada(0)
+        Router.back();
     }
 
     // Quando selecionar uma nova categoria na lista
@@ -179,7 +177,7 @@ export const getServerSideProps = canSSRAdmin(async (ctx) => {
     
     const apiClient = setupAPIClient(ctx);
 
-    const response = await apiClient.get('/categoria')
+    const response = await apiClient.get('/categorias')
     
     return {
         props: {

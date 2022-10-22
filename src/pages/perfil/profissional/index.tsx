@@ -7,6 +7,7 @@ import { FiUpload } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { canSSRProf } from "../../../utils/canSSRProf";
 import MaskedInput from "../../../components/ui/MaskedInput";
+import { containsNumbers, retiraMascara } from "../../../utils/Functions";
 
 type ItemUserProps = {
     id: string;
@@ -31,26 +32,18 @@ export default function PerfilProfissional({ userData }: UserProps){
 
     const [user, setUser] = useState(userData);
     const [descricaoSobreMim, setDescricaoSobreMim] = useState('');
+    const [descricaoSobreMimPlaceHolder, setDescricaoSobreMimPlaceHolder] = useState('Escreva uma breve descrição sobre você...');
     const [nomeUsuario, setNomeUsuario] = useState(user.nome);
     const [telefone, setTelefone] = useState(user.telefone);
     const [endereco, setEndereco] = useState(user.endereco);
     const [imagem, setImagem] = useState(user.imagem);
     const [cnpj, setCnpj] = useState('');
-    
+    const [cadastrou, setCadastrou] = useState(false)
+
     let splitedData = user.dataNascimento.split('T')
     let newDate = splitedData[0].split('-')
     let dataFormatada = `${newDate[2]}/${newDate[1]}/${newDate[0]}`
 
-    function containsNumbers(str){        
-        const regexNome = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$/;
-        return regexNome.test(str);
-    }
-
-    const onlyNumbers = (str) => str.replace(/[^0-9]/g, '') // Retira a máscara, deixando apenas os números
-
-    function handleRetiraMascara(value) {        
-        return onlyNumbers(value)
-    }
 
     async function handleFile(e: ChangeEvent<HTMLInputElement>){
        
@@ -88,49 +81,99 @@ export default function PerfilProfissional({ userData }: UserProps){
     async function handleSalvarInformacoes(e: FormEvent) {
         e.preventDefault();
 
-        if(nomeUsuario === user.nome && telefone === user.telefone && endereco === user.endereco && descricaoSobreMim === ''){
-            // Se o usuário não inserir informações novas, a função será finalizada.
-            console.log('encerrou')
-            return;
-        }
+        // if(nomeUsuario === user.nome && telefone === user.telefone && endereco === user.endereco && descricaoSobreMim === ''){
+        //     // Se o usuário não inserir informações novas, a função será finalizada.
+        //     console.log('encerrou')
+        //     return;
+        // }
 
         // Map necessário para validar se a descrição está vazia ou não.
         // Se o usuário não alterar nenhum caracter da Textarea, a useState "descricaoSobreMim" ficará vazia, mesmo se o Textarea da tela possuir um texto        
-        var descricao = '';
-        user.userProfissional.map((item) => {
-            descricao = item.descricaoSobreMim            
-        })
-        console.log(descricao)
+        //var descricao = '';
+        // user.userProfissional.map((item) => {
+        //     descricao = item.descricaoSobreMim            
+        // })
+        // console.log(descricao)
 
-        if(nomeUsuario === '' || telefone === '' || endereco === '' || descricao === '') {
-            toast.warn('Campos de Nome, Telefone, Email e Descrição não podem ser vazios')
-            return;
+        // if(nomeUsuario === '' || telefone === '' || endereco === '' || descricaoSobreMim === '') {
+        //     toast.warn('Campos de Nome, Telefone, Email e Descrição não podem ser vazios')
+        //     return;
+        // }
+
+        if(nomeUsuario){
+            if(!containsNumbers(nomeUsuario)){ // Verificando se o nome possui números ou caracteres inválidos.
+                toast.error("Nome inválido")
+                return;
+            }
         }
 
-        if(!containsNumbers(nomeUsuario)){ // Verificando se o nome possui números ou caracteres inválidos.
-            toast.error("Nome inválido")
-            return;
+        if(telefone){
+            if(telefone.length < 11){
+                toast.error("Telefone incompleto")
+                return;
+            }
         }
 
-        if(telefone.length < 11){
-            toast.error("Telefone incompleto")
-            return;
-        }
+        let descricao = user.userProfissional.map((item) => item.descricaoSobreMim)
 
+        if(cadastrou === false){
+            if(descricao[0]){
+                setDescricaoSobreMimPlaceHolder(descricao[0])
+            }
+    
+            if(descricaoSobreMim === ''){
+                setDescricaoSobreMimPlaceHolder('Escreva uma breve descrição sobre você...')
+            }            
+        }
         const api = setupAPIClient();
 
         try{
-            await api.put('/userinfo/update/profissional', {
-                nome: nomeUsuario,
-                telefone: telefone,
-                endereco: endereco,
-                cnpj: cnpj,
-                descricaoSobreMim: descricaoSobreMim,
-            })
+            if(descricaoSobreMim === '' && cadastrou === false){
+                await api.put('/userinfo/update/profissional', {
+                    nome: nomeUsuario,
+                    telefone: telefone,
+                    endereco: endereco,
+                    cnpj: cnpj,
+                    descricaoSobreMim: descricao[0],
+                })
+            } else if(descricaoSobreMim === '' && cadastrou === true) {
+                await api.put('/userinfo/update/profissional', {
+                    nome: nomeUsuario,
+                    telefone: telefone,
+                    endereco: endereco,
+                    cnpj: cnpj,
+                    descricaoSobreMim: descricaoSobreMimPlaceHolder,
+                })
+            } else {
+                await api.put('/userinfo/update/profissional', {
+                    nome: nomeUsuario,
+                    telefone: telefone,
+                    endereco: endereco,
+                    cnpj: cnpj,
+                    descricaoSobreMim: descricaoSobreMim,
+                })
+            }
         } catch(err){
-            toast.error('Ops! Erro inesperado, favor contatar o suporte! ' + err)            
+            const { error } = err.response.data
+            toast.error('Ops! Erro inesperado, favor contatar o suporte! ' + error)            
         }
 
+        if(nomeUsuario){
+            setNomeUsuario(nomeUsuario)
+        }
+        if(telefone){
+            setTelefone(telefone)
+        }
+        if(endereco){
+            setEndereco(endereco)
+        }
+
+        if(descricaoSobreMim){
+            setCadastrou(true)
+            setDescricaoSobreMimPlaceHolder(descricaoSobreMim)
+        }
+        
+        setDescricaoSobreMim('')        
         toast.success('Dados atualizados com sucesso!');
     }
 
@@ -170,7 +213,7 @@ export default function PerfilProfissional({ userData }: UserProps){
                 <div className={styles.containerCards}>
                     <form onSubmit={handleSalvarInformacoes}>
                         <h1>Meus Dados</h1>
-                        <h2 style={{marginTop:'-1rem'}}>__________________________</h2>
+                        <div className={styles.linhaHorizontal}></div>
                         <div className={styles.cardDadosDaConta}>
 
                             <h1 className={styles.DadosContaTitle}>Dados da Conta</h1>
@@ -230,7 +273,7 @@ export default function PerfilProfissional({ userData }: UserProps){
                                         mask={"(99) 99999-9999"}
                                         maskChar={''}
                                         value={telefone}
-                                        onChange={(e) => setTelefone(handleRetiraMascara(e.target.value))}                                        
+                                        onChange={(e) => setTelefone(retiraMascara(e.target.value))}                                        
                                     />
                             </div>
 
@@ -258,24 +301,32 @@ export default function PerfilProfissional({ userData }: UserProps){
                             {user.userProfissional.map((item)=>{
                                 return(                                
                                     <div key={user.id}>
-                                        {descricaoSobreMim === '' ? 
-                                        (
+                                        {item.descricaoSobreMim === '' || item.descricaoSobreMim === null ? (
                                             <textarea 
                                                 className={styles.TextAreaSobreMim}
                                                 maxLength={265}
-                                                placeholder={"Uma breve descrição sobre você"}
-                                                value={item.descricaoSobreMim}
-                                                onChange={(e) => setDescricaoSobreMim(e.target.value)}
-                                            />
-                                        ) : (
-
-                                            <textarea 
-                                                className={styles.TextAreaSobreMim}
-                                                maxLength={265}
-                                                placeholder={"Uma breve descrição sobre você"}
+                                                placeholder={descricaoSobreMimPlaceHolder}
                                                 value={descricaoSobreMim}
                                                 onChange={(e) => setDescricaoSobreMim(e.target.value)}
-                                            />
+                                            /> 
+                                        ) : (
+                                            cadastrou === true ? (
+                                                <textarea 
+                                                    className={styles.TextAreaSobreMim}
+                                                    maxLength={265}
+                                                    placeholder={descricaoSobreMimPlaceHolder}
+                                                    value={descricaoSobreMim}
+                                                    onChange={(e) => setDescricaoSobreMim(e.target.value)}
+                                                />        
+                                            ) : (
+                                                <textarea 
+                                                    className={styles.TextAreaSobreMim}
+                                                    maxLength={265}
+                                                    placeholder={item.descricaoSobreMim}
+                                                    value={descricaoSobreMim}
+                                                    onChange={(e) => setDescricaoSobreMim(e.target.value)}
+                                                />
+                                            )
                                         )}
                                     </div>
                                 )

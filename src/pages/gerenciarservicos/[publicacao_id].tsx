@@ -12,7 +12,7 @@ import { ptBR } from 'date-fns/locale'
 
 import styles from './styles.module.css'
 import { toast } from "react-toastify";
-import { DateFormat } from "../../utils/Functions";
+import { containsNumbers, DateFormat } from "../../utils/Functions";
 
 type ItemCategoriaProps = {
     id: string;
@@ -108,11 +108,6 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
         setTipoServicoSelecionada(event.target.value)
     }
 
-    function containsNumbers(str){        
-        const regexNome = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$/;
-        return regexNome.test(str);
-    }
-
     function isNumeric(str) {
         return /^-?\d+$/.test(str);
     }
@@ -197,8 +192,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
         
         setPagina((paginaAtual) => paginaAtual + 1)
 
-    }
-    
+    }    
 
     async function handleDeleteItemServico(servico_id: string){
         
@@ -599,7 +593,7 @@ export const getServerSideProps = canSSRProf(async (ctx) => {
 
     const api = setupAPIClient(ctx)
 
-    const response = await api.get('/categoria')
+    const response = await api.get('/categorias')
 
     return{
         props: {

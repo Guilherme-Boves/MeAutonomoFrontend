@@ -1,0 +1,87 @@
+.container {
+    max-width: 720px;
+    height: auto 1rem;
+    background-color: #fff;
+    margin-left: 550px;
+    border-radius: 20px;
+    margin-top: 3rem;
+}
+
+.containertitle{
+    font-size: 20px;
+    padding-left: 3rem;
+    padding-top: 4rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+}
+
+.novoServico{
+    padding-right: 3.5rem;
+}
+
+.form{
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 0;
+}
+
+.select{
+    margin-top: 2rem;
+    margin-left: 3rem;
+    margin-bottom: 1rem;
+    height: 55px;
+    border: 0;
+    border-radius: 0.5rem;
+    background-color: #1d1d2e;
+    color: #fff;
+    padding: 1rem;
+    width: 100%;
+}
+
+.cardContainer{
+    display: flex;    
+    flex-direction: column;
+    max-width: 86%;
+}
+
+.card{    
+    padding: 1rem;
+    margin-left: 3rem;
+    margin-top: 1rem;
+    height: 200px;
+    border: 1px black solid;
+    border-radius: 20px;
+    width: 100%;
+}
+
+.title{
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.linhaHorizontal{    
+    width: 100%;
+    border: 1px solid #000;
+}
+
+.titleFiEditContainer{
+    display: flex;
+    justify-content: space-between;
+}
+
+.subtitleImagemContainer{
+    display: flex;
+    flex-direction: row;    
+}
+
+.subtitle{
+    font-size: 16px;
+    margin-top: 1rem;
+    font-weight: 600;
+}
+
+.imagemContainer{
+    margin-top: 1rem;
+    margin-left: 1rem;
+}

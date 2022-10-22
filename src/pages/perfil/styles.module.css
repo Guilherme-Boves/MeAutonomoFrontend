@@ -68,6 +68,11 @@
     font-weight: 600;
 }
 
+.linhaHorizontal{
+    width: 90%;
+    border: 1px solid #000;
+}
+
 .cardDadosDaConta{
     margin-top: 1rem;
     height: 140px;
