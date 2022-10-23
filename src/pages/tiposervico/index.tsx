@@ -126,37 +126,7 @@ export default function TipoDeServicos({ listaCategorias }: ListCategorias){
                             </Link>
                         </div>
                     </div>
-                    <div className={styles.cardContainer} >
-                        {/* {categorias.length === 0 ? (
-                            <h1>Nenhuma serviço foi encontrado</h1>
-                        ) : (
-                            categorias.map((item) => {
-                                return(
-                                    <div key={item.id} className={styles.card}>
-                                        <div className={styles.titleFiEditContainer}>
-                                            <h1 className={styles.title}>{item.nome}</h1>
-                                            <button onClick={e => handleEditCategoria(item.id) }>
-                                                <FiEdit size={24} />                                            
-                                            </button>
-                                        </div>
-                                        <div className={styles.linhaHorizontal}></div>
-                                        <div className={styles.subtitleImagemContainer}>
-                                            <div className={styles.subtitle}>
-                                                <h2>Imagem:</h2>
-                                            </div>
-                                            <div className={styles.imagemContainer}>
-                                                <Image 
-                                                    src={`http://localhost:3333/files/${item.imagem}`}
-                                                    alt={"Imagem da categoria"}
-                                                    width={100}
-                                                    height={100}                                        
-                                                />
-                                            </div>
-                                        </div>    
-                                    </div>
-                                )
-                            })
-                        )} */}
+                    <div className={styles.cardContainer} >                       
                         <div className={styles.form}>
                             {categorias.length === 0 ? (
                                 <select className={styles.select}>                                                                    
@@ -182,9 +152,9 @@ export default function TipoDeServicos({ listaCategorias }: ListCategorias){
                                 return(
                                     <div key={item.id} className={styles.card}>
                                         <div className={styles.titleFiEditContainer}>
-                                        <div>
-                                            <h1 className={styles.title}>{item.nome}</h1>
-                                        </div>
+                                            <div>
+                                                <h1 className={styles.title}>{item.nome}</h1>
+                                            </div>
                                             <div className={styles.fiButtonsContainer}>
                                                 <button onClick={e => handleEditServico(item.id) }>
                                                     <FiEdit size={24} />                                            

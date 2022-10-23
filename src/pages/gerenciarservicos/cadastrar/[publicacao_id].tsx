@@ -1,7 +1,7 @@
 import React, { useState, useEffect, FormEvent } from "react"
 import { useRouter } from "next/router";
-import { setupAPIClient } from "../../services/api";
-import { canSSRProf } from "../../utils/canSSRProf";
+import { setupAPIClient } from "../../../services/api";
+import { canSSRProf } from "../../../utils/canSSRProf";
 import { FiTrash } from "react-icons/fi";
 
 import { TextField } from '@mui/material'
@@ -12,7 +12,8 @@ import { ptBR } from 'date-fns/locale'
 
 import styles from './styles.module.css'
 import { toast } from "react-toastify";
-import { containsNumbers, DateFormat } from "../../utils/Functions";
+import { containsNumbers, DateFormat } from "../../../utils/Functions";
+
 
 type ItemCategoriaProps = {
     id: string;

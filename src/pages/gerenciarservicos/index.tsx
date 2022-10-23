@@ -5,7 +5,7 @@ import { AuthContext } from '../../contexts/AuthContext';
 import { setupAPIClient } from '../../services/api';
 import { canSSRProf } from '../../utils/canSSRProf';
 import styles from './styles.module.css'
-import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
+import { FiArrowLeft, FiArrowRight, FiEdit } from "react-icons/fi";
 import { DateFormat } from '../../utils/Functions';
 
 type PublicacaoProps = {
@@ -44,8 +44,6 @@ export default function GerenciarServicos({listPublicacoes}: list) {
 
     const user = useContext(AuthContext)
     const [publicacoes, setPublicacoes] = useState(listPublicacoes || []);
-    
-    const carrossel = useRef(null);
 
     async function criarNovaPublicacao() {
 
@@ -59,20 +57,12 @@ export default function GerenciarServicos({listPublicacoes}: list) {
 
         const { id } = response.data
 
-        Router.push(`/gerenciarservicos/${id}`)
+        Router.push(`/gerenciarservicos/cadastrar/${id}`)
 
     }
 
-    const handleLeftClick = (e) => {
-        e.preventDefault();
-
-        carrossel.current.scrollLeft -= carrossel.current.offsetWidth
-    }
-
-    const handleRightClick = (e) => {
-        e.preventDefault();
-
-        carrossel.current.scrollLeft += carrossel.current.offsetWidth
+    async function handleEditPublicacao(publicacao_id: string) {
+        alert(publicacao_id)
     }
 
     return(
@@ -88,37 +78,53 @@ export default function GerenciarServicos({listPublicacoes}: list) {
                         </button>
                     </div>
                 </div>
-                <div className={styles.publicacoesCarrossel} ref={carrossel}>                
+                <div className={styles.cardContainer} >                
                     {publicacoes.length === 0 ? (
                         <h1>Nenhum serviço foi publicado</h1>
                     ) : (
                         publicacoes.map((item)=>{
+                            const publicacao_id = item.id
                             return(
                                 <div key={item.id}>
                                     <div>{item.items.map((item)=>{
                                         return(
-                                                <div key={item.id} className={styles.publicacoes}>
-                                                    <div className={styles.tipoServicoText}>{item.tipoDoServico.nome}</div>
-                                                    <h2>_______________________</h2>
+                                                <div key={item.id} className={styles.card}>
+
+                                                    <div className={styles.titleFiEditContainer}>
+                                                        <div>
+                                                            <div className={styles.tipoServicoText}>{item.tipoDoServico.nome}</div>
+                                                        </div>
+                                                        <div className={styles.fiButtonContainer}>
+                                                            <button onClick={e => handleEditPublicacao(publicacao_id) }>
+                                                                <FiEdit size={24} />                                            
+                                                            </button>                                                        
+                                                        </div>  
+                                                    </div>
+
+                                                        
+
+                                                    <div className={styles.linhaHorizontal}></div>
                                                     <div className={styles.itemsSubTitles}>Descrição</div>
                                                     <div>{item.descricao}</div>
 
                                                     <h2 className={styles.itemsSubTitles}>Serviços prestados</h2>
-                                                    <h2>__________________</h2>
-                                                    <div>{item.servicosPrestadosProf.map((item)=> {
+                                                    <div className={styles.linhaHorizontal}></div>
+                                                    <div className={styles.servicosAgendaContainer}>
+                                                        {item.servicosPrestadosProf.map((item)=> {
                                                         return(
-                                                            <div key={item.id}>
+                                                            <div key={item.id} className={styles.servicosAgenda}>
                                                                 <div>{item.nome} - R${item.preco}</div>
                                                             </div>
                                                             )
                                                         })}
                                                     </div>
-                                                    <div>
-                                                        <h2 className={styles.itemsSubTitles}>Agenda</h2>
-                                                        <h2>__________________</h2>
+                                                    
+                                                    <h2 className={styles.itemsSubTitles}>Agenda</h2>
+                                                    <div className={styles.linhaHorizontal}></div>
+                                                    <div className={styles.servicosAgendaContainer}>
                                                         {item.agenda.map((item)=>{
                                                             return(
-                                                                <div key={item.id}>
+                                                                <div key={item.id} className={styles.servicosAgenda}>
                                                                     <div>{DateFormat(item.data)}</div>
                                                                 </div>
                                                             )
@@ -133,14 +139,6 @@ export default function GerenciarServicos({listPublicacoes}: list) {
                         })
                     )}
                 </div>
-                {publicacoes.length === 0 ? (
-                    <></>
-                ) : (
-                    <div className={styles.buttons}>
-                        <button onClick={handleLeftClick}><FiArrowLeft size={28}/></button>
-                        <button onClick={handleRightClick}><FiArrowRight size={28} /></button>
-                    </div>
-                )}
             </div>
         </>
         
