@@ -90,7 +90,7 @@
 .DadosInfos{
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: baseline;
     font-size: 16px;
 }
 
@@ -100,12 +100,12 @@
 
 .cardDadosPessoais{
     margin-top: 1rem;
-    height: 265px;
+    height: 275px;
     width: 90%;
     border: 2px solid #D3E2E5;
     border-radius: 20px;
     padding: 1rem;
-    background-color: #fff;
+    background-color: #fff;        
 }
 
 .DadosPessoaisTitle{

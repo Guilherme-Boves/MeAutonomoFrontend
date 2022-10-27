@@ -14,6 +14,33 @@ import styles from './styles.module.css'
 import { toast } from "react-toastify";
 import { containsNumbers, DateFormat } from "../../../utils/Functions";
 
+type ItemPublicacaoRecebidaProps = [{
+    id: string;
+    items:[
+        {
+            id: string;
+            descricao: string;
+            publicacao_id: string;
+            tipoDoServico_id: string;
+            tipoDoServico: {
+                id: string;
+                nome: string;
+                categoria_id: string;
+            },
+            servicosPrestadosProf: [{
+                id: string;
+                nome: string;
+                preco: string;
+                item_id: string;
+            }],            
+            agenda: [{
+                id: string;
+                data: string;
+                item_id: string;
+            }]
+        }
+    ]
+}]
 
 type ItemCategoriaProps = {
     id: string;
@@ -49,13 +76,20 @@ interface CategoriaProps {
     listCategoria: ItemCategoriaProps[];
 }
 
-export default function NovaPublicacao({ listCategoria }: CategoriaProps){
+interface PublicacaoProps {
+    publicacaoRecebida: ItemPublicacaoRecebidaProps;
+}
+
+export default function NovaPublicacao({publicacaoRecebida}: PublicacaoProps/*, { listCategoria }: CategoriaProps*/){
 
     const router = useRouter();
     
     const [pagina, setPagina] = useState(0);
+
+    const [publicacao, setPublicacao] = useState(publicacaoRecebida)
+    const [servicos, setServicos] = useState<Servicos[]>();
     
-    const [categorias, setCategorias] = useState(listCategoria || []);
+    //const [categorias, setCategorias] = useState(listCategoria || []);
     const [categoriaSelecionada, setCagoriaSelecionada] = useState(0);
 
     const [tipoServico, setTipoServico] = useState<TipoServicoProps[] | []>([]);
@@ -71,7 +105,6 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
     const [itemId, setItemId] = useState<ItemPublicacao>();
     const [itemIdAux, setitemIdAux] = useState('');
 
-    const [servicos, setServicos] = useState<Servicos[]>([]);
     const [agendas, setAgendas] = useState<Agendas[]>([]);
 
     const [loadingServicos, setLoadingServicos] = useState(false)
@@ -81,25 +114,25 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
     const [countAgendas, setCountAgendas] = useState(0)
     
 
-    useEffect(() => {
-        async function loadInfo() {
+    // useEffect(() => {
+    //     async function loadInfo() {
 
-            const api = setupAPIClient();
-            try{
-                const response = await api.get('/tiposervico',{
-                    params:{
-                        categoria_id: categorias[categoriaSelecionada].id
-                    }
-                })
+    //         const api = setupAPIClient();
+    //         try{
+    //             const response = await api.get('/tiposervico',{
+    //                 params:{
+    //                     categoria_id: categorias[categoriaSelecionada].id
+    //                 }
+    //             })
 
-                setTipoServico(response.data)
-            } catch(err){ // catch necessário para não quebrar a aplicação, pois se não tiver nenhum serviço cadastrado, irá retornar erro.
-                return;
-            }
-        }
+    //             setTipoServico(response.data)
+    //         } catch(err){ // catch necessário para não quebrar a aplicação, pois se não tiver nenhum serviço cadastrado, irá retornar erro.
+    //             return;
+    //         }
+    //     }
 
-       loadInfo()
-    }, [categorias, categoriaSelecionada])
+    //    loadInfo()
+    // }, [categorias, categoriaSelecionada])
    
     function handleChangeCategoria(event){
         setCagoriaSelecionada(event.target.value)
@@ -109,96 +142,166 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
         setTipoServicoSelecionada(event.target.value)
     }
 
-    const handleChangeAgenda = (newValue) => {
-        setDataAgenda(newValue)
-    }
-
     function isNumeric(str) {
         return /^-?\d+$/.test(str);
     }
-    
-    async function handleCadastarPrimeirasInfos(){
 
-        const publicacao_id = router.query.publicacao_id
+    // async function handleCadastarPrimeirasInfos(){
 
-        if(categorias.length === 0){
-            toast.error("Selecione uma categoria!")
-            return;
-        }
+    //     const publicacao_id = router.query.publicacao_id
 
-        if(tipoServico.length === 0){
-            toast.error("Selecione um Serviço!")
-            return;
-        }
+    //     if(categorias.length === 0){
+    //         toast.error("Selecione uma categoria!")
+    //         return;
+    //     }
 
-        if(descricao === ''){
-            toast.warning('Preencha todos os campos!')
-            return;
-        }
+    //     if(tipoServico.length === 0){
+    //         toast.error("Selecione um Serviço!")
+    //         return;
+    //     }
 
-        if(publicacao_id === ''){
-            console.log('Não foi encontrado o ID da publicação!')
-            return;
-        }
+    //     if(descricao === ''){
+    //         toast.warning('Preencha todos os campos!')
+    //         return;
+    //     }
 
-        if(tipoServico[tipoServicoSelecionada].id === ''){
-            toast.warning('Selecione o tipo de serviço!')
-            return;
-        }        
+    //     if(publicacao_id === ''){
+    //         console.log('Não foi encontrado o ID da publicação!')
+    //         return;
+    //     }
+
+    //     if(tipoServico[tipoServicoSelecionada].id === ''){
+    //         toast.warning('Selecione o tipo de serviço!')
+    //         return;
+    //     }        
         
-        const api = setupAPIClient();
+    //     const api = setupAPIClient();
 
-        try{
-            const response = await api.post('/publicarservico/add', {
-                descricao: descricao,
-                publicacao_id: publicacao_id,
-                tipoDoServico_id: tipoServico[tipoServicoSelecionada].id
-            })
+    //     try{
+    //         const response = await api.post('/publicarservico/add', {
+    //             descricao: descricao,
+    //             publicacao_id: publicacao_id,
+    //             tipoDoServico_id: tipoServico[tipoServicoSelecionada].id
+    //         })
             
-            const idItem = response.data
-            setItemId(idItem.id)
-            setitemIdAux(idItem.id)
-            setPagina((paginaAtual) => paginaAtual + 1)
-        } catch(err){
-            toast.error(`Você já têm uma publicação como: ${tipoServico[tipoServicoSelecionada].nome}`)
-            return;
-        }
-    }
+    //         const idItem = response.data
+    //         setItemId(idItem.id)
+    //         setitemIdAux(idItem.id)
+    //         setPagina((paginaAtual) => paginaAtual + 1)
+    //     } catch(err){
+    //         toast.error(`Você já têm uma publicação como: ${tipoServico[tipoServicoSelecionada].nome}`)
+    //         return;
+    //     }
+    // }
+      
 
-    async function handleUpdateInfos(item_id: string){
+    async function handleDeleteItemServico(servico_id: string){
         
-        const publicacao_id = router.query.publicacao_id
+       const api = setupAPIClient();
 
-        if(descricao === ''){
-            toast.warning('Preencha todos os campos!')
-            return;
-        }
-
-        if(publicacao_id === ''){
-            console.log('Não foi encontrado o ID da publicação!')
-            return;
-        }
-
-        if(tipoServico[tipoServicoSelecionada].id === ''){
-            toast.warning('Selecione o tipo de serviço!')
-            return;
-        }      
-        
-        const api = setupAPIClient();
-
-        await api.put('/publicarservico/update', {
-            item_id: item_id,
-            descricao: descricao,
-            publicacao_id: publicacao_id,
-            tipoDoServico_id: tipoServico[tipoServicoSelecionada].id
+        await api.delete('/servicosprestados/delete', {
+            params:{
+                servico_id: servico_id
+            }
         })
 
-        setitemIdAux(item_id)
-        
-        
-        setPagina((paginaAtual) => paginaAtual + 1)
+        let removeItemServico = servicos.filter( item => {
+            return (item.id !== servico_id)
+        })
 
+        setServicos(removeItemServico)
+        setCountServicos(-1);
+        
     }
+
+    // async function handleUpdateInfos(item_id: string){
+    //     const publicacao_id = router.query.publicacao_id
+
+    //     if(descricao === ''){
+    //         toast.warning('Preencha todos os campos!')
+    //         return;
+    //     }
+
+    //     if(publicacao_id === ''){
+    //         console.log('Não foi encontrado o ID da publicação!')
+    //         return;
+    //     }
+
+    //     if(tipoServico[tipoServicoSelecionada].id === ''){
+    //         toast.warning('Selecione o tipo de serviço!')
+    //         return;
+    //     }      
+        
+    //     const api = setupAPIClient();
+
+    //     await api.put('/publicarservico/update', {
+    //         item_id: item_id,
+    //         descricao: descricao,
+    //         publicacao_id: publicacao_id,
+    //         tipoDoServico_id: tipoServico[tipoServicoSelecionada].id
+    //     })
+
+    //     setitemIdAux(item_id)
+        
+    //     setPagina((paginaAtual) => paginaAtual + 1)
+    //}  
+
+    async function handleDeleteItemAgenda(agenda_id: string){
+        
+        const api = setupAPIClient();
+
+        await api.delete('/agenda/delete', {
+            params:{
+                agenda_id: agenda_id
+            }
+        })
+
+        let removeItemAgenda = agendas.filter( item => {
+            return (item.id !== agenda_id)
+        })
+
+        setAgendas(removeItemAgenda)
+        setCountAgendas(-1);
+    }
+
+    // async function handleDeleteItem(item_id: string) {
+        
+    //     const api = setupAPIClient();
+
+    //     await api.delete('/publicarservico/delete', {           
+    //         params:{
+    //             item_id: item_id
+    //         }
+    //     })     
+
+    // }
+
+    // async function handlePublicar() {
+
+    //     if(countServicos === 0){
+    //         toast.error("Adicione um serviço!")
+    //         return;
+    //     }
+        
+    //     if(countAgendas === 0){
+    //         toast.error("Adicione uma agenda!")
+    //         return;
+    //     }
+
+    //     const publicacao_id = router.query.publicacao_id
+
+    //     const api = setupAPIClient();
+
+    //     await api.put('/publicarservico', {
+    //             publicacao_id: publicacao_id                
+    //     }).then(function (response) {
+    //         toast.success('Publicação criada com sucesso!')
+    //         router.back();
+    //     }).catch(function (error) {
+    //         console.log(error);
+    //     });
+
+    // }
 
     async function handleAddServicoPrestado(e: FormEvent){
         e.preventDefault();
@@ -225,24 +328,37 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
 
         const api = setupAPIClient();
         
-        setLoadingServicos(true)
-        await api.post('/servicosprestados', {
-            nome: nomeServico,
-            preco: preco,
-            item_id: itemId
+        //console.log("ID: " + itemId)
+
+        // const itemId = publicacao.map((item) => {
+        //     item.items.map((item) => {
+        //       item.id 
+        //     })
+        // })
+        // console.log("ID: " + itemId)
+
+        // setLoadingServicos(true)
+        // await api.post('/servicosprestados', {
+        //     nome: nomeServico,
+        //     preco: preco,
+        //     item_id: itemId
                 
-        }).then(function (response) {
-            setServicos((oldArray => [...oldArray, response.data]))
-            setLoadingServicos(false)
-            setNomeServico('')
-            setPreco('')
+        // }).then(function (response) {
+        //     setServicos((oldArray => [...oldArray, response.data]))
+        //     setLoadingServicos(false)
+        //     setNomeServico('')
+        //     setPreco('')
 
-            setCountServicos(+1);
+        //     setCountServicos(+1);
 
-        }).catch(function (error) {
-            setLoadingServicos(false)            
-        });
+        // }).catch(function (error) {
+        //     setLoadingServicos(false)            
+        // });
 
+    }
+
+    const handleChangeAgenda = (newValue) => {
+        setDataAgenda(newValue)
     }
 
     async function handleAddAgenda(e: FormEvent){
@@ -276,123 +392,45 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
             toast.error(error);
         });
     }
-    
-    async function handlePublicar() {
 
-        if(countServicos === 0){
-            toast.error("Adicione um serviço!")
-            return;
-        }
+    // async function deletePublicacao() {
+
+    //     const api = setupAPIClient();
         
-        if(countAgendas === 0){
-            toast.error("Adicione uma agenda!")
-            return;
-        }
+    //     if(servicos.length > 0) {
+    //         servicos.map((item) => {
+    //             handleDeleteItemServico(item.id)
+    //             setNomeServico('')
+    //             setPreco('')
+    //             setServicos([])
+    //         })
+    //     }
 
-        const publicacao_id = router.query.publicacao_id
+    //     if(agendas.length > 0) {
+    //         agendas.map((item) => {
+    //             handleDeleteItemAgenda(item.id)
+    //             //setDataAgenda('');                
+    //             setAgendas([])
+    //         })
+    //     }
 
-        const api = setupAPIClient();
-
-        await api.put('/publicarservico', {
-                publicacao_id: publicacao_id                
-        }).then(function (response) {
-            toast.success('Publicação criada com sucesso!')
-            router.back();
-        }).catch(function (error) {
-            console.log(error);
-        });
-
-    }
-
-
-    async function handleDeleteItemServico(servico_id: string){
+    //     if(itemIdAux != ''){
+    //         handleDeleteItem(itemIdAux)
+    //     }
         
-       const api = setupAPIClient();
-
-        await api.delete('/servicosprestados/delete', {
-            params:{
-                servico_id: servico_id
-            }
-        })
-
-        let removeItemServico = servicos.filter( item => {
-            return (item.id !== servico_id)
-        })
-
-        setServicos(removeItemServico)
-        setCountServicos(-1);
-        
-    }
-
-    async function handleDeleteItemAgenda(agenda_id: string){
-        
-        const api = setupAPIClient();
-
-        await api.delete('/agenda/delete', {
-            params:{
-                agenda_id: agenda_id
-            }
-        })
-
-        let removeItemAgenda = agendas.filter( item => {
-            return (item.id !== agenda_id)
-        })
-
-        setAgendas(removeItemAgenda)
-        setCountAgendas(-1);
-    }
-
-    async function handleDeleteItem(item_id: string) {
-        
-        const api = setupAPIClient();
-
-        await api.delete('/publicarservico/delete', {           
-            params:{
-                item_id: item_id
-            }
-        })
-    }
-
-    async function handleDeletePublicacao() {
-
-        const api = setupAPIClient();
-        
-        if(servicos.length > 0) {
-            servicos.map((item) => {
-                handleDeleteItemServico(item.id)
-                setNomeServico('')
-                setPreco('')
-                setServicos([])
-            })
-        }
-
-        if(agendas.length > 0) {
-            agendas.map((item) => {
-                handleDeleteItemAgenda(item.id)
-                //setDataAgenda('');                
-                setAgendas([])
-            })
-        }
-
-        if(itemIdAux != ''){
-            handleDeleteItem(itemIdAux)
-        }
-        
-        await api.delete('/publicarservico', {
-            params:{
-                publicacao_id: router.query.publicacao_id
-            } 
-        })
-
-        
-    }
+    //     await api.delete('/publicarservico', {
+    //         params:{
+    //             publicacao_id: router.query.publicacao_id
+    //         } 
+    //     })
+    // }
 
     const PageDisplay = () => {
         if (pagina == 0){
             return(
                 <form className={styles.form}>
                  
-                    {categorias.length === 0 ? (
+                    {/* {categorias.length === 0 ? (
                         <select className={styles.select}>                                                                    
                             <option>
                                 {"Selecione uma categoria"}
@@ -408,7 +446,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                                 )
                             })}
                         </select>
-                    )}
+                    )} */}
 
                     {tipoServico.length === 0 ? (
                         <select className={styles.select}>                                                                    
@@ -498,7 +536,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                             </button>
                         </div>
                     </form>
-                    {loadingServicos ? (
+                    {/* {loadingServicos ? (
                         <></>
                     ) : (
                         servicos.map((item: Servicos) => {
@@ -526,7 +564,39 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                                 </div>
                                 )
                             })
-                        )}   
+                        )}    */}
+                    {/* <>
+                        {publicacao.map((item) => {
+                            item.items.map((item) => {
+                                item.servicosPrestadosProf.map((item) => {
+                                    return(
+                                        <div key={item.id} className={styles.items}>
+                                            <h1>{item.nome} - R${item.preco}</h1>
+                                            <button onClick={e => handleDeleteItemServico(item.id)}>
+                                                <FiTrash size={24}/>
+                                            </button>
+                                        </div>
+                                    )
+                                })
+                            })
+                        })}
+                    </>
+                    <>
+                        {publicacao.map((item) => {
+                            item.items.map((item) => {
+                                item.agenda.map((item) => {
+                                    return(
+                                        <div key={item.id} className={styles.items}>
+                                            <h1>{item.data}</h1>
+                                            <button onClick={e => handleDeleteItemAgenda(item.id)}>
+                                                <FiTrash size={24}/>
+                                            </button>
+                                        </div>
+                                    )
+                                })
+                            })
+                        })}
+                    </> */}
                 </div>
             )
         }
@@ -542,6 +612,18 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                     {PageDisplay()}
                 </div>
 
+                <>
+                    {publicacao.map((teste) => {
+                        teste.items.map((teste2) => {
+                            return(
+                                <div key={teste2.id}>
+                                    <h1>{teste2.id}</h1>
+                                </div>
+                            )
+                        })
+                    })}
+                </>
+
                 <div className={styles.botoes}>
                     <button 
                         className={styles.input} 
@@ -553,7 +635,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                             }}                    
                         onClick={() => {
                                 if( pagina === 0) {
-                                    handleDeletePublicacao();
+                                    //deletePublicacao();                                           
                                     router.back()
                                 } else {
                                     setPagina((paginaAtual) => paginaAtual - 1)
@@ -573,13 +655,14 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                             }}
                         onClick={() => {
                             if(pagina === 1){
-                                handlePublicar();
+                                //handlePublicar();
                             } else {
-                                if(itemIdAux != ''){
-                                    handleUpdateInfos(itemIdAux);
-                                } else {
-                                    handleCadastarPrimeirasInfos();
-                                }
+                                setPagina((paginaAtual) => paginaAtual + 1)
+                                // if(itemIdAux != ''){
+                                //     handleUpdateInfos(itemIdAux);
+                                // } else {
+                                //     handleCadastarPrimeirasInfos();
+                                // }
                             }
                         }}
                     >
@@ -595,11 +678,13 @@ export const getServerSideProps = canSSRProf(async (ctx) => {
 
     const api = setupAPIClient(ctx)
 
-    const response = await api.get('/categorias')
+    //const responseCategoria = await api.get('/categorias')
+    const responsePublicacao = await api.get('/publicacao')
 
     return{
         props: {
-            listCategoria: response.data
+            //listCategoria: responseCategoria.data,
+            publicacaoRecebida: responsePublicacao.data
         }
     }
 })

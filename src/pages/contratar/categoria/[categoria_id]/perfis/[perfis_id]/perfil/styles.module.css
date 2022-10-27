@@ -1,28 +1,97 @@
+.body{
+    width: 100%;    
+    background-image: linear-gradient(to top, #ebf2f5, #c4e1ec, #9ad0e2, #69bfd7, #12afcb);
+    overflow: hidden;
+}
+
 .container{
-    background-color: rgba(255,255,255, 0.75);
-    max-width: 900px;
-    margin-left: 500px;    
-    min-height: 50vh;
-    padding-bottom: auto;
     display: flex;
-    justify-content: center; 
-    border-radius: 8px;
+    background-color: rgba(255,255,255, 0.75);
+    max-width: 980px;
+    margin-left: 500px;    
+    padding-bottom: auto;
+    border-radius: 20px;
+    border: 1px solid #fff;
+}
+
+.bodyImagem {
+    background-color: rgba(41,182,209, 0.90);
+    width: 100%;
+    border-radius: 20px;
+}
+
+.bodySobreMimNomeBtnContratar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #8DD9EA;
+    width: 100%;
+    padding: 1rem;
 }
 
 .containerNomeTipoServicoBtnContratar{
+    display: flex;
+    align-items: center;
+}
+
+.buttonSobreMim{
+    background-color: #12AFCB;
+    padding: 0.5rem 1rem;
+    border: 1px solid #fff;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: bold;
+}
+
+.buttonContratar{
+    background-color: #FFD666;
+    padding: 0.5rem 1rem;
+    border: 1px solid #fff;
+    border-radius: 8px;
+    color: #8D734B;
+    font-weight: bold;
+}
+
+.buttonChat{
+    margin-left: 3rem;
+}
+
+.buttonEndereco{
+    margin-left: 3rem;
+}
+
+
+.containerSobreMim{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-left: 9rem;   
+    margin-right: 5rem; 
+}
+.containerNomeServico{
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 }
+
+.containerContratar{
+    display: flex;
+    justify-content: flex-end;  
+    align-items: flex-end;  
+    margin-left: 5rem;
+}
+
 .containerImagem{
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 8px;
-    width: 270px;
-    height: 270px;
-    background-color: #fff;
+    width: 210px;
+    height: 210px;
+    background-color: #D3E2E5;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
 }
 
 .containerMap{
@@ -34,17 +103,44 @@
 }
 
 .Profnome{
+    display: flex;
+    flex-direction: row;
+    font-size: 20px;
     font-weight: bold;
     margin-top: 0.5rem;
     margin-bottom: 0.3rem;
+    color: #4D6F80;    
+}
+
+.check{
+    background-color: rgb(35, 171, 255);
+    border-radius: 10px;
+    padding: 2px;
+    color: #fff;
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
+.tipoServicoTitle{
+    font-weight: bold;
+    color: #fff;
+}
+
+.bodyDescricao{
+    background-color: rgba(255,255,255, 0.70);
+    width: 100%;
+    border-radius: 0 0 20px 20px;
 }
 
 .containerDescricao{
-    margin-top: 3rem;
-    margin-bottom: 3rem;
-    background-color: #FFF;
-    padding: 5rem 10rem 5rem 10rem;
+    margin: 3rem;
+    background-color: #fff;
+    padding: 3rem;
     border-radius: 2rem;
+}
+
+.cardTitle{
+    font-weight: bold;
 }
 
 .containerServicoAgenda{
@@ -53,30 +149,31 @@
 }
 
 .containerServicosPrestados{
-    margin-top: 1rem;
-    background-color: #FFF;
-    padding: 3rem 3rem 3rem 3rem;
-    margin-right: 2rem;
-    border-radius: 2rem;
     display: flex;
-    justify-content: center;
-    flex-direction: column;
-    margin-bottom: 2rem;
+    flex-flow: row wrap;    
+    background-color: #FFF;
+    padding: 2rem;
+    margin: 0 2rem 2rem 3rem;
+    border-radius: 2rem;
+    min-width: 43%;
 }
 
-.itemsServicosPrestados{
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
+.itemsServicosAgenda{
+    width: 50%;
 }
 
 .containerAgenda{
-    margin-top: 1rem;
-    background-color: #FFF;
-    padding: 2rem 2rem 2rem 2rem;
-    border-radius: 2rem;
     display: flex;
-    justify-content: center;
-    flex-direction: column;
+    flex-flow: row wrap;    
+    background-color: #FFF;
+    padding: 2rem;
+    border-radius: 2rem;
+    margin-right: 3rem;    
     margin-bottom: 2rem;
+}
+
+.linhaHorizontal{    
+    width: 100%;
+    border: solid 1px #1d1d2e;
+    margin-bottom: 1rem;
 }

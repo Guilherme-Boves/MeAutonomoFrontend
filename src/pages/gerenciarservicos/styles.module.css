@@ -40,7 +40,7 @@
     width: 100%;
 }
 
-.titleFiEditContainer{
+.fiButtonsContainer{
     display: flex;
     justify-content: space-between;
 }
@@ -72,10 +72,3 @@
     font-size: 18px;
     margin-top: 1rem;
 }
-
-.buttons{
-    text-align: center;
-    margin-top: 3rem;
-}
-
-

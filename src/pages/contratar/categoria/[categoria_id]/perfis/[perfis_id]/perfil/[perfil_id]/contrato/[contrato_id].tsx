@@ -171,7 +171,7 @@ export default function Contrato({ perfilProf }: PerfilProps){
                                                     <Select
                                                         labelId="demo-multiple-name-label"
                                                         id="demo-multiple-name"
-                                                        label={'Serviços'}                                                        
+                                                        label={'Serviços'}
                                                         multiple                                                        
                                                         value={servicos}
                                                         onChange={handleChangeServico}

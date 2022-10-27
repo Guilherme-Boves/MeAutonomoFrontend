@@ -1,7 +1,7 @@
 .container {
     display: flex;
     justify-content: flex-start;
-    max-width: 720px;
+    max-width: 720px;    
     height: 750px;
     background-color: #fff;
     margin-left: 550px;
@@ -14,19 +14,31 @@
     margin-top: 3rem;
 }
 
+.ServicosRefreshIcon{
+    display: flex;
+    flex-direction: row;
+}
+
+.refreshButton{
+    margin-top: 0.3rem;
+    cursor: pointer;
+}
+
 .title{
     font-weight: bold;    
     font-size: 20px;
     text-decoration-line: underline;
+    margin-right: 1rem;
 }
 
 .card{
     margin-top: 3rem;
     background-color: #fff;
     height: auto; 
-    width: 500px;
+    width: auto;
     border-radius: 20px;
     border: 2px solid #ddd;
+    padding-right: 1rem;
 }
 
 .cardTitle{
@@ -49,7 +61,6 @@
     display: flex;
     justify-content: flex-start;
     margin: 1rem;
-    
 }
 
 .buttonFinalizar:hover{ 

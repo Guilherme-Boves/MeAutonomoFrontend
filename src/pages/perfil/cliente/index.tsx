@@ -155,11 +155,11 @@ export default function PerfilCliente({ userData }: UserProps){
                 </div>
 
                 <h1 className={styles.nome}>{user.nome}</h1>
-
+                           
                 <div className={styles.containerCards}>
                     <form onSubmit={handleSalvarInformacoes}>
                         <h1>Meus Dados</h1>
-                        <h2 style={{marginTop:'-1rem'}}>__________________________</h2>
+                        <div className={styles.linhaHorizontal}></div>                        
                         <div className={styles.cardDadosDaConta}>
 
                             <h1 className={styles.DadosContaTitle}>Dados da Conta</h1>
@@ -190,7 +190,7 @@ export default function PerfilCliente({ userData }: UserProps){
                                     onChange={(e) => setNomeUsuario(e.target.value)}
                                 />
                             </div>
-                            
+                                                        
                             {user.userCliente.map((item)=>{
 
                                 {cpf === '' ? (setCpf(item.cpf)) : (<></>) }
@@ -239,7 +239,6 @@ export default function PerfilCliente({ userData }: UserProps){
                                         onChange={(e) => setEndereco(e.target.value)}
                                     />
                             </div>
-
                         </div>
                         
                         <div className={styles.button}>

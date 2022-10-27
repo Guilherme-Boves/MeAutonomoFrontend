@@ -31,13 +31,13 @@ export default function Categorias({ listaCategorias }: ListCategorias){
 
     const [categorias, setCategorias] = useState(listaCategorias || []);
     const [open, setOpen] = useState(false);
-    const [categoriaSelecionadaId, setCagoriaSelecionadaId] = useState('');
-    const [categoriaSelecionadaNome, setCagoriaSelecionadaNome] = useState('');
+    const [categoriaSelecionadaId, setCategoriaSelecionadaId] = useState('');
+    const [categoriaSelecionadaNome, setCategoriaSelecionadaNome] = useState('');
 
     const handleClickOpen = (categoria_id: string, nomeCategoria: string) => {
         setOpen(true);
-        setCagoriaSelecionadaId(categoria_id)
-        setCagoriaSelecionadaNome(nomeCategoria)
+        setCategoriaSelecionadaId(categoria_id)
+        setCategoriaSelecionadaNome(nomeCategoria)
     };
 
     const handleClose = () => {
@@ -100,10 +100,9 @@ export default function Categorias({ listaCategorias }: ListCategorias){
                                 return(
                                     <div key={item.id} className={styles.card}>
                                         <div className={styles.titleFiEditContainer}>
-                                        <div>
-                                            <h1 className={styles.title}>{item.nome}</h1>
-
-                                        </div>
+                                            <div>
+                                                <h1 className={styles.title}>{item.nome}</h1>
+                                            </div>
                                             <div className={styles.fiButtonsContainer}>
                                                 <button onClick={e => handleEditCategoria(item.id) }>
                                                     <FiEdit size={24} />                                            

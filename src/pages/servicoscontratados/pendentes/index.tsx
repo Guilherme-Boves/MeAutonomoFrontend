@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import jsonWebTokenService from 'jsonwebtoken'
 import { parseCookies } from 'nookies';
 import { DateFormat } from "../../../utils/Functions";
+import { FiRefreshCw } from "react-icons/fi";
 
 
 type ItemProps = {
@@ -68,17 +69,40 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
     const [servicos, setServicos] = useState(listServicos || [])
     const [open, setOpen] = useState(false);
     const [role, setRole] = useState('');
+    const [opcao, setOpcao] = useState('');
+
     let valorTotal = 0;
 
-    const handleClickOpen = () => {
+    const handleClickOpen = (op: number) => {
+        
+        if(op === 0){
+            setOpcao("Cancelar Serviço")
+        } else if(op === 1) {
+            setOpcao("Finalizar Serviço")
+        }
+
         setOpen(true);
     };
-
+    
     const handleClose = () => {
         setOpen(false);
     };
 
-    async function handleFinalizar(contrato_id, agenda_id) {
+    async function handleRefresh(){
+
+        const api = setupAPIClient();
+
+        try {
+            const listaAtualizada = await api.get('/servicos/pendentes')
+            setServicos(listaAtualizada.data)
+
+            toast.success("Lista atualizada!")
+        } catch(err){
+            toast.error("Ops, erro inesperado!")
+        }
+    }
+
+    async function handleFinalizar(contrato_id: string, agenda_id: string) {
         
         const api = setupAPIClient();
 
@@ -93,10 +117,38 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
             
             const listaAtualizada = await api.get('/servicos/pendentes')
             setServicos(listaAtualizada.data)
+
+            setOpen(false)
             
         } catch(err){
-            console.log("Ops, erro inesperado! ", err)
+            toast.error("Ops, erro inesperado!")
         }
+    }
+
+    async function handleCancelar(contrato_id: string, itemContrato_id: string, agenda_id: string) {
+        
+        const api = setupAPIClient();
+
+        try{
+            const response = await api.delete('/servicos/delete', {
+                data:{
+                    contrato_id,
+                    itemContrato_id,
+                    agenda_id,
+                }
+            })
+
+            toast.success('Serviço cancelado com sucesso!')                     
+            
+            const listaAtualizada = await api.get('/servicos/pendentes')
+            setServicos(listaAtualizada.data)
+
+            setOpen(false)
+            
+        } catch(err){
+            toast.error("Ops, erro inesperado!")
+        }
+
     }
 
     useEffect(() => {
@@ -133,7 +185,14 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
             </div>
             <div className={styles.container}>            
                 <div className={styles.itemContainer}>
-                    <h1 className={styles.title}>Serviços Pendentes</h1>
+                    <div className={styles.ServicosRefreshIcon}>
+                        <div>
+                            <h1 className={styles.title}>Serviços Pendentes</h1>
+                        </div>
+                        <div className={styles.refreshButton}>
+                            <FiRefreshCw size={20} onClick={handleRefresh}/>
+                        </div>
+                    </div>
                     {servicos.length === 0 ? (
                         <>
                             Nenhum serviço pendente
@@ -152,12 +211,13 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
                                     {item.item.map((item) => {
 
                                         let contrato_id = item.contrato_id
-
+                                        let itemContrato_id = item.id
+                                        
                                         return(
                                             <div key={item.id}>
                                                 {item.agendas.map((item) => {
                                                     return(
-                                                        <div key={item.id}>
+                                                        <div key={item.id}>                                                            
                                                             <h1 className={styles.cardTitle}>{DateFormat(item.agendas.data)} </h1>
                                                         </div>
                                                     )
@@ -194,28 +254,53 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
 
                                                 {item.agendas.map((item) => {
                                                     let agenda_id = item.agenda_id
-
                                                     return(
                                                         <div className={styles.buttonFinalizarContainer} key={item.id}>
-                                                            <Button variant="outlined" onClick={handleClickOpen} className={styles.buttonFinalizar}>
-                                                                    Finalizar servico
-                                                            </Button>
+                                                            { role === "CLIENTE" ? (
+                                                                    <div>                                                                        
+                                                                        <Button variant="outlined" onClick={e => handleClickOpen(0)} className={styles.buttonFinalizar}>
+                                                                            Cancelar servico
+                                                                        </Button>
+                                                                    </div>
+                                                                ) : (
+                                                                    <div>
+                                                                        <Button variant="outlined" onClick={e => handleClickOpen(0)} className={styles.buttonFinalizar} style={{marginRight:"10px"}}>
+                                                                            Cancelar servico
+                                                                        </Button>
+                                                                        <Button variant="outlined" onClick={e => handleClickOpen(1)} className={styles.buttonFinalizar}>
+                                                                            Finalizar servico
+                                                                        </Button>
+                                                                    </div>
+                                                                )}
+                                                            
 
                                                             <Dialog
                                                                 open={open}
                                                                 onClose={handleClose}                                                                    
                                                             >
-                                                                <DialogTitle>
-                                                                    {"Você tem certeza que deseja finalizar esse serviço?"}
-                                                                </DialogTitle>     
+                                                                { opcao.startsWith('C') ? (
+                                                                    <DialogTitle>
+                                                                        {"Você tem certeza que deseja cancelar esse serviço?"}
+                                                                    </DialogTitle>  
+                                                                ) : (
+                                                                    <DialogTitle>
+                                                                        {"Você tem certeza que deseja finalizar esse serviço?"}
+                                                                    </DialogTitle>
+                                                                )}   
 
                                                                 <DialogActions>
                                                                     <Button onClick={handleClose}>
                                                                         Cancelar
                                                                     </Button>
-                                                                    <Button onClick={(e) => handleFinalizar(contrato_id, agenda_id)} autoFocus>
-                                                                        Confirmar
-                                                                    </Button>
+                                                                    { opcao.startsWith('C') ? (
+                                                                        <Button onClick={(e) => handleCancelar(contrato_id, itemContrato_id, agenda_id)} autoFocus>
+                                                                            Confirmar
+                                                                        </Button>  
+                                                                    ) : (
+                                                                        <Button onClick={(e) => handleFinalizar(contrato_id, agenda_id)} autoFocus>
+                                                                            Confirmar
+                                                                        </Button>
+                                                                    )}
                                                                 </DialogActions>
                                                             </Dialog>
                                                         </div>    
