@@ -86,18 +86,20 @@ export default function CadastrarTipoServico({ listaCategorias }: CategoriaProps
 
             toast.success('Serviço cadastrado com sucesso!');
 
+            setNomeServico('');
+            setAvatarUrl('');
+            setImageAvatar(null);
+            setLoading(false);
+            setCagoriaSelecionada(0)
+            Router.back();
+
         }catch(err){
             const { error } = err.response.data
             toast.error(error);
             setLoading(false)
         }
 
-        setNomeServico('');
-        setAvatarUrl('');
-        setImageAvatar(null);
-        setLoading(false);
-        setCagoriaSelecionada(0)
-        Router.back();
+        
     }
 
     // Quando selecionar uma nova categoria na lista

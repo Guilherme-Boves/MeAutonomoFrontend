@@ -25,10 +25,8 @@ export default function EditarCategoria({categoriaRecebida}: CategoriaProps){
     const [categoria, setCategoria] = useState(categoriaRecebida)
     
     const [nomeCategoria, setNomeCategoria] = useState('');
-    //const [nomeCategoriaPlaceHolder, setNomeCategoriaPlaceHolder] = useState('');
     const [imageCategoriaUrl, setImageCategoriaUrl] = useState(''); //Armazendo uma URL para mostrar o Preview da imagem    ;
     const [imageCategoria, setimageCategoria] = useState(null) //Armazendo o File para ser enviado para o banco de dados
-    //const [cadastrou, setCadastrou] = useState(false)
 
     const [loading, setLoading] = useState(false)
 
@@ -72,6 +70,10 @@ export default function EditarCategoria({categoriaRecebida}: CategoriaProps){
                 return;
             }
 
+            if(nomeCategoria === categoria.nome && imageCategoria === null){                
+                return;
+            }
+
             if(nomeCategoria){
                 if(!containsNumbers(nomeCategoria)){ // Verificando se o nome da categoria possui números ou caracteres inválidos.
                     toast.error("Nome inválido")
@@ -84,23 +86,23 @@ export default function EditarCategoria({categoriaRecebida}: CategoriaProps){
             const data = new FormData();
             const categoria_id  = router.query.categoria_id as string;
             
-            // if(nomeCategoria && imageCategoria){
-            //     data.append('categoria_id', categoria_id)
-            //     data.append('nome', nomeCategoria)
-            //     data.append('file', imageCategoria)
-            // } else if(nomeCategoria && imageCategoria === null) {
-            //     data.append('categoria_id', categoria_id)
-            //     data.append('nome', nomeCategoria)
-            //     data.append('file', '')
-            // } else if(nomeCategoria === '' && imageCategoria){
-            //     data.append('categoria_id', categoria_id)
-            //     data.append('nome', '')
-            //     data.append('file', imageCategoria)
-            // }
-
-            data.append('categoria_id', categoria_id)
-            data.append('nome', nomeCategoria)
-            data.append('file', imageCategoria)
+            if(nomeCategoria === categoria.nome && imageCategoria){
+                data.append('categoria_id', categoria_id)
+                data.append('nome', '')
+                data.append('file', imageCategoria)
+            } else if(nomeCategoria && imageCategoria){
+                data.append('categoria_id', categoria_id)
+                data.append('nome', nomeCategoria)
+                data.append('file', imageCategoria)
+            } else if(nomeCategoria && imageCategoria === null) {
+                data.append('categoria_id', categoria_id)
+                data.append('nome', nomeCategoria)
+                data.append('file', '')
+            } else if(nomeCategoria === '' && imageCategoria){
+                data.append('categoria_id', categoria_id)
+                data.append('nome', '')
+                data.append('file', imageCategoria)
+            }
 
             setLoading(true);
 
@@ -109,23 +111,18 @@ export default function EditarCategoria({categoriaRecebida}: CategoriaProps){
 
             toast.success('Categoria editada com sucesso!');
 
+            setNomeCategoria('');
+            setimageCategoria(null);
+            setLoading(false);
+            router.back()
+
         }catch(err){  
             const { error } = err.response.data          
             toast.error(error);
-            console.log(err)
+            setLoading(false);
         }
 
         
-        //setCadastrou(true)
-        // if(nomeCategoria === ''){
-        //     setNomeCategoriaPlaceHolder(categoria.nome)
-        // } else{
-        //     setNomeCategoriaPlaceHolder(nomeCategoria)
-        // }
-        setNomeCategoria('');
-        setimageCategoria(null);
-        setLoading(false);
-        router.back()
     }
 
     return(
@@ -149,21 +146,6 @@ export default function EditarCategoria({categoriaRecebida}: CategoriaProps){
                             value={nomeCategoria}
                             onChange={(e) => setNomeCategoria(e.target.value)}
                         />
-                        {/* {cadastrou === true ? (
-                            <Input
-                                type="text" 
-                                //placeholder={nomeCategoriaPlaceHolder}
-                                value={nomeCategoria}
-                                onChange={(e) => setNomeCategoria(e.target.value)}
-                            />
-                        ) : (
-                            <Input
-                                type="text" 
-                                placeholder={categoria.nome}
-                                value={nomeCategoria}
-                                onChange={(e) => setNomeCategoria(e.target.value)}
-                            />
-                        )} */}
 
                         <label className={styles.label}>
                             <span className={styles.span}>

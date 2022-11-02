@@ -25,10 +25,8 @@ export default function EditarTipoServico({ servicoRecebido }: TipoSerivcoProps)
     const [tipoServico, setTipoServico] = useState(servicoRecebido)
     
     const [nomeServico, setNomeServico] = useState('');
-    //const [nomeServicoPlaceHolder, setNomeServicoPlaceHolder] = useState('');
     const [imageServicoUrl, setimageServicoUrl] = useState(''); //Armazendo uma URL para mostrar o Preview da imagem    ;
     const [imageServico, setimageServico] = useState(null) //Armazendo o File para ser enviado para o banco de dados
-    const [cadastrou, setCadastrou] = useState(false)
 
     const [loading, setLoading] = useState(false)
 
@@ -72,6 +70,10 @@ export default function EditarTipoServico({ servicoRecebido }: TipoSerivcoProps)
                 return;
             }
 
+            if(nomeServico === tipoServico.nome && imageServico === null){                
+                return;
+            }
+
             if(nomeServico){
                 if(!containsNumbers(nomeServico)){ // Verificando se o nome da tipoServico possui números ou caracteres inválidos.
                     toast.error("Nome inválido")
@@ -84,24 +86,24 @@ export default function EditarTipoServico({ servicoRecebido }: TipoSerivcoProps)
             const data = new FormData();
             const tipoServico_id  = router.query.tiposervico_id as string;
             
-            // if(nomeServico && imageServico){
-            //     data.append('tipoServico_id', tipoServico_id)
-            //     data.append('nome', nomeServico)
-            //     data.append('file', imageServico)
-            // } else if(nomeServico && imageServico === null) {
-            //     data.append('tipoServico_id', tipoServico_id)
-            //     data.append('nome', nomeServico)
-            //     data.append('file', '')
-            // } else if(nomeServico === '' && imageServico){
-            //     data.append('tipoServico_id', tipoServico_id)
-            //     data.append('nome', '')
-            //     data.append('file', imageServico)
-            // }
-
-            data.append('tipoServico_id', tipoServico_id)
-            data.append('nome', nomeServico)
-            data.append('file', imageServico)
-
+            if(nomeServico === tipoServico.nome && imageServico){
+                data.append('tipoServico_id', tipoServico_id)
+                data.append('nome', '')
+                data.append('file', imageServico)
+            } else if(nomeServico && imageServico){
+                data.append('tipoServico_id', tipoServico_id)
+                data.append('nome', nomeServico)
+                data.append('file', imageServico)
+            } else if(nomeServico && imageServico === null) {
+                data.append('tipoServico_id', tipoServico_id)
+                data.append('nome', nomeServico)
+                data.append('file', '')
+            } else if(nomeServico === '' && imageServico){
+                data.append('tipoServico_id', tipoServico_id)
+                data.append('nome', '')
+                data.append('file', imageServico)
+            }
+            
             setLoading(true);
 
             const apiClient = setupAPIClient();
@@ -109,23 +111,17 @@ export default function EditarTipoServico({ servicoRecebido }: TipoSerivcoProps)
 
             toast.success('Serviço editado com sucesso!');
 
+            setNomeServico('');
+            setimageServico(null);
+            setLoading(false);
+            router.back()
+
         }catch(err){  
             const { error } = err.response.data          
             toast.error(error);
-            console.log(err)
-        }
-
+            setLoading(false)
+        }        
         
-        //setCadastrou(true)
-        // if(nomeServico === ''){
-        //     setNomeServicoPlaceHolder(tipoServico.nome)
-        // } else{
-        //     setNomeServicoPlaceHolder(nomeServico)
-        // }
-        setNomeServico('');
-        setimageServico(null);
-        setLoading(false);
-        router.back()
     }
 
     return(
@@ -143,27 +139,12 @@ export default function EditarTipoServico({ servicoRecebido }: TipoSerivcoProps)
                     </div>
 
                     <form className={styles.form} onSubmit={handleEdittipoServico}>
-                    <Input
-                        type="text" 
-                        placeholder={"Nome do serviço"}
-                        value={nomeServico}
-                        onChange={(e) => setNomeServico(e.target.value)}
-                    />
-                        {/* {cadastrou === true ? (
-                            <Input
-                                type="text" 
-                                placeholder={nomeServicoPlaceHolder}
-                                value={nomeServico}
-                                onChange={(e) => setNomeServico(e.target.value)}
-                            />
-                        ) : (
-                            <Input
-                                type="text" 
-                                placeholder={tipoServico.nome}
-                                value={nomeServico}
-                                onChange={(e) => setNomeServico(e.target.value)}
-                            />
-                        )} */}
+                        <Input
+                            type="text" 
+                            placeholder={"Nome do serviço"}
+                            value={nomeServico}
+                            onChange={(e) => setNomeServico(e.target.value)}
+                        />
 
                         <label className={styles.label}>
                             <span className={styles.span}>

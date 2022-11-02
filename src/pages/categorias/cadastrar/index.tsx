@@ -69,16 +69,19 @@ export default function CadastrarCategoria(){
 
             toast.success('Categoria cadastrada com sucesso!');
 
+            setNomeCategoria('');
+            setAvatarUrl('');
+            setImageAvatar(null);
+            setLoading(false);
+            router.back();
+
         }catch(err){  
             const { error } = err.response.data          
             toast.error(error);
+            setLoading(false);
         }
 
-        setNomeCategoria('');
-        setAvatarUrl('');
-        setImageAvatar(null);
-        setLoading(false);
-        router.back();
+        
     }
 
     return(

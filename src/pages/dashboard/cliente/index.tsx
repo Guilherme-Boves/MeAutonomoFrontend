@@ -1,25 +1,46 @@
-import { Fragment } from 'react'
+import { Fragment, useContext, useEffect, useState } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BiBell, BiX } from "react-icons/bi";
-import { ButtonSignOut } from '../../../components/ui/ButtonSignOut';
 import Link from 'next/link';
 import { canSSRCliente } from '../../../utils/canSSRCliente';
+import { AuthContext } from '../../../contexts/AuthContext';
+import { setupAPIClient } from '../../../services/api';
 
-const user = {
-  name: 'Luiz Henrique',
-  imageUrl:
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+type ItemUserProps = {
+  id: string;
+  nome: string;
+  email: string;
+  role: string;
+  telefone: string;
+  dataNascimento: string;
+  endereco: string;
+  imagem: string;
+  userCliente:[{
+      cpf: string;        
+  }]
 }
-const userNavigation = [
-  { name: 'Gerenciar meu Perfil', href: '/perfil/cliente' },
-  { name: 'Sair', href:'#' },
-]
+
+interface UserProps {
+  userData: ItemUserProps
+}
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Dashboard() {
+export default function Dashboard({ userData }: UserProps) {
+
+  const { signOut } = useContext(AuthContext)
+
+  const [user, setUser] = useState(userData);
+  const [nomeUsuario, setNomeUsuario] = useState(user.nome);
+  const [imagem, setImagem] = useState(user.imagem);
+  
+  const userNavigation = [
+    { name: 'Gerenciar meu Perfil', href: '/perfil/cliente' },
+    { name: 'Sair', onClick: signOut },
+  ]
+
   return (
     <>
       <div className="min-h-full">
@@ -43,11 +64,10 @@ export default function Dashboard() {
                     >
                       <BiBell className="h-6 w-6" aria-hidden="true" />
                     </button>
-                    <ButtonSignOut/>
                     <Menu as="div" className="relative ml-3">
                       <div>
                         <Menu.Button className="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-zinc-400">
-                          <img className="h-8 w-8 rounded-full" src={user.imageUrl} alt="" />
+                          <img className="h-8 w-8 rounded-full" src={`http://localhost:3333/files/${imagem}`} alt="" />
                         </Menu.Button>
                       </div>
                       <Transition
@@ -65,9 +85,10 @@ export default function Dashboard() {
                               {({ active }) => (
                                 <a
                                   href={item.href}
+                                  onClick={item.onClick}
                                   className={classNames(
                                     active ? 'bg-gray-100' : '',
-                                    'block px-4 py-2 text-sm text-gray-700'
+                                    'block px-4 py-2 text-sm text-gray-700', "cursor-pointer"
                                   )}
                                 >
                                   {item.name}
@@ -86,7 +107,7 @@ export default function Dashboard() {
 
         <header className="bg-white shadow">
           <div className="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-extrabold tracking-tight text-[#4D6F80]">Bem vindo, {user.name}!</h1>
+            <h1 className="text-3xl font-extrabold tracking-tight text-[#4D6F80]">Bem vindo, {nomeUsuario}!</h1>
             <h1 className="text-base font-semibold tracking-tight text-[#4D6F80]">Ficamos felizes de poder contar com você :)</h1>
           </div>
         </header>
@@ -152,8 +173,14 @@ export default function Dashboard() {
 }
 
 export const getServerSideProps = canSSRCliente(async (ctx) =>{
- 
+  
+    const api = setupAPIClient(ctx);
+
+    const user = await api.get('/userinfo');
+
     return {
-        props: {}
+        props: {
+          userData: user.data
+        }
     }
 })

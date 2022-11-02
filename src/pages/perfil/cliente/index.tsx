@@ -7,6 +7,7 @@ import { FiUpload } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { canSSRCliente } from "../../../utils/canSSRCliente";
 import MaskedInput from "../../../components/ui/MaskedInput";
+import { containsNumbers, retiraMascara, ShortDateFormat } from "../../../utils/Functions";
 
 type ItemUserProps = {
     id: string;
@@ -33,22 +34,7 @@ export default function PerfilCliente({ userData }: UserProps){
     const [telefone, setTelefone] = useState(user.telefone);
     const [endereco, setEndereco] = useState(user.endereco);
     const [imagem, setImagem] = useState(user.imagem);
-    const [cpf, setCpf] = useState('');
-
-    let splitedData = user.dataNascimento.split('T')
-    let newDate = splitedData[0].split('-')
-    let dataFormatada = `${newDate[2]}/${newDate[1]}/${newDate[0]}`
-
-    function containsNumbers(str){        
-        const regexNome = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$/;
-        return regexNome.test(str);
-    }
-
-    const onlyNumbers = (str) => str.replace(/[^0-9]/g, '') // Retira a máscara, deixando apenas os números
-
-    function handleRetiraMascara(value) {        
-        return onlyNumbers(value)
-    }
+    const [cpf, setCpf] = useState('');   
 
     async function handleFile(e: ChangeEvent<HTMLInputElement>){
        
@@ -91,10 +77,10 @@ export default function PerfilCliente({ userData }: UserProps){
             return;
         }
 
-        if(nomeUsuario === user.nome && telefone === user.telefone && endereco === user.endereco){
-            // Se o usuário não inserir informações novas, a função será finalizada.            
-            return;
-        }
+        // if(nomeUsuario === user.nome && telefone === user.telefone && endereco === user.endereco){
+        //     // Se o usuário não inserir informações novas, a função será finalizada.            
+        //     return;
+        // }
 
         if(!containsNumbers(nomeUsuario)){ // Verificando se o nome possui números ou caracteres inválidos.
             toast.error("Nome inválido")
@@ -219,7 +205,7 @@ export default function PerfilCliente({ userData }: UserProps){
                                         style={{marginBottom:"0", padding:"0"}}                                       
                                         mask={"(99) 99999-9999"}
                                         maskChar={''}
-                                        onChange={(e) => setTelefone(handleRetiraMascara(e.target.value))}
+                                        onChange={(e) => setTelefone(retiraMascara(e.target.value))}
                                         value={telefone}                                        
                                     />
                             </div>
@@ -228,7 +214,7 @@ export default function PerfilCliente({ userData }: UserProps){
                                 <h2 className={styles.DadosPessoaisSubTitle}>Data de Nascimento: </h2>
                                     <input 
                                         disabled={true}
-                                        value={dataFormatada}
+                                        value={ShortDateFormat(user.dataNascimento)}
                                     />
                             </div>
 
