@@ -86,13 +86,13 @@ export default function PerfilCliente({ userData }: UserProps){
     async function handleSalvarInformacoes(e: FormEvent) {
         e.preventDefault();
 
-        if(nomeUsuario === user.nome && telefone === user.telefone && endereco === user.endereco){
-            // Se o usuário não inserir informações novas, a função será finalizada.            
+        if(nomeUsuario === '' || telefone === '' || endereco === '' || endereco === null) {
+            toast.warn('Campos de Nome, Telefone e Email não podem ser vazios')
             return;
         }
 
-        if(nomeUsuario === '' || telefone === '' || endereco === '') {
-            toast.warn('Campos de Nome, Telefone e Email não podem ser vazios')
+        if(nomeUsuario === user.nome && telefone === user.telefone && endereco === user.endereco){
+            // Se o usuário não inserir informações novas, a função será finalizada.            
             return;
         }
 

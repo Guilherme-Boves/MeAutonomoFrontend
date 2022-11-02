@@ -12,12 +12,12 @@ import { ptBR } from 'date-fns/locale'
 
 import styles from './styles.module.css'
 import { toast } from "react-toastify";
-import { containsNumbers, DateFormat } from "../../../utils/Functions";
+import { containsNumbers, DateFormat, isDataDoisMesesAdiante, isNumeric } from "../../../utils/Functions";
+import { ReturnButtonWithFunction } from "../../../components/ui/ReturnButtonWithFunction";
 
-type ItemPublicacaoRecebidaProps = [{
+type ItemPublicacaoRecebidaProps = {
     id: string;
-    items:[
-        {
+    items: [{
             id: string;
             descricao: string;
             publicacao_id: string;
@@ -40,7 +40,7 @@ type ItemPublicacaoRecebidaProps = [{
             }]
         }
     ]
-}]
+}
 
 type ItemCategoriaProps = {
     id: string;
@@ -53,10 +53,7 @@ type TipoServicoProps = {
 }
 
 type ItemPublicacao = {
-    descricao: string;
     id: string;
-    publicacao_id: string;
-    tipoDoServico_id: string;
 }
 
 type Servicos = {
@@ -80,7 +77,7 @@ interface PublicacaoProps {
     publicacaoRecebida: ItemPublicacaoRecebidaProps;
 }
 
-export default function NovaPublicacao({publicacaoRecebida}: PublicacaoProps/*, { listCategoria }: CategoriaProps*/){
+export default function NovaPublicacao({publicacaoRecebida}: PublicacaoProps){
 
     const router = useRouter();
     
@@ -88,116 +85,104 @@ export default function NovaPublicacao({publicacaoRecebida}: PublicacaoProps/*, 
 
     const [publicacao, setPublicacao] = useState(publicacaoRecebida)
     const [servicos, setServicos] = useState<Servicos[]>();
-    
-    //const [categorias, setCategorias] = useState(listCategoria || []);
-    const [categoriaSelecionada, setCagoriaSelecionada] = useState(0);
 
-    const [tipoServico, setTipoServico] = useState<TipoServicoProps[] | []>([]);
-    const [tipoServicoSelecionada, setTipoServicoSelecionada] = useState(0);
+    const [categoria, setCategoria] = useState('');    
+    const [tipoServicoId, setTipoServicoId] = useState('');
+    const [tipoServicoNome, setTipoServicoNome] = useState('');
 
-    const [descricao, setDescricao] = useState('');
-
+    const [descricao, setDescricao] = useState('');    
     const [nomeServico, setNomeServico] = useState('');
     const [preco, setPreco] = useState('');
-
     const [dataAgenda, setDataAgenda] = useState(new Date())
-
     const [itemId, setItemId] = useState<ItemPublicacao>();
-    const [itemIdAux, setitemIdAux] = useState('');
-
+ 
     const [agendas, setAgendas] = useState<Agendas[]>([]);
 
-    const [loadingServicos, setLoadingServicos] = useState(false)
-    const [loadingAgenda, setLoadingAgenda] = useState(false)
+    useEffect(() => {
+        async function loadInfosLocalStorage() {
 
-    const [countServicos, setCountServicos] = useState(0)
-    const [countAgendas, setCountAgendas] = useState(0)
-    
-
-    // useEffect(() => {
-    //     async function loadInfo() {
-
-    //         const api = setupAPIClient();
-    //         try{
-    //             const response = await api.get('/tiposervico',{
-    //                 params:{
-    //                     categoria_id: categorias[categoriaSelecionada].id
-    //                 }
-    //             })
-
-    //             setTipoServico(response.data)
-    //         } catch(err){ // catch necessário para não quebrar a aplicação, pois se não tiver nenhum serviço cadastrado, irá retornar erro.
-    //             return;
-    //         }
-    //     }
-
-    //    loadInfo()
-    // }, [categorias, categoriaSelecionada])
-   
-    function handleChangeCategoria(event){
-        setCagoriaSelecionada(event.target.value)
-    }
-
-    function handleChangeTipoServico(event){
-        setTipoServicoSelecionada(event.target.value)
-    }
-
-    function isNumeric(str) {
-        return /^-?\d+$/.test(str);
-    }
-
-    // async function handleCadastarPrimeirasInfos(){
-
-    //     const publicacao_id = router.query.publicacao_id
-
-    //     if(categorias.length === 0){
-    //         toast.error("Selecione uma categoria!")
-    //         return;
-    //     }
-
-    //     if(tipoServico.length === 0){
-    //         toast.error("Selecione um Serviço!")
-    //         return;
-    //     }
-
-    //     if(descricao === ''){
-    //         toast.warning('Preencha todos os campos!')
-    //         return;
-    //     }
-
-    //     if(publicacao_id === ''){
-    //         console.log('Não foi encontrado o ID da publicação!')
-    //         return;
-    //     }
-
-    //     if(tipoServico[tipoServicoSelecionada].id === ''){
-    //         toast.warning('Selecione o tipo de serviço!')
-    //         return;
-    //     }        
-        
-    //     const api = setupAPIClient();
-
-    //     try{
-    //         const response = await api.post('/publicarservico/add', {
-    //             descricao: descricao,
-    //             publicacao_id: publicacao_id,
-    //             tipoDoServico_id: tipoServico[tipoServicoSelecionada].id
-    //         })
+            setDescricao(localStorage.getItem("ls_descricao"))
+            setServicos(JSON.parse(localStorage.getItem("ls_servicos")))   
+            setAgendas(JSON.parse(localStorage.getItem("ls_agendas")))                
+            setCategoria(localStorage.getItem("ls_categoria"))       
             
-    //         const idItem = response.data
-    //         setItemId(idItem.id)
-    //         setitemIdAux(idItem.id)
-    //         setPagina((paginaAtual) => paginaAtual + 1)
-    //     } catch(err){
-    //         toast.error(`Você já têm uma publicação como: ${tipoServico[tipoServicoSelecionada].nome}`)
-    //         return;
-    //     }
-    // }
-      
+            setTipoServicoId(localStorage.getItem("ls_tiposervicoid"))
+            setTipoServicoNome(localStorage.getItem("ls_tiposerviconome"))
+
+            /** Recuperando o id da tabela ItemPublicacao. 
+             * ID necessário para quando formos adicionar novos serviços ou agendas para a publicação, desta forma
+             * o sistema saberá qual publicação aquele serviço ou agenda pertencerá
+             * **/
+            const itemId = publicacao.items.map((item) => item.id)            
+            setItemId({id: itemId[0].toString()})
+            
+        }
+
+        loadInfosLocalStorage()
+    }, [publicacao.items])
+    
+    function handleNextForm(){
+
+        if(descricao === '' || descricao.length === 0){
+            toast.warning('Insira uma descrição!')
+            return;
+        }
+        setPagina((paginaAtual) => paginaAtual + 1)
+    }
+
+    async function handleUpdateInfos(){
+
+        const publicacao_id = router.query.publicacao_id
+
+        if(descricao === '' || descricao.length === 0){
+            toast.warning('Insira uma descrição!')
+            return;
+        }
+
+        if(publicacao_id === ''){
+            console.log('Não foi encontrado o ID da publicação!')
+            return;
+        }
+
+        if(!tipoServicoId){
+            console.log('Não foi encontrado o tipoServicoID!')
+            return;
+        }
+
+        if(!servicos || servicos.length === 0){
+            toast.error("Adicione um serviço!")
+            return;
+        }
+        
+        if(!agendas || agendas.length === 0){
+            toast.error("Adicione uma agenda!")
+            return;
+        }   
+        
+        try{
+            const api = setupAPIClient();
+
+            await api.put('/publicarservico/update', {
+                item_id: itemId.id,
+                descricao: descricao,
+                publicacao_id: publicacao_id,                
+                tipoDoServico_id: tipoServicoId
+            })
+
+            localStorage.clear()
+
+            toast.success("Publicação editada com sucesso!")
+            router.back()
+            
+        } catch(err) {
+            const { error } = err.response.data
+            toast.error(error)
+        }
+    }  
 
     async function handleDeleteItemServico(servico_id: string){
-        
-       const api = setupAPIClient();
+
+        const api = setupAPIClient();
 
         await api.delete('/servicosprestados/delete', {
             params:{
@@ -209,42 +194,8 @@ export default function NovaPublicacao({publicacaoRecebida}: PublicacaoProps/*, 
             return (item.id !== servico_id)
         })
 
-        setServicos(removeItemServico)
-        setCountServicos(-1);
-        
+        setServicos(removeItemServico)        
     }
-
-    // async function handleUpdateInfos(item_id: string){
-    //     const publicacao_id = router.query.publicacao_id
-
-    //     if(descricao === ''){
-    //         toast.warning('Preencha todos os campos!')
-    //         return;
-    //     }
-
-    //     if(publicacao_id === ''){
-    //         console.log('Não foi encontrado o ID da publicação!')
-    //         return;
-    //     }
-
-    //     if(tipoServico[tipoServicoSelecionada].id === ''){
-    //         toast.warning('Selecione o tipo de serviço!')
-    //         return;
-    //     }      
-        
-    //     const api = setupAPIClient();
-
-    //     await api.put('/publicarservico/update', {
-    //         item_id: item_id,
-    //         descricao: descricao,
-    //         publicacao_id: publicacao_id,
-    //         tipoDoServico_id: tipoServico[tipoServicoSelecionada].id
-    //     })
-
-    //     setitemIdAux(item_id)
-        
-    //     setPagina((paginaAtual) => paginaAtual + 1)
-    //}  
 
     async function handleDeleteItemAgenda(agenda_id: string){
         
@@ -261,47 +212,7 @@ export default function NovaPublicacao({publicacaoRecebida}: PublicacaoProps/*, 
         })
 
         setAgendas(removeItemAgenda)
-        setCountAgendas(-1);
     }
-
-    // async function handleDeleteItem(item_id: string) {
-        
-    //     const api = setupAPIClient();
-
-    //     await api.delete('/publicarservico/delete', {           
-    //         params:{
-    //             item_id: item_id
-    //         }
-    //     })     
-
-    // }
-
-    // async function handlePublicar() {
-
-    //     if(countServicos === 0){
-    //         toast.error("Adicione um serviço!")
-    //         return;
-    //     }
-        
-    //     if(countAgendas === 0){
-    //         toast.error("Adicione uma agenda!")
-    //         return;
-    //     }
-
-    //     const publicacao_id = router.query.publicacao_id
-
-    //     const api = setupAPIClient();
-
-    //     await api.put('/publicarservico', {
-    //             publicacao_id: publicacao_id                
-    //     }).then(function (response) {
-    //         toast.success('Publicação criada com sucesso!')
-    //         router.back();
-    //     }).catch(function (error) {
-    //         console.log(error);
-    //     });
-
-    // }
 
     async function handleAddServicoPrestado(e: FormEvent){
         e.preventDefault();
@@ -328,32 +239,19 @@ export default function NovaPublicacao({publicacaoRecebida}: PublicacaoProps/*, 
 
         const api = setupAPIClient();
         
-        //console.log("ID: " + itemId)
-
-        // const itemId = publicacao.map((item) => {
-        //     item.items.map((item) => {
-        //       item.id 
-        //     })
-        // })
-        // console.log("ID: " + itemId)
-
-        // setLoadingServicos(true)
-        // await api.post('/servicosprestados', {
-        //     nome: nomeServico,
-        //     preco: preco,
-        //     item_id: itemId
+        await api.post('/servicosprestados', {
+            nome: nomeServico,
+            preco: preco,
+            item_id: itemId.id
                 
-        // }).then(function (response) {
-        //     setServicos((oldArray => [...oldArray, response.data]))
-        //     setLoadingServicos(false)
-        //     setNomeServico('')
-        //     setPreco('')
-
-        //     setCountServicos(+1);
-
-        // }).catch(function (error) {
-        //     setLoadingServicos(false)            
-        // });
+        }).then(function (response) {
+            setServicos((oldArray => [...oldArray, response.data]))
+            setNomeServico('')
+            setPreco('')
+        }).catch(function (err) {
+            const {error} = err.response.data
+            toast.error(error)            
+        });
 
     }
 
@@ -365,115 +263,65 @@ export default function NovaPublicacao({publicacaoRecebida}: PublicacaoProps/*, 
 
         e.preventDefault();
 
-        // if(dataAgenda === ''){
-        //     toast.warning('Informe uma data!');
-        //     return;
-        // }
+        if(!dataAgenda){
+            toast.warning('Informe uma data!');
+            return;
+        }
 
-        //let splittedDate = dataAgenda.split('-')
-        //dataAgenda = `${splittedDate[2]}/${splittedDate[1]}/${splittedDate[0]}`
-        
+        if(Number(dataAgenda) < Date.now()){
+            toast.warning("Data inválida!");
+            return;
+        }
+
+        if(!isDataDoisMesesAdiante(dataAgenda)){
+            return;
+        }
+
         const api = setupAPIClient();
 
-        setLoadingAgenda(true)
         await api.post('/agenda', {
             data: dataAgenda,
-            item_id: itemId
+            item_id: itemId.id
         }).then(function (response) {
-
             setAgendas((oldArray => [...oldArray, response.data]))
-            setLoadingAgenda(false)
-
-            setCountAgendas(+1);
-
         }).catch(function (err) {
-            setLoadingAgenda(false)
             const {error} = err.response.data;
             toast.error(error);
         });
     }
 
-    // async function deletePublicacao() {
+    function handleReturn(){
+        if(servicos.length === 0) {
+            toast.error("Adicione um serviço antes de finalizar a edição!")
+            return;
+        } else if(agendas.length === 0) {
+            toast.error("Adicione uma agenda antes de finalizar a edição!")
+            return;
+        }
 
-    //     const api = setupAPIClient();
-        
-    //     if(servicos.length > 0) {
-    //         servicos.map((item) => {
-    //             handleDeleteItemServico(item.id)
-    //             setNomeServico('')
-    //             setPreco('')
-    //             setServicos([])
-    //         })
-    //     }
-
-    //     if(agendas.length > 0) {
-    //         agendas.map((item) => {
-    //             handleDeleteItemAgenda(item.id)
-    //             //setDataAgenda('');                
-    //             setAgendas([])
-    //         })
-    //     }
-
-    //     if(itemIdAux != ''){
-    //         handleDeleteItem(itemIdAux)
-    //     }
-        
-    //     await api.delete('/publicarservico', {
-    //         params:{
-    //             publicacao_id: router.query.publicacao_id
-    //         } 
-    //     })
-    // }
+        localStorage.clear()
+        router.back()
+    }
 
     const PageDisplay = () => {
         if (pagina == 0){
             return(
                 <form className={styles.form}>
-                 
-                    {/* {categorias.length === 0 ? (
-                        <select className={styles.select}>                                                                    
-                            <option>
-                                {"Selecione uma categoria"}
-                            </option>    
-                        </select>
-                    ) : (
-                        <select className={styles.select} value={categoriaSelecionada} onChange={handleChangeCategoria}>
-                            {categorias.map( (item, index) => {
-                                return(
-                                    <option key={item.id} value={index}>
-                                        {item.nome}
-                                    </option>
-                                )
-                            })}
-                        </select>
-                    )} */}
+                                     
+                    <div className={styles.select}>
+                        {categoria}
+                    </div>
+                    <div className={styles.select}>
+                        {tipoServicoNome}
+                    </div>
 
-                    {tipoServico.length === 0 ? (
-                        <select className={styles.select}>                                                                    
-                            <option>
-                                {"Selecione um tipo de serviço"}
-                            </option>    
-                        </select>
-                    ) : (
-                        <select className={styles.select} value={tipoServicoSelecionada} onChange={handleChangeTipoServico}>
-                            {tipoServico.map( (item, index) => {
-                                return(
-                                    <option key={item.id} value={index}>
-                                        {item.nome}
-                                    </option>
-                                )
-                            })}
-                        </select>
-                    )}
-                    
                     <h1 className={styles.titulo} style={{paddingTop:'1rem'}}>Descrição</h1>
-                    
                     <textarea                     
                         className={styles.descricao}
                         maxLength={265}
                         value={descricao}
                         onChange={(e) => setDescricao(e.target.value)}
-                    />
+                    />                    
                 </form>
             )
         } else {
@@ -513,90 +361,73 @@ export default function NovaPublicacao({publicacaoRecebida}: PublicacaoProps/*, 
                     </form>
 
                     <form className={styles.form} onSubmit={handleAddAgenda}>
-                        <h1 className={styles.titulo} style={{paddingTop:'1rem'}}>Agenda</h1>
-                        <div className={styles.inputContainer}>
-                            <LocalizationProvider adapterLocale={ ptBR } dateAdapter={AdapterDateFns}>
-                                <DateTimePicker
-                                    renderInput={(props) => <TextField placeholder={`${Date.now()}`} {...props} />}
-                                    label="DateTimePicker"                               
-                                    className={styles.datePicker}
-                                    value={dataAgenda}
-                                    onChange={handleChangeAgenda}
-                                />
-                            </LocalizationProvider>
-                            <button 
-                                className={styles.input} 
-                                style={{
-                                    backgroundColor:'#12AFCB', 
-                                    color:'#fff'
-                                }}
-                                type="submit"
-                            >
-                                +
-                            </button>
+                        <h1 className={styles.titulo} style={{paddingTop:'0'}}>Agenda</h1>
+                        <div className={styles.inputDatePickerContainer}>
+                            <div className={styles.datePickerContainer}>
+                                <LocalizationProvider adapterLocale={ ptBR } dateAdapter={AdapterDateFns}>
+                                    <DateTimePicker
+                                        renderInput={(props) => <TextField placeholder={`${Date.now()}`} {...props} />}
+                                        label="DateTimePicker"                               
+                                        className={styles.datePicker}
+                                        value={dataAgenda}
+                                        onChange={handleChangeAgenda}
+                                    />
+                                </LocalizationProvider>
+                            </div>
+                            <div className={styles.btnAddAgendaContainer}>
+                                <button 
+                                    className={styles.inputAddAgenda} 
+                                    style={{
+                                        backgroundColor:'#12AFCB', 
+                                        color:'#fff'
+                                    }}
+                                    type="submit"
+                                >
+                                    +
+                                </button>
+                            </div>
                         </div>
                     </form>
-                    {/* {loadingServicos ? (
+                    {servicos.length === 0 ?(
                         <></>
                     ) : (
-                        servicos.map((item: Servicos) => {
-                            return(
-                                <div key={item.id} className={styles.items}>
-                                    <h1>{item.nome} - R${item.preco}</h1>
-                                    <button onClick={e => handleDeleteItemServico(item.id)}>
-                                        <FiTrash size={24}/>
-                                    </button>
-                                </div>
-                                )
-                            })
+                        <div>
+                            <div className={styles.subtitle}>
+                                <h1>Serviços</h1>
+                            </div>
+                            {servicos.map((item: Servicos) => {
+                                return(
+                                    <div key={item.id} className={styles.listaDeServicosAgendas}>
+                                        <h1>{item.nome} - R${item.preco}</h1>
+                                        <button onClick={e => handleDeleteItemServico(item.id)}>
+                                            <FiTrash size={24}/>
+                                        </button>
+                                    </div>
+                                    )
+                                })
+                            }
+                        </div>              
                         )}
-
-                    {loadingAgenda ? (
+                    {agendas.length === 0 ? (
                         <></>
                     ) : (
-                        agendas.map((item: Agendas) => {
-                            return(
-                                <div key={item.id} className={styles.items}>
-                                    <h1>{DateFormat(item.data)}</h1>
-                                    <button onClick={e => handleDeleteItemAgenda(item.id)}>
-                                        <FiTrash size={24}/>
-                                    </button>
-                                </div>
-                                )
-                            })
-                        )}    */}
-                    {/* <>
-                        {publicacao.map((item) => {
-                            item.items.map((item) => {
-                                item.servicosPrestadosProf.map((item) => {
-                                    return(
-                                        <div key={item.id} className={styles.items}>
-                                            <h1>{item.nome} - R${item.preco}</h1>
-                                            <button onClick={e => handleDeleteItemServico(item.id)}>
-                                                <FiTrash size={24}/>
-                                            </button>
-                                        </div>
+                        <div>
+                            <div className={styles.subtitle}>
+                                <h1>Agendas</h1>
+                            </div>
+                            {agendas.map((item: Agendas) => {
+                                return(
+                                    <div key={item.id} className={styles.listaDeServicosAgendas}>
+                                        <h1>{DateFormat(item.data)}</h1>
+                                        <button onClick={e => handleDeleteItemAgenda(item.id)}>
+                                            <FiTrash size={24}/>
+                                        </button>
+                                    </div>
                                     )
                                 })
-                            })
-                        })}
-                    </>
-                    <>
-                        {publicacao.map((item) => {
-                            item.items.map((item) => {
-                                item.agenda.map((item) => {
-                                    return(
-                                        <div key={item.id} className={styles.items}>
-                                            <h1>{item.data}</h1>
-                                            <button onClick={e => handleDeleteItemAgenda(item.id)}>
-                                                <FiTrash size={24}/>
-                                            </button>
-                                        </div>
-                                    )
-                                })
-                            })
-                        })}
-                    </> */}
+                            }
+                        </div>   
+                        )}                   
                 </div>
             )
         }
@@ -605,6 +436,7 @@ export default function NovaPublicacao({publicacaoRecebida}: PublicacaoProps/*, 
     return(
 
         <>
+            <ReturnButtonWithFunction onClick={handleReturn}/>
             <main className={styles.container}>
                 <h1 className={styles.titulo}>Publicar Serviço</h1>
 
@@ -612,19 +444,10 @@ export default function NovaPublicacao({publicacaoRecebida}: PublicacaoProps/*, 
                     {PageDisplay()}
                 </div>
 
-                <>
-                    {publicacao.map((teste) => {
-                        teste.items.map((teste2) => {
-                            return(
-                                <div key={teste2.id}>
-                                    <h1>{teste2.id}</h1>
-                                </div>
-                            )
-                        })
-                    })}
-                </>
-
                 <div className={styles.botoes}>
+                    {pagina == 0 ? (
+                        <></>
+                    ) : (
                     <button 
                         className={styles.input} 
                         style={{
@@ -633,40 +456,28 @@ export default function NovaPublicacao({publicacaoRecebida}: PublicacaoProps/*, 
                             maxWidth:'85%', 
                             fontWeight:"bold"                        
                             }}                    
-                        onClick={() => {
-                                if( pagina === 0) {
-                                    //deletePublicacao();                                           
-                                    router.back()
-                                } else {
-                                    setPagina((paginaAtual) => paginaAtual - 1)
-                                }
-                            }
-                        }
+                        onClick={() => { setPagina((paginaAtual) => paginaAtual - 1) }}
                     >
                         Retornar
                     </button>
+                    )}
                     <button 
                         className={styles.input} 
                         style={{
                             backgroundColor:'#12AFCB', 
                             color:'#fff', 
-                            maxWidth:'85%', 
-                            fontWeight:"bold"
+                            maxWidth:'100%', 
+                            fontWeight:"bold",
                             }}
                         onClick={() => {
                             if(pagina === 1){
-                                //handlePublicar();
+                                handleUpdateInfos();
                             } else {
-                                setPagina((paginaAtual) => paginaAtual + 1)
-                                // if(itemIdAux != ''){
-                                //     handleUpdateInfos(itemIdAux);
-                                // } else {
-                                //     handleCadastarPrimeirasInfos();
-                                // }
+                                handleNextForm();
                             }
                         }}
                     >
-                        {pagina === 0 ? "Continuar" : "Publicar"}
+                        {pagina === 0 ? "Continuar" : "Salvar informações"}
                     </button>
                 </div>
             </main>
@@ -678,12 +489,14 @@ export const getServerSideProps = canSSRProf(async (ctx) => {
 
     const api = setupAPIClient(ctx)
 
-    //const responseCategoria = await api.get('/categorias')
-    const responsePublicacao = await api.get('/publicacao')
+    const responsePublicacao = await api.get('/publicacao', {
+        params:{
+            publicacao_id: ctx.query.publicacao_id
+        }
+    })
 
     return{
-        props: {
-            //listCategoria: responseCategoria.data,
+        props: {            
             publicacaoRecebida: responsePublicacao.data
         }
     }

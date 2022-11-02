@@ -12,7 +12,8 @@ import { ptBR } from 'date-fns/locale'
 
 import styles from './styles.module.css'
 import { toast } from "react-toastify";
-import { containsNumbers, DateFormat } from "../../../utils/Functions";
+import { containsNumbers, DateFormat, isDataDoisMesesAdiante, isNumeric } from "../../../utils/Functions";
+import { ReturnButtonWithFunction } from "../../../components/ui/ReturnButtonWithFunction";
 
 
 type ItemCategoriaProps = {
@@ -56,7 +57,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
     const [pagina, setPagina] = useState(0);
     
     const [categorias, setCategorias] = useState(listCategoria || []);
-    const [categoriaSelecionada, setCagoriaSelecionada] = useState(0);
+    const [categoriaSelecionada, setCategoriaSelecionada] = useState(0);
 
     const [tipoServico, setTipoServico] = useState<TipoServicoProps[] | []>([]);
     const [tipoServicoSelecionada, setTipoServicoSelecionada] = useState(0);
@@ -72,14 +73,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
     const [itemIdAux, setitemIdAux] = useState('');
 
     const [servicos, setServicos] = useState<Servicos[]>([]);
-    const [agendas, setAgendas] = useState<Agendas[]>([]);
-
-    const [loadingServicos, setLoadingServicos] = useState(false)
-    const [loadingAgenda, setLoadingAgenda] = useState(false)
-
-    const [countServicos, setCountServicos] = useState(0)
-    const [countAgendas, setCountAgendas] = useState(0)
-    
+    const [agendas, setAgendas] = useState<Agendas[]>([]);    
 
     useEffect(() => {
         async function loadInfo() {
@@ -102,7 +96,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
     }, [categorias, categoriaSelecionada])
    
     function handleChangeCategoria(event){
-        setCagoriaSelecionada(event.target.value)
+        setCategoriaSelecionada(event.target.value)
     }
 
     function handleChangeTipoServico(event){
@@ -111,10 +105,6 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
 
     const handleChangeAgenda = (newValue) => {
         setDataAgenda(newValue)
-    }
-
-    function isNumeric(str) {
-        return /^-?\d+$/.test(str);
     }
     
     async function handleCadastarPrimeirasInfos(){
@@ -222,10 +212,9 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
             toast.error("Preço inválido!")
             return;
         }
-
+        
         const api = setupAPIClient();
         
-        setLoadingServicos(true)
         await api.post('/servicosprestados', {
             nome: nomeServico,
             preco: preco,
@@ -233,14 +222,11 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                 
         }).then(function (response) {
             setServicos((oldArray => [...oldArray, response.data]))
-            setLoadingServicos(false)
             setNomeServico('')
             setPreco('')
 
-            setCountServicos(+1);
-
         }).catch(function (error) {
-            setLoadingServicos(false)            
+            toast.error("Ops! Erro inesperado, favor contatar o suporte!")        
         });
 
     }
@@ -249,29 +235,30 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
 
         e.preventDefault();
 
-        // if(dataAgenda === ''){
-        //     toast.warning('Informe uma data!');
-        //     return;
-        // }
+        if(!dataAgenda){
+            toast.warning('Informe uma data!');
+            return;
+        }
 
-        //let splittedDate = dataAgenda.split('-')
-        //dataAgenda = `${splittedDate[2]}/${splittedDate[1]}/${splittedDate[0]}`
+        if(Number(dataAgenda) < Date.now()){
+            toast.warning("Data inválida!");
+            return;
+        }
+
+        if(!isDataDoisMesesAdiante(dataAgenda)){
+            return;
+        }
         
         const api = setupAPIClient();
 
-        setLoadingAgenda(true)
         await api.post('/agenda', {
             data: dataAgenda,
             item_id: itemId
         }).then(function (response) {
 
-            setAgendas((oldArray => [...oldArray, response.data]))
-            setLoadingAgenda(false)
-
-            setCountAgendas(+1);
+            setAgendas((oldArray => [...oldArray, response.data]))            
 
         }).catch(function (err) {
-            setLoadingAgenda(false)
             const {error} = err.response.data;
             toast.error(error);
         });
@@ -279,12 +266,12 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
     
     async function handlePublicar() {
 
-        if(countServicos === 0){
+        if(servicos.length === 0){
             toast.error("Adicione um serviço!")
             return;
         }
         
-        if(countAgendas === 0){
+        if(agendas.length === 0){
             toast.error("Adicione uma agenda!")
             return;
         }
@@ -320,7 +307,6 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
         })
 
         setServicos(removeItemServico)
-        setCountServicos(-1);
         
     }
 
@@ -339,7 +325,6 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
         })
 
         setAgendas(removeItemAgenda)
-        setCountAgendas(-1);
     }
 
     async function handleDeleteItem(item_id: string) {
@@ -384,6 +369,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
             } 
         })
 
+        router.back();
         
     }
 
@@ -432,7 +418,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                     
                     <textarea                     
                         className={styles.descricao}
-                        maxLength={265}
+                        maxLength={280}
                         value={descricao}
                         onChange={(e) => setDescricao(e.target.value)}
                     />
@@ -475,58 +461,73 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                     </form>
 
                     <form className={styles.form} onSubmit={handleAddAgenda}>
-                        <h1 className={styles.titulo} style={{paddingTop:'1rem'}}>Agenda</h1>
-                        <div className={styles.inputContainer}>
-                            <LocalizationProvider adapterLocale={ ptBR } dateAdapter={AdapterDateFns}>
-                                <DateTimePicker
-                                    renderInput={(props) => <TextField placeholder={`${Date.now()}`} {...props} />}
-                                    label="DateTimePicker"                               
-                                    className={styles.datePicker}
-                                    value={dataAgenda}
-                                    onChange={handleChangeAgenda}
-                                />
-                            </LocalizationProvider>
-                            <button 
-                                className={styles.input} 
-                                style={{
-                                    backgroundColor:'#12AFCB', 
-                                    color:'#fff'
-                                }}
-                                type="submit"
-                            >
-                                +
-                            </button>
+                        <h1 className={styles.titulo} style={{paddingTop:'0'}}>Agenda</h1>
+                        <div className={styles.inputDatePickerContainer}>
+                            <div className={styles.datePickerContainer}>
+                                <LocalizationProvider adapterLocale={ ptBR } dateAdapter={AdapterDateFns}>
+                                    <DateTimePicker
+                                        renderInput={(props) => <TextField placeholder={`${Date.now()}`} {...props} />}
+                                        label="DateTimePicker"                               
+                                        className={styles.datePicker}
+                                        value={dataAgenda}
+                                        onChange={handleChangeAgenda}
+                                    />
+                                </LocalizationProvider>
+                            </div>
+                            <div className={styles.btnAddAgendaContainer}>
+                                <button 
+                                    className={styles.inputAddAgenda} 
+                                    style={{
+                                        backgroundColor:'#12AFCB', 
+                                        color:'#fff'
+                                    }}
+                                    type="submit"
+                                >
+                                    +
+                                </button>
+                            </div>
                         </div>
                     </form>
-                    {loadingServicos ? (
+                    {servicos.length === 0 ?(
                         <></>
                     ) : (
-                        servicos.map((item: Servicos) => {
-                            return(
-                                <div key={item.id} className={styles.items}>
-                                    <h1>{item.nome} - R${item.preco}</h1>
-                                    <button onClick={e => handleDeleteItemServico(item.id)}>
-                                        <FiTrash size={24}/>
-                                    </button>
-                                </div>
-                                )
-                            })
+                        <div>
+                            <div className={styles.subtitle}>
+                                <h1>Serviços</h1>
+                            </div>
+                            {servicos.map((item: Servicos) => {
+                                return(
+                                    <div key={item.id} className={styles.listaDeServicosAgendas}>
+                                        <h1>{item.nome} - R${item.preco}</h1>
+                                        <button onClick={e => handleDeleteItemServico(item.id)}>
+                                            <FiTrash size={24}/>
+                                        </button>
+                                    </div>
+                                    )
+                                })
+                            }
+                        </div>              
                         )}
-
-                    {loadingAgenda ? (
+                    {agendas.length === 0 ? (
                         <></>
                     ) : (
-                        agendas.map((item: Agendas) => {
-                            return(
-                                <div key={item.id} className={styles.items}>
-                                    <h1>{DateFormat(item.data)}</h1>
-                                    <button onClick={e => handleDeleteItemAgenda(item.id)}>
-                                        <FiTrash size={24}/>
-                                    </button>
-                                </div>
-                                )
-                            })
-                        )}   
+                        <div>
+                            <div className={styles.subtitle}>
+                                <h1>Agendas</h1>
+                            </div>
+                            {agendas.map((item: Agendas) => {
+                                return(
+                                    <div key={item.id} className={styles.listaDeServicosAgendas}>
+                                        <h1>{DateFormat(item.data)}</h1>
+                                        <button onClick={e => handleDeleteItemAgenda(item.id)}>
+                                            <FiTrash size={24}/>
+                                        </button>
+                                    </div>
+                                    )
+                                })
+                            }
+                        </div>   
+                        )}
                 </div>
             )
         }
@@ -534,7 +535,8 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
 
     return(
 
-        <>
+        <>            
+            <ReturnButtonWithFunction onClick={handleDeletePublicacao}/>
             <main className={styles.container}>
                 <h1 className={styles.titulo}>Publicar Serviço</h1>
 
@@ -543,7 +545,10 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                 </div>
 
                 <div className={styles.botoes}>
-                    <button 
+                    {pagina == 0 ? (
+                        <></>
+                    ) : (
+                        <button 
                         className={styles.input} 
                         style={{
                             backgroundColor:'#12AFCB', 
@@ -551,24 +556,17 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                             maxWidth:'85%', 
                             fontWeight:"bold"                        
                             }}                    
-                        onClick={() => {
-                                if( pagina === 0) {
-                                    handleDeletePublicacao();
-                                    router.back()
-                                } else {
-                                    setPagina((paginaAtual) => paginaAtual - 1)
-                                }
-                            }
-                        }
+                        onClick={() => { setPagina((paginaAtual) => paginaAtual - 1) }}
                     >
                         Retornar
                     </button>
+                    )}
                     <button 
-                        className={styles.input} 
+                        className={styles.input}                        
                         style={{
                             backgroundColor:'#12AFCB', 
                             color:'#fff', 
-                            maxWidth:'85%', 
+                            maxWidth:'100%', 
                             fontWeight:"bold"
                             }}
                         onClick={() => {

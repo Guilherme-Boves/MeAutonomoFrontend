@@ -1,6 +1,5 @@
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
-import { ReturnButton } from "../../../components/ui/ReturnButton";
 import { setupAPIClient } from "../../../services/api";
 import styles from '../styles.module.css'
 
@@ -8,6 +7,8 @@ import jsonWebTokenService from 'jsonwebtoken'
 import { parseCookies } from 'nookies';
 import { canSSRAuth } from "../../../utils/canSSRAuth";
 import { DateFormat } from "../../../utils/Functions";
+import { ReturnButtonWithFunction } from "../../../components/ui/ReturnButtonWithFunction";
+import Router from "next/router";
 
 type ItemProps = {
     id: string;
@@ -35,20 +36,15 @@ type ItemProps = {
         },
         servicos: [{
             id: string;
-            servico_id: string;
-            servicos: {
-                id: string;
-                nome: string;
-                preco: number;                
-            }
+            nome: string;
+            preco: string;
+            itemContrato_id: string;
         }],
         agendas: [{
             id: string;
+            data: string;
             agenda_id: string;
-            agendas: {
-                id: string;
-                data: string;
-            }
+            itemContrato_id: string;
         }]
     }]
 }
@@ -86,9 +82,19 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
 
     }, [])
 
+    function handleReturn() {
+        if(role === "CLIENTE"){
+            Router.push("../dashboard/cliente")
+        } else if(role === "PROFISSIONAL") {
+            Router.push("../dashboard/profissional")
+        } else {
+            Router.push("../dashboard/admin")
+        }
+    }
+
     return(
         <>
-            <ReturnButton/>
+            <ReturnButtonWithFunction onClick={handleReturn}/>
             <div>
                 <Link href={'/servicoscontratados/pendentes'}>
                     <a>
@@ -121,7 +127,7 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
                                                 {item.agendas.map((item) => {
                                                     return(
                                                         <div key={item.id}>
-                                                            <h1 className={styles.cardTitle}>{DateFormat(item.agendas.data)}</h1>
+                                                            <h1 className={styles.cardTitle}>{DateFormat(item.data)}</h1>
                                                         </div>
                                                     )
                                                 })}
@@ -141,7 +147,7 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
                                                     {item.servicos.map((item) => {
                                                         return(
                                                             <div key={item.id}>                                                                
-                                                                <h1 style={{marginLeft:'0.2rem'}}>{item.servicos.nome}, </h1>                                                                
+                                                                <h1 style={{marginLeft:'0.2rem'}}>{item.nome}, </h1>                                                                
                                                             </div>
                                                         )
                                                     })}
@@ -150,7 +156,7 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
                                                 <div className={styles.titleServicoPrestado}>
                                                     <h2 className={styles.subTitle}>Valor total: R$ </h2>
 
-                                                    {valorTotal = item.servicos.reduce( (valorAnterior, valorAtual) => valorAnterior + Number(valorAtual.servicos.preco), 0)}
+                                                    {valorTotal = item.servicos.reduce( (valorAnterior, valorAtual) => valorAnterior + Number(valorAtual.preco), 0)}
                                                     
                                                 </div>
                                                 

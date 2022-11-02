@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import Image from "next/image";
 import { ReturnButton } from "../../../components/ui/ReturnButton";
 import { setupAPIClient } from "../../../services/api";
@@ -7,7 +7,7 @@ import { FiUpload } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { canSSRProf } from "../../../utils/canSSRProf";
 import MaskedInput from "../../../components/ui/MaskedInput";
-import { containsNumbers, retiraMascara } from "../../../utils/Functions";
+import { containsNumbers, retiraMascara, ShortDateFormat } from "../../../utils/Functions";
 
 type ItemUserProps = {
     id: string;
@@ -31,19 +31,12 @@ interface UserProps {
 export default function PerfilProfissional({ userData }: UserProps){
 
     const [user, setUser] = useState(userData);
-    const [descricaoSobreMim, setDescricaoSobreMim] = useState('');
-    const [descricaoSobreMimPlaceHolder, setDescricaoSobreMimPlaceHolder] = useState('Escreva uma breve descrição sobre você...');
+    const [descricaoSobreMim, setDescricaoSobreMim] = useState('');        
     const [nomeUsuario, setNomeUsuario] = useState(user.nome);
     const [telefone, setTelefone] = useState(user.telefone);
     const [endereco, setEndereco] = useState(user.endereco);
     const [imagem, setImagem] = useState(user.imagem);
     const [cnpj, setCnpj] = useState('');
-    const [cadastrou, setCadastrou] = useState(false)
-
-    let splitedData = user.dataNascimento.split('T')
-    let newDate = splitedData[0].split('-')
-    let dataFormatada = `${newDate[2]}/${newDate[1]}/${newDate[0]}`
-
 
     async function handleFile(e: ChangeEvent<HTMLInputElement>){
        
@@ -81,24 +74,15 @@ export default function PerfilProfissional({ userData }: UserProps){
     async function handleSalvarInformacoes(e: FormEvent) {
         e.preventDefault();
 
-        // if(nomeUsuario === user.nome && telefone === user.telefone && endereco === user.endereco && descricaoSobreMim === ''){
-        //     // Se o usuário não inserir informações novas, a função será finalizada.
-        //     console.log('encerrou')
+        // if(nomeUsuario === user.nome && telefone === user.telefone && endereco === user.endereco){
+        //     // Se o usuário não inserir informações novas, a função será finalizada.           
         //     return;
         // }
 
-        // Map necessário para validar se a descrição está vazia ou não.
-        // Se o usuário não alterar nenhum caracter da Textarea, a useState "descricaoSobreMim" ficará vazia, mesmo se o Textarea da tela possuir um texto        
-        //var descricao = '';
-        // user.userProfissional.map((item) => {
-        //     descricao = item.descricaoSobreMim            
-        // })
-        // console.log(descricao)
-
-        // if(nomeUsuario === '' || telefone === '' || endereco === '' || descricaoSobreMim === '') {
-        //     toast.warn('Campos de Nome, Telefone, Email e Descrição não podem ser vazios')
-        //     return;
-        // }
+        if(nomeUsuario.length === 0 || telefone.length === 0 || endereco.length === 0 || descricaoSobreMim.length === 0) {
+            toast.warn('Campos de Nome, Telefone, Email e Descrição não podem ser vazios')
+            return;
+        }
 
         if(nomeUsuario){
             if(!containsNumbers(nomeUsuario)){ // Verificando se o nome possui números ou caracteres inválidos.
@@ -113,69 +97,39 @@ export default function PerfilProfissional({ userData }: UserProps){
                 return;
             }
         }
-
-        let descricao = user.userProfissional.map((item) => item.descricaoSobreMim)
-
-        if(cadastrou === false){
-            if(descricao[0]){
-                setDescricaoSobreMimPlaceHolder(descricao[0])
-            }
-    
-            if(descricaoSobreMim === ''){
-                setDescricaoSobreMimPlaceHolder('Escreva uma breve descrição sobre você...')
-            }            
-        }
+       
         const api = setupAPIClient();
 
         try{
-            if(descricaoSobreMim === '' && cadastrou === false){
-                await api.put('/userinfo/update/profissional', {
-                    nome: nomeUsuario,
-                    telefone: telefone,
-                    endereco: endereco,
-                    cnpj: cnpj,
-                    descricaoSobreMim: descricao[0],
-                })
-            } else if(descricaoSobreMim === '' && cadastrou === true) {
-                await api.put('/userinfo/update/profissional', {
-                    nome: nomeUsuario,
-                    telefone: telefone,
-                    endereco: endereco,
-                    cnpj: cnpj,
-                    descricaoSobreMim: descricaoSobreMimPlaceHolder,
-                })
-            } else {
-                await api.put('/userinfo/update/profissional', {
-                    nome: nomeUsuario,
-                    telefone: telefone,
-                    endereco: endereco,
-                    cnpj: cnpj,
-                    descricaoSobreMim: descricaoSobreMim,
-                })
-            }
+            await api.put('/userinfo/update/profissional', {
+                nome: nomeUsuario,
+                telefone: telefone,
+                endereco: endereco,
+                cnpj: cnpj,
+                descricaoSobreMim: descricaoSobreMim,
+            })
         } catch(err){
             const { error } = err.response.data
             toast.error('Ops! Erro inesperado, favor contatar o suporte! ' + error)            
         }
 
-        if(nomeUsuario){
-            setNomeUsuario(nomeUsuario)
-        }
-        if(telefone){
-            setTelefone(telefone)
-        }
-        if(endereco){
-            setEndereco(endereco)
-        }
-
-        if(descricaoSobreMim){
-            setCadastrou(true)
-            setDescricaoSobreMimPlaceHolder(descricaoSobreMim)
-        }
-        
-        setDescricaoSobreMim('')        
+        setNomeUsuario(nomeUsuario)
+        setTelefone(telefone)
+        setEndereco(endereco)
+        setDescricaoSobreMim(descricaoSobreMim)
+    
         toast.success('Dados atualizados com sucesso!');
     }
+
+    useEffect(() => {
+        function loadDescricao(){
+            let descricao = user.userProfissional.map((item) => {
+                return(item.descricaoSobreMim)
+            })
+            setDescricaoSobreMim(descricao.toString())
+        }
+        loadDescricao();
+    }, [user.userProfissional])
 
     return(
         
@@ -281,7 +235,7 @@ export default function PerfilProfissional({ userData }: UserProps){
                                 <h2 className={styles.DadosPessoaisSubTitle}>Data de Nascimento: </h2>
                                     <input
                                         disabled={true}
-                                        value={dataFormatada}
+                                        value={ShortDateFormat(user.dataNascimento)}
                                     />
                             </div>
 
@@ -297,40 +251,14 @@ export default function PerfilProfissional({ userData }: UserProps){
 
                         <div className={styles.cardSobreMim}>
                             <h1 className={styles.DadosPessoaisTitle}>Sobre Mim</h1>
-                            
-                            {user.userProfissional.map((item)=>{
-                                return(                                
-                                    <div key={user.id}>
-                                        {item.descricaoSobreMim === '' || item.descricaoSobreMim === null ? (
-                                            <textarea 
-                                                className={styles.TextAreaSobreMim}
-                                                maxLength={265}
-                                                placeholder={descricaoSobreMimPlaceHolder}
-                                                value={descricaoSobreMim}
-                                                onChange={(e) => setDescricaoSobreMim(e.target.value)}
-                                            /> 
-                                        ) : (
-                                            cadastrou === true ? (
-                                                <textarea 
-                                                    className={styles.TextAreaSobreMim}
-                                                    maxLength={265}
-                                                    placeholder={descricaoSobreMimPlaceHolder}
-                                                    value={descricaoSobreMim}
-                                                    onChange={(e) => setDescricaoSobreMim(e.target.value)}
-                                                />        
-                                            ) : (
-                                                <textarea 
-                                                    className={styles.TextAreaSobreMim}
-                                                    maxLength={265}
-                                                    placeholder={item.descricaoSobreMim}
-                                                    value={descricaoSobreMim}
-                                                    onChange={(e) => setDescricaoSobreMim(e.target.value)}
-                                                />
-                                            )
-                                        )}
-                                    </div>
-                                )
-                            })}
+
+                            <textarea 
+                                className={styles.TextAreaSobreMim}
+                                maxLength={265}
+                                placeholder={'Escreva uma breve descrição sobre você...'}
+                                value={descricaoSobreMim}
+                                onChange={(e) => setDescricaoSobreMim(e.target.value)}
+                            /> 
                             
                         </div>
                     
@@ -352,7 +280,7 @@ export const getServerSideProps = canSSRProf(async (ctx) => {
     const api = setupAPIClient(ctx);
 
     const user = await api.get('/userinfo');
-
+        
     return{
         props: {
             userData: user.data

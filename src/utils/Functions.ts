@@ -1,3 +1,4 @@
+import moment from "moment";
 import { toast } from "react-toastify";
 
 export function validaCadastroProfissional(nome: string, email: string, password: string, cnpj: string, telefone: string, dataNascimento: string) {
@@ -78,8 +79,18 @@ export function validaCadastroCliente(nome: string, email: string, password: str
     return true;
 }
 
+//Entrada => 1985-11-01T03:00:00.000Z
+export function ShortDateFormat(str: string){
+    console.log(str)
+    let splitedData = str.split('T')
+    let newDate = splitedData[0].split('-')
+    let dataFormatada = `${newDate[2]}/${newDate[1]}/${newDate[0]}`
+    console.log(dataFormatada)
+    return dataFormatada
+    // Saída => 01/11/1985
+}
 
-//Função para formatar data
+//Função para formatar data que também contem horário
 export function DateFormat(str: string){
     //Entrada => 1990-10-10T13:05:00Z
     let data = str.split('T');
@@ -141,4 +152,23 @@ export function validaData(data: string){
     }
     
     return data; // Se a data for válida, retorna a data formatada => Entrada: 05/10/1997 / Saída: 1997/10/05
+}
+
+//Verificando se o valor recebido é um número
+export function isNumeric(str) {
+    if(str.includes(".") || str.includes(",")){
+        return /\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})/.test(str);
+    } else {
+        return /^-?\d+$/.test(str);
+    }
+}
+
+export function isDataDoisMesesAdiante(data: Date){
+    const doisMesesAdiante = new Date(moment().add(30, 'days').calendar())
+        if(data > doisMesesAdiante){
+            toast.warning(`Insira uma data antes de ${doisMesesAdiante.toLocaleString()}h`)
+            return;
+        }
+
+        return data
 }

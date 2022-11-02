@@ -1,6 +1,7 @@
 .container {
     max-width: 720px;
-    height: 750px;
+    min-height: 750px;
+    height: auto;
     background-color: #fff;
     margin-left: 550px;
     border-radius: 20px;
@@ -14,6 +15,14 @@
     font-weight: 600;
     display: flex;
     justify-content: space-between;
+}
+
+.subtitle{
+    display: flex;
+    padding-left: 3rem;
+    margin-top: 1rem;
+    font-size: 18px;
+    font-weight: 500;
 }
 
 .form{
@@ -64,9 +73,37 @@
     background-color: #1d1d2e;    
 }
 
+.inputDatePickerContainer{
+    display: flex;
+    justify-content: space-between;    
+    max-width: 92%;
+}
+
+.datePickerContainer{
+    width: 45%;
+}
+
+.btnAddAgendaContainer{
+    width: 26%;
+    margin-top: 1rem;
+    margin-right: 2rem;
+}
+
+.inputAddAgenda{
+    margin-top: 0.5rem;
+    border-radius: 0.3rem;
+    margin-bottom: 1rem;
+    margin-left: 2rem;
+    padding: 0.5rem;
+    width: 100%;
+    color: #fff;
+    background-color: #1d1d2e; 
+}
+
 .botoes{
     display: flex;
     width: 92%;
+    margin-top: 1rem;
 }
 
 .datePicker{    
@@ -77,10 +114,16 @@
 
 /* ----------------- Items */
 
-.items {
+.listaDeServicosAgendas {
     display: flex;
     justify-content: space-between;
     width: 85%;
+    color: #fff;
+    background-color: #1d1d2e;    
+    border: 1px solid #1d1d2e;
+    border-radius: 8px;
+    padding: 4px 4px 4px 6px;
+    margin-bottom: 4px;
     margin-left: 3rem;
 }
 

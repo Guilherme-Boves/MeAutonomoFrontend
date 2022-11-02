@@ -70,5 +70,24 @@
 .itemsSubTitles{
     font-weight: bold;
     font-size: 18px;
-    margin-top: 1rem;
+}
+
+.titleEditButton{
+    display: flex;
+    justify-content: flex-start;
+}
+
+.editButton{
+    margin-top: -0.2rem;
+    margin-left: 0.3rem;
+}
+
+.descricao{    
+    border-radius: 0.3rem;    
+    min-height: 180px;
+    resize: none;
+    padding: 0.5rem;
+    width: 100%;
+    color: #1d1d2e;
+    background-color: #fff;    
 }

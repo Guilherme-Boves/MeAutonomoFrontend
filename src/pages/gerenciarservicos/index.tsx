@@ -14,7 +14,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import { toast } from 'react-toastify';
 
-
 type PublicacaoProps = {
     id: string;
     rascunho: string;
@@ -29,16 +28,23 @@ type PublicacaoProps = {
             nome: string;
             imagem: string;
             categoria_id: string;
+            categoria:{
+                id: string;
+                nome: string;
+                imagem: string;
+            }
         }
         servicosPrestadosProf:[{
             id: string;
             nome: string;
-            preco: string;            
+            preco: string;
+            item_id: string;            
         }],
         agenda:[{
             id: string;
             data: string;
-            status: string;            
+            status: string; 
+            item_id: string;           
         }]
     }]
 }
@@ -88,8 +94,55 @@ export default function GerenciarServicos({listPublicacoes}: list) {
 
     }
 
-    async function handleEditPublicacao(publicacao_id: string) {
+    function handleArmazenaServicos(itemPublicacao_id: string) {
+        let arrayServicos = [];
+
+        publicacoes.map((item) =>{
+            item.items.map((item) => {
+                item.servicosPrestadosProf.map((item) => {                    
+                    if(itemPublicacao_id === item.item_id){
+                        //console.log(item.nome)
+                        //armazenarInfosPublicacao(`ls_servico${index}`, `${item.nome} - ${item.preco}`)
+                        //arrayServicos.push(`${item.nome} - ${item.preco}`)
+                        arrayServicos.push({id: item.id, nome: item.nome, preco: item.preco, item_id: item.item_id})
+                    }             
+                })
+            })
+        })
+
+        localStorage.setItem("ls_servicos", JSON.stringify(arrayServicos));
+    }
+
+    function handleArmazenaAgenda(itemPublicacao_id: string){
+        let arrayAgendas = [];
+
+        publicacoes.map((item) => {
+            item.items.map((item) => {
+                item.agenda.map((item) => {
+                    if(itemPublicacao_id === item.item_id){
+                        arrayAgendas.push({id: item.id, data: item.data, item_id: item.item_id})
+                    }
+                })
+            })
+        })
+
+        localStorage.setItem("ls_agendas", JSON.stringify(arrayAgendas))
+    }
+
+    function handleEditPublicacao(publicacao_id: string, itemPublicacao_id: string, descricao: string, tipoSerivcoId: string, tipoServicoNome: string, categoriaNome: string) {
+
+        handleArmazenaServicos(itemPublicacao_id)
+        handleArmazenaAgenda(itemPublicacao_id)
+        armazenarInfosPublicacao("ls_descricao", descricao)
+        armazenarInfosPublicacao("ls_tiposervicoid", tipoSerivcoId)
+        armazenarInfosPublicacao("ls_tiposerviconome", tipoServicoNome)
+        armazenarInfosPublicacao("ls_categoria", categoriaNome)
+
         Router.push(`/gerenciarservicos/edit/${publicacao_id}`)
+    }
+
+    const armazenarInfosPublicacao = (chave, valor) => {
+        localStorage.setItem(chave, valor)
     }
 
     async function handleDeletePublicacao( publicacao_id: string, itemPublicacao_id: string) {
@@ -153,6 +206,10 @@ export default function GerenciarServicos({listPublicacoes}: list) {
                                     <div>{item.items.map((item)=>{
                                         const itemPublicacao_id = item.id
                                         const nomePublicacao = item.tipoDoServico.nome
+                                        const descricao = item.descricao
+                                        const tipoSerivcoId = item.tipoDoServico_id;
+                                        const tipoServicoNome = item.tipoDoServico.nome; // Variável necessária para armazenar no localStorage qual categoria e tipo de serviço pertence aquela publicação.
+                                        const categoriaNome = item.tipoDoServico.categoria.nome;
                                         return(
                                                 <div key={item.id} className={styles.card}>
 
@@ -161,30 +218,30 @@ export default function GerenciarServicos({listPublicacoes}: list) {
                                                             <div className={styles.tipoServicoText}>{item.tipoDoServico.nome}</div>
                                                         </div>
                                                         <div className={styles.fiButtonContainer}>
-                                                            <button onClick={e => handleEditPublicacao(publicacao_id) }>
+                                                            <button onClick={e => handleEditPublicacao(publicacao_id, itemPublicacao_id, descricao, tipoSerivcoId, tipoServicoNome, categoriaNome) }>
                                                                 <FiEdit size={24} />                                            
-                                                            </button>
+                                                            </button>                                                            
                                                             <button onClick={e => {handleClickOpen(publicacao_id, itemPublicacao_id, nomePublicacao)}}>
                                                                 <FiTrash size={24} />                                            
                                                             </button>
                                                         </div>  
                                                     </div>                             
 
-                                                    <div className={styles.linhaHorizontal}></div>
+                                                    <div className={styles.linhaHorizontal}></div>                                                    
                                                     <div className={styles.itemsSubTitles}>Descrição</div>
-                                                    <div>{item.descricao}</div>
-
+                                                    <div style={{marginBottom:'0.6rem'}}>{item.descricao}</div>
+                                                                                                        
                                                     <h2 className={styles.itemsSubTitles}>Serviços prestados</h2>
                                                     <div className={styles.linhaHorizontal}></div>
-                                                    <div className={styles.servicosAgendaContainer}>
-                                                        {item.servicosPrestadosProf.map((item)=> {
+                                                    <div className={styles.servicosAgendaContainer}>                                                        
+                                                        {item.servicosPrestadosProf.map((item)=> {                                                        
                                                         return(
-                                                            <div key={item.id} className={styles.servicosAgenda}>
-                                                                <div>{item.nome} - R${item.preco}</div>
-                                                            </div>
-                                                            )
-                                                        })}
-                                                    </div>
+                                                                <div key={item.id} className={styles.servicosAgenda}>
+                                                                    <div>{item.nome} - R${item.preco}</div>                                                                    
+                                                                </div>                                                                                                                            
+                                                            )                                                            
+                                                        })}                                                        
+                                                    </div>                                                    
                                                     
                                                     <h2 className={styles.itemsSubTitles}>Agenda</h2>
                                                     <div className={styles.linhaHorizontal}></div>
@@ -197,13 +254,13 @@ export default function GerenciarServicos({listPublicacoes}: list) {
                                                             )
                                                         })}
                                                     </div>
-                                                </div>
+                                                </div>                                                
                                             )
-                                        })}
+                                        })}                                        
                                     </div>
                                 </div>
-                            )
-                        })
+                            )                            
+                        })                        
                     )}
                     <Dialog
                         open={open}

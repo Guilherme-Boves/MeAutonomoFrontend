@@ -13,6 +13,7 @@ import { FiArrowLeft } from 'react-icons/fi'
 import { toast } from "react-toastify";
 import { FiThumbsUp } from "react-icons/fi"
 import { DateFormat } from "../../../../../../../../../utils/Functions";
+import { ReturnButtonWithFunction } from "../../../../../../../../../components/ui/ReturnButtonWithFunction";
 
 type ItemProps = {
     id: string;
@@ -46,6 +47,12 @@ type ItemProps = {
     }]
 }
 
+type ServicosProps = {
+    id: string;
+    nome: string;
+    preco: string;
+}
+
 interface PerfilProps {
     perfilProf: ItemProps[];
 }
@@ -57,7 +64,7 @@ export default function Contrato({ perfilProf }: PerfilProps){
     const [perfil, setPerfil] = useState(perfilProf || []);
     const [servicos, setServicos] = useState<string[] | []>([]);
     const [agenda, setAgenda] = useState('');
-  
+      
     const handleChangeServico = (event: SelectChangeEvent<typeof servicos>) => {
         setServicos(event.target.value as string[]);
     };
@@ -112,7 +119,7 @@ export default function Contrato({ perfilProf }: PerfilProps){
             return;
         }
         
-        let publicacaoId = perfil.map((item) => item.publicacao_id)        
+        let publicacaoId = perfil.map((item) => item.publicacao_id)
         const contrato_id = router.query.contrato_id;
 
         const api = setupAPIClient();
@@ -130,14 +137,20 @@ export default function Contrato({ perfilProf }: PerfilProps){
             while(i < servicos.length){
                 await api.post('/contrato/addservico', {
                     itemContrato_id: id,
-                    servico_id: servicos[i]
+                    nomePreco: servicos[i]
                 })                
                 i++;
             }
 
+            //Split necessário para separar o id e a data da agenda selecionada pelo usuário
+            let splittedAgendaIdData = agenda.split('/')
+            let agenda_id = splittedAgendaIdData[0]
+            let data = splittedAgendaIdData[1]
+
             await api.post('/contrato/addagenda', {
                 itemContrato_id: id,
-                agenda_id: agenda
+                data: data,
+                agenda_id: agenda_id
             })    
 
             toast.success('Contrato realizado com sucesso!')
@@ -153,10 +166,10 @@ export default function Contrato({ perfilProf }: PerfilProps){
         if(pagina === 0){
             return(
                 <>
-                    <div onClick={handleDeleteContrato} className={styles.containerButtonRetornarPagina}>
+                    {/* <div onClick={handleDeleteContrato} className={styles.containerButtonRetornarPagina}>
                         <FiArrowLeft size={28} className={styles.buttonRetornarPagina} />
-                    </div>
-
+                    </div> */}
+                    <ReturnButtonWithFunction onClick={handleDeleteContrato}/>
                     <div className={styles.container}>
                         <h1 className={styles.title}>Escolha os serviços desejados e horários</h1>
                         <div className={styles.cardContainer}>
@@ -179,7 +192,8 @@ export default function Contrato({ perfilProf }: PerfilProps){
                                                     {item.servicosPrestadosProf.map((item) => (
                                                         <MenuItem
                                                             key={item.id}
-                                                            value={item.id}                                                    
+                                                            value={`${item.nome}-${item.preco}`} //Passando o nome e o preço do serviço no array de serviços
+                                                            //value={item.id}
                                                         >
                                                             {item.nome} - R${item.preco}                                                    
                                                         </MenuItem>
@@ -210,7 +224,8 @@ export default function Contrato({ perfilProf }: PerfilProps){
                                                     {item.agenda.map((item) => (
                                                         <MenuItem
                                                             key={item.id}
-                                                            value={item.id}                                                    
+                                                            //value={item.data}  
+                                                            value={`${item.id}/${item.data}`} //Passando o Id e a data da agenda
                                                         >
                                                             {DateFormat(item.data)}
                                                         </MenuItem>

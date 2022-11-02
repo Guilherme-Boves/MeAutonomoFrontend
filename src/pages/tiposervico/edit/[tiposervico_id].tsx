@@ -1,5 +1,5 @@
 import Head from "next/head"
-import { useState, ChangeEvent, FormEvent } from 'react'
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react'
 import { Button } from "../../../components/ui/Button"
 import { Input } from "../../../components/ui/Input"
 import { canSSRAdmin } from "../../../utils/canSSRAdmin"
@@ -25,12 +25,20 @@ export default function EditarTipoServico({ servicoRecebido }: TipoSerivcoProps)
     const [tipoServico, setTipoServico] = useState(servicoRecebido)
     
     const [nomeServico, setNomeServico] = useState('');
-    const [nomeServicoPlaceHolder, setNomeServicoPlaceHolder] = useState('');
+    //const [nomeServicoPlaceHolder, setNomeServicoPlaceHolder] = useState('');
     const [imageServicoUrl, setimageServicoUrl] = useState(''); //Armazendo uma URL para mostrar o Preview da imagem    ;
     const [imageServico, setimageServico] = useState(null) //Armazendo o File para ser enviado para o banco de dados
     const [cadastrou, setCadastrou] = useState(false)
 
     const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        async function loadTipoServicoInfo(){
+
+            setNomeServico(tipoServico.nome)
+        }
+        loadTipoServicoInfo()
+    }, [tipoServico.nome])
 
     function handleFile(e: ChangeEvent<HTMLInputElement>){
        
@@ -54,7 +62,12 @@ export default function EditarTipoServico({ servicoRecebido }: TipoSerivcoProps)
 
     async function handleEdittipoServico(e: FormEvent) {
         e.preventDefault();
-        
+
+            if(nomeServico.length === 0) {
+                toast.error("Nome inválido!")
+                return;
+            }
+            
             if(nomeServico === '' && imageServico === null){                
                 return;
             }
@@ -71,19 +84,23 @@ export default function EditarTipoServico({ servicoRecebido }: TipoSerivcoProps)
             const data = new FormData();
             const tipoServico_id  = router.query.tiposervico_id as string;
             
-            if(nomeServico && imageServico){
-                data.append('tipoServico_id', tipoServico_id)
-                data.append('nome', nomeServico)
-                data.append('file', imageServico)
-            } else if(nomeServico && imageServico === null) {
-                data.append('tipoServico_id', tipoServico_id)
-                data.append('nome', nomeServico)
-                data.append('file', '')
-            } else if(nomeServico === '' && imageServico){
-                data.append('tipoServico_id', tipoServico_id)
-                data.append('nome', '')
-                data.append('file', imageServico)
-            }
+            // if(nomeServico && imageServico){
+            //     data.append('tipoServico_id', tipoServico_id)
+            //     data.append('nome', nomeServico)
+            //     data.append('file', imageServico)
+            // } else if(nomeServico && imageServico === null) {
+            //     data.append('tipoServico_id', tipoServico_id)
+            //     data.append('nome', nomeServico)
+            //     data.append('file', '')
+            // } else if(nomeServico === '' && imageServico){
+            //     data.append('tipoServico_id', tipoServico_id)
+            //     data.append('nome', '')
+            //     data.append('file', imageServico)
+            // }
+
+            data.append('tipoServico_id', tipoServico_id)
+            data.append('nome', nomeServico)
+            data.append('file', imageServico)
 
             setLoading(true);
 
@@ -99,12 +116,12 @@ export default function EditarTipoServico({ servicoRecebido }: TipoSerivcoProps)
         }
 
         
-        setCadastrou(true)
-        if(nomeServico === ''){
-            setNomeServicoPlaceHolder(tipoServico.nome)
-        } else{
-            setNomeServicoPlaceHolder(nomeServico)
-        }
+        //setCadastrou(true)
+        // if(nomeServico === ''){
+        //     setNomeServicoPlaceHolder(tipoServico.nome)
+        // } else{
+        //     setNomeServicoPlaceHolder(nomeServico)
+        // }
         setNomeServico('');
         setimageServico(null);
         setLoading(false);
@@ -126,7 +143,13 @@ export default function EditarTipoServico({ servicoRecebido }: TipoSerivcoProps)
                     </div>
 
                     <form className={styles.form} onSubmit={handleEdittipoServico}>
-                        {cadastrou === true ? (
+                    <Input
+                        type="text" 
+                        placeholder={"Nome do serviço"}
+                        value={nomeServico}
+                        onChange={(e) => setNomeServico(e.target.value)}
+                    />
+                        {/* {cadastrou === true ? (
                             <Input
                                 type="text" 
                                 placeholder={nomeServicoPlaceHolder}
@@ -140,7 +163,7 @@ export default function EditarTipoServico({ servicoRecebido }: TipoSerivcoProps)
                                 value={nomeServico}
                                 onChange={(e) => setNomeServico(e.target.value)}
                             />
-                        )}
+                        )} */}
 
                         <label className={styles.label}>
                             <span className={styles.span}>
@@ -170,7 +193,7 @@ export default function EditarTipoServico({ servicoRecebido }: TipoSerivcoProps)
                         </label>
 
                         <Button type="submit" loading={loading} style={{maxWidth: '720px'}}>
-                            Cadastrar
+                            Salvar Informações
                         </Button>
                     </form>
                 </main>

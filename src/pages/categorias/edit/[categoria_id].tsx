@@ -1,5 +1,5 @@
 import Head from "next/head"
-import { useState, ChangeEvent, FormEvent } from 'react'
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react'
 import { Button } from "../../../components/ui/Button"
 import { Input } from "../../../components/ui/Input"
 import { canSSRAdmin } from "../../../utils/canSSRAdmin"
@@ -25,12 +25,20 @@ export default function EditarCategoria({categoriaRecebida}: CategoriaProps){
     const [categoria, setCategoria] = useState(categoriaRecebida)
     
     const [nomeCategoria, setNomeCategoria] = useState('');
-    const [nomeCategoriaPlaceHolder, setNomeCategoriaPlaceHolder] = useState('');
+    //const [nomeCategoriaPlaceHolder, setNomeCategoriaPlaceHolder] = useState('');
     const [imageCategoriaUrl, setImageCategoriaUrl] = useState(''); //Armazendo uma URL para mostrar o Preview da imagem    ;
     const [imageCategoria, setimageCategoria] = useState(null) //Armazendo o File para ser enviado para o banco de dados
-    const [cadastrou, setCadastrou] = useState(false)
+    //const [cadastrou, setCadastrou] = useState(false)
 
     const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        async function loadCategoriaInfo(){
+
+            setNomeCategoria(categoria.nome)
+        }
+        loadCategoriaInfo()
+    }, [categoria.nome])
 
     function handleFile(e: ChangeEvent<HTMLInputElement>){
        
@@ -54,6 +62,11 @@ export default function EditarCategoria({categoriaRecebida}: CategoriaProps){
 
     async function handleEditCategoria(e: FormEvent) {
         e.preventDefault();
+
+            if(nomeCategoria.length === 0) {
+                toast.error("Nome inválido!")
+                return;
+            }
         
             if(nomeCategoria === '' && imageCategoria === null){                
                 return;
@@ -71,19 +84,23 @@ export default function EditarCategoria({categoriaRecebida}: CategoriaProps){
             const data = new FormData();
             const categoria_id  = router.query.categoria_id as string;
             
-            if(nomeCategoria && imageCategoria){
-                data.append('categoria_id', categoria_id)
-                data.append('nome', nomeCategoria)
-                data.append('file', imageCategoria)
-            } else if(nomeCategoria && imageCategoria === null) {
-                data.append('categoria_id', categoria_id)
-                data.append('nome', nomeCategoria)
-                data.append('file', '')
-            } else if(nomeCategoria === '' && imageCategoria){
-                data.append('categoria_id', categoria_id)
-                data.append('nome', '')
-                data.append('file', imageCategoria)
-            }
+            // if(nomeCategoria && imageCategoria){
+            //     data.append('categoria_id', categoria_id)
+            //     data.append('nome', nomeCategoria)
+            //     data.append('file', imageCategoria)
+            // } else if(nomeCategoria && imageCategoria === null) {
+            //     data.append('categoria_id', categoria_id)
+            //     data.append('nome', nomeCategoria)
+            //     data.append('file', '')
+            // } else if(nomeCategoria === '' && imageCategoria){
+            //     data.append('categoria_id', categoria_id)
+            //     data.append('nome', '')
+            //     data.append('file', imageCategoria)
+            // }
+
+            data.append('categoria_id', categoria_id)
+            data.append('nome', nomeCategoria)
+            data.append('file', imageCategoria)
 
             setLoading(true);
 
@@ -99,12 +116,12 @@ export default function EditarCategoria({categoriaRecebida}: CategoriaProps){
         }
 
         
-        setCadastrou(true)
-        if(nomeCategoria === ''){
-            setNomeCategoriaPlaceHolder(categoria.nome)
-        } else{
-            setNomeCategoriaPlaceHolder(nomeCategoria)
-        }
+        //setCadastrou(true)
+        // if(nomeCategoria === ''){
+        //     setNomeCategoriaPlaceHolder(categoria.nome)
+        // } else{
+        //     setNomeCategoriaPlaceHolder(nomeCategoria)
+        // }
         setNomeCategoria('');
         setimageCategoria(null);
         setLoading(false);
@@ -126,10 +143,16 @@ export default function EditarCategoria({categoriaRecebida}: CategoriaProps){
                     </div>
 
                     <form className={styles.form} onSubmit={handleEditCategoria}>
-                        {cadastrou === true ? (
+                        <Input
+                            type="text" 
+                            placeholder={"Nome da Categoria"}
+                            value={nomeCategoria}
+                            onChange={(e) => setNomeCategoria(e.target.value)}
+                        />
+                        {/* {cadastrou === true ? (
                             <Input
                                 type="text" 
-                                placeholder={nomeCategoriaPlaceHolder}
+                                //placeholder={nomeCategoriaPlaceHolder}
                                 value={nomeCategoria}
                                 onChange={(e) => setNomeCategoria(e.target.value)}
                             />
@@ -140,7 +163,7 @@ export default function EditarCategoria({categoriaRecebida}: CategoriaProps){
                                 value={nomeCategoria}
                                 onChange={(e) => setNomeCategoria(e.target.value)}
                             />
-                        )}
+                        )} */}
 
                         <label className={styles.label}>
                             <span className={styles.span}>
@@ -170,7 +193,7 @@ export default function EditarCategoria({categoriaRecebida}: CategoriaProps){
                         </label>
 
                         <Button type="submit" loading={loading} style={{maxWidth: '720px'}}>
-                            Cadastrar
+                            Salvar Informações
                         </Button>
                     </form>
                 </main>
