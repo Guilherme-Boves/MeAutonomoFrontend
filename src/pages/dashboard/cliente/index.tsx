@@ -33,11 +33,11 @@ export default function Dashboard({ userData }: UserProps) {
   const { signOut } = useContext(AuthContext)
 
   const [user, setUser] = useState(userData);
-  const [nomeUsuario, setNomeUsuario] = useState(user.nome);
+  const [nomeUsuario, setNomeUsuario] = useState(user.nome.split(" ", 1)); 
   const [imagem, setImagem] = useState(user.imagem);
   
   const userNavigation = [
-    { name: 'Gerenciar meu Perfil', href: '/perfil/cliente' },
+    { name: 'Meu Perfil', href: '/perfil/cliente' },
     { name: 'Sair', onClick: signOut },
   ]
 
@@ -107,14 +107,14 @@ export default function Dashboard({ userData }: UserProps) {
 
         <header className="bg-white shadow">
           <div className="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-extrabold tracking-tight text-[#4D6F80]">Bem vindo, {nomeUsuario}!</h1>
+            <h1 className="text-3xl font-extrabold tracking-tight text-[#4D6F80]">Olá, {nomeUsuario}!</h1>
             <h1 className="text-base font-semibold tracking-tight text-[#4D6F80]">Ficamos felizes de poder contar com você :)</h1>
           </div>
         </header>
         <main>
           <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
             <div className="px-4 py-6 sm:px-0">
-              <div className="bg-white h-[530px] rounded-lg border-2 border-[#D3E2E5] py-8">
+              <div className="bg-white h-[490px] 2xl:h-[530px] rounded-lg border-2 border-[#D3E2E5] py-8">
                 <div className="flex">
                   <div className='flex mx-auto space-x-12 p-4'>
                     <Link href={"/contratar/categoria"}>
@@ -152,11 +152,11 @@ export default function Dashboard({ userData }: UserProps) {
                             <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
 
                               <div className=" bg-[#ccf0fb] w-full max-h-full">
-                                  <img src="/images/GerenciarPerfil.png" alt="" />
+                                  <img className="" src="/images/MeuPerfil.png" alt="" />
                               </div> 
 
                                 <div className="text-center px-6 py-8 bg-[#56CCF2] hover:bg-[hsl(195,86%,50%)] transition-colors ">
-                                    <div className="font-extrabold text-xl mb-2 text-white">Gerenciar Perfil</div>
+                                    <div className="font-extrabold text-xl mb-2 text-white">Meu Perfil</div>
                                 </div>
                             </div>
                         </a>
