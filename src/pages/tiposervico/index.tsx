@@ -121,7 +121,7 @@ export default function TipoDeServicos({ listaCategorias }: ListCategorias){
                         <div className={styles.novoServico}>
                             <Link href={"/tiposervico/cadastrar"}>
                                 <a>
-                                    Nova Serviço
+                                    Novo Serviço
                                 </a>
                             </Link>
                         </div>

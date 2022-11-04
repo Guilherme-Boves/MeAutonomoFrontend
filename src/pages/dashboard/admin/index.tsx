@@ -6,6 +6,7 @@ import { AuthContext } from '../../../contexts/AuthContext';
 import { setupAPIClient } from '../../../services/api';
 import Head from 'next/head';
 import { canSSRAdmin } from '../../../utils/canSSRAdmin';
+import { MdOutlineArrowForwardIos, MdVerified } from 'react-icons/md';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -49,7 +50,7 @@ export default function Dashboard() {
                             <Menu as="div" className="relative ml-3">
                                 <div>
                                 <Menu.Button className="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-zinc-400">
-                                    <img className="h-8 w-8 rounded-full" src={""} alt="" />
+                                    <img className="h-8 w-8 rounded-full" src={`https://www.diethelmtravel.com/wp-content/uploads/2016/04/bill-gates-wealthiest-person.jpg`} alt="" />
                                 </Menu.Button>
                                 </div>
                                 <Transition
@@ -89,19 +90,19 @@ export default function Dashboard() {
 
             <header className="bg-white shadow">
                 <div className="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
-                <h1 className="text-3xl font-extrabold tracking-tight text-[#4D6F80]">Bem vindo, Admin!</h1>
-                <h1 className="text-base font-semibold tracking-tight text-[#4D6F80]">Ficamos felizes de poder contar com você :)</h1>
+                <h1 className="text-3xl font-extrabold tracking-tight text-[#4D6F80]">Olá, Admin!</h1>
+                <h1 className="text-base font-semibold tracking-tight text-[#4D6F80]">Ficamos felizes de poder te ver novamente :)</h1>
                 </div>
             </header>
             <main>
                 <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
                     <div className="px-4 py-6 sm:px-0">
-                        <div className="bg-white h-[530px] rounded-lg border-2 border-[#D3E2E5] py-8">
-                            <div className="flex">
+                        <div className="bg-white h-[850px] 2xl:h-[850px] rounded-lg border-2 border-[#D3E2E5] py-8">
+                            <div className="flex flex-col">
                                 <div className='flex mx-auto space-x-12 p-4'>
                                     <Link href={"/contratar/categoria"}>
                                         <a href="">
-                                            <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
+                                            <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
 
                                             <div className=" bg-[#ccf0fb] w-full max-h-full">
                                                 <img src="/images/ContratarServicos.png" alt="" />
@@ -116,7 +117,7 @@ export default function Dashboard() {
 
                                     <Link href={"/servicoscontratados/pendentes"}>
                                         <a href="">
-                                            <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
+                                            <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
 
                                             <div className=" bg-[#ccf0fb] w-full max-h-full">
                                                 <img src="/images/ServicosContratados.png" alt="" />
@@ -127,44 +128,46 @@ export default function Dashboard() {
                                                 </div>
                                             </div>
                                         </a>
-                                    </Link>
-
-                                    <Link href={""}>
+                                    </Link>                                 
+                            
+                                    <Link href={"/gerenciarservicos"}>
                                         <a href="">
-                                            <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
+                                            <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
 
                                                 <div className=" bg-[#ccf0fb] w-full max-h-full">
-                                                    <img src="/images/GerenciarPerfil.png" alt="" />
+                                                    <img src="/images/GerenciarServicos.png" alt="" />
                                                 </div> 
 
                                                 <div className="text-center px-6 py-8 bg-[#56CCF2] hover:bg-[hsl(195,86%,50%)] transition-colors ">
-                                                    <div className="font-extrabold text-xl mb-2 text-white">Gerenciar Perfil</div>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </Link>
-                                    
-                                    <Link href={""}>
-                                        <a href="">
-                                            <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
-
-                                                <div className=" bg-[#ccf0fb] w-full max-h-full">
-                                                    <img src="/images/ServicosContratados.png" alt="" />
-                                                </div> 
-
-                                                <div className="text-center px-6 py-8 bg-[#56CCF2] hover:bg-[hsl(195,86%,50%)] transition-colors ">
-                                                    <div className="font-extrabold text-xl mb-2 text-white">Gerenciar serviços prestados</div>
+                                                    <div className="font-extrabold text-xl mb-2 text-white">Serviços Prestados</div>
                                                 </div>
                                             </div>
                                         </a>
                                     </Link>
 
+                                    <Link href={"/perfil/profissional"}>
+                                        <a href="">
+                                            <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
+
+                                                <div className=" bg-[#ccf0fb] w-full max-h-full">
+                                                    <img src="/images/MeuPerfil.png" alt="" />
+                                                </div> 
+
+                                                <div className="text-center px-6 py-8 bg-[#56CCF2] hover:bg-[hsl(195,86%,50%)] transition-colors ">
+                                                    <div className="font-extrabold text-xl mb-2 text-white">Meu Perfil</div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </Link>
+                                </div>
+                                
+                                <div className='flex mx-auto space-x-12 p-5'>
                                     <Link href={"/categorias"}>
                                         <a href="">
-                                            <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
+                                            <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
 
                                                 <div className=" bg-[#ccf0fb] w-full max-h-full">
-                                                    <img src="/images/ServicosContratados.png" alt="" />
+                                                    <img src="/images/MeuPerfil.png" alt="" />
                                                 </div> 
 
                                                 <div className="text-center px-6 py-8 bg-[#56CCF2] hover:bg-[hsl(195,86%,50%)] transition-colors ">
@@ -176,10 +179,10 @@ export default function Dashboard() {
 
                                     <Link href={"/tiposervico"}>
                                         <a href="">
-                                            <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
+                                            <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
 
                                                 <div className=" bg-[#ccf0fb] w-full max-h-full">
-                                                    <img src="/images/ServicosContratados.png" alt="" />
+                                                    <img src="/images/MeuPerfil.png" alt="" />
                                                 </div> 
 
                                                 <div className="text-center px-6 py-8 bg-[#56CCF2] hover:bg-[hsl(195,86%,50%)] transition-colors ">
@@ -189,12 +192,12 @@ export default function Dashboard() {
                                         </a>
                                     </Link>
 
-                                    <Link href={""}>
+                                    <Link href={"/perfil/profissional"}>
                                         <a href="">
-                                            <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
+                                            <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
 
                                                 <div className=" bg-[#ccf0fb] w-full max-h-full">
-                                                    <img src="/images/ServicosContratados.png" alt="" />
+                                                    <img src="/images/MeuPerfil.png" alt="" />
                                                 </div> 
 
                                                 <div className="text-center px-6 py-8 bg-[#56CCF2] hover:bg-[hsl(195,86%,50%)] transition-colors ">
