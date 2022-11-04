@@ -1,6 +1,7 @@
 import { Fragment, useContext, useEffect, useState } from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { BiBell, BiX } from "react-icons/bi";
+import { Menu, Transition } from '@headlessui/react'
+import { BiBell } from "react-icons/bi";
+import { MdVerified, MdOutlineArrowForwardIos } from "react-icons/md"
 import Link from 'next/link';
 import { canSSRProf } from '../../../utils/canSSRProf';
 import { AuthContext } from '../../../contexts/AuthContext';
@@ -35,7 +36,7 @@ export default function Dashboard({ userData }: UserProps) {
   const { signOut } = useContext(AuthContext)
 
   const [user, setUser] = useState(userData);
-  const [nomeUsuario, setNomeUsuario] = useState(user.nome);
+  const [nomeUsuario, setNomeUsuario] = useState(user.nome.split(" ", 1));
   const [imagem, setImagem] = useState(user.imagem);
   
   const userNavigation = [
@@ -119,12 +120,12 @@ export default function Dashboard({ userData }: UserProps) {
             <main>
                 <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
                     <div className="px-4 py-6 sm:px-0">
-                        <div className="bg-white h-[530px] rounded-lg border-2 border-[#D3E2E5] py-8">
-                            <div className="flex">
+                        <div className="bg-white h-[650px] 2xl:h-[650px] rounded-lg border-2 border-[#D3E2E5] py-8">
+                            <div className="flex flex-col">
                                 <div className='flex mx-auto space-x-12 p-4'>
                                     <Link href={"/contratar/categoria"}>
                                         <a href="">
-                                            <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
+                                            <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
 
                                             <div className=" bg-[#ccf0fb] w-full max-h-full">
                                                 <img src="/images/ContratarServicos.png" alt="" />
@@ -139,7 +140,7 @@ export default function Dashboard({ userData }: UserProps) {
 
                                     <Link href={"/servicoscontratados/pendentes"}>
                                         <a href="">
-                                            <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
+                                            <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
 
                                             <div className=" bg-[#ccf0fb] w-full max-h-full">
                                                 <img src="/images/ServicosContratados.png" alt="" />
@@ -150,49 +151,55 @@ export default function Dashboard({ userData }: UserProps) {
                                                 </div>
                                             </div>
                                         </a>
+                                    </Link>                                 
+                            
+                                    <Link href={"/gerenciarservicos"}>
+                                        <a href="">
+                                            <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
+
+                                                <div className=" bg-[#ccf0fb] w-full max-h-full">
+                                                    <img src="/images/GerenciarServicos.png" alt="" />
+                                                </div> 
+
+                                                <div className="text-center px-6 py-8 bg-[#56CCF2] hover:bg-[hsl(195,86%,50%)] transition-colors ">
+                                                    <div className="font-extrabold text-xl mb-2 text-white">Gerenciar Serviços</div>
+                                                </div>
+                                            </div>
+                                        </a>
                                     </Link>
 
                                     <Link href={"/perfil/profissional"}>
                                         <a href="">
-                                            <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
+                                            <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
 
                                                 <div className=" bg-[#ccf0fb] w-full max-h-full">
-                                                    <img src="/images/GerenciarPerfil.png" alt="" />
+                                                    <img src="/images/MeuPerfil.png" alt="" />
                                                 </div> 
 
                                                 <div className="text-center px-6 py-8 bg-[#56CCF2] hover:bg-[hsl(195,86%,50%)] transition-colors ">
-                                                    <div className="font-extrabold text-xl mb-2 text-white">Gerenciar Perfil</div>
+                                                    <div className="font-extrabold text-xl mb-2 text-white">Meu Perfil</div>
                                                 </div>
                                             </div>
                                         </a>
                                     </Link>
-                                    
+                                </div>
+                                
+                                <div className='p-5'>
                                     <Link href={"/gerenciarservicos"}>
-                                        <a href="">
-                                            <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
-
-                                                <div className=" bg-[#ccf0fb] w-full max-h-full">
-                                                    <img src="/images/ServicosContratados.png" alt="" />
-                                                </div> 
-
-                                                <div className="text-center px-6 py-8 bg-[#56CCF2] hover:bg-[hsl(195,86%,50%)] transition-colors ">
-                                                    <div className="font-extrabold text-xl mb-2 text-white">Gerenciar serviços prestados</div>
-                                                </div>
+                                        <a href="" className="w-[1167px] ml-auto mr-auto 2xl:w-[1167px] bg-[#56CCF2] rounded-2xl overflow-hidden flex items-stretch gap-6 hover:bg-blue-400 transition-colors">
+                                            <div className="bg-[rgb(255,255,255,0.7)] h-full p-14 flex items-center">
+                                                <MdVerified size={45} color="#4d6f80"/>
                                             </div>
-                                        </a>
-                                    </Link>
+                                            
+                                            <div className="py-10 leading-relaxed">
+                                                <strong className="text-2xl text-white font-extrabold">Publicar Serviço</strong>
+                                                <p className="text-base text-white mt-2 mr-64">
+                                                    Publique o seu serviço agora mesmo! É super simples e prático. Vamos lá!
+                                                </p>
+                                            </div>
 
-                                    <Link href={""}>
-                                        <a href="">
-                                            <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
-
-                                                <div className=" bg-[#ccf0fb] w-full max-h-full">
-                                                    <img src="/images/ServicosContratados.png" alt="" />
-                                                </div> 
-
-                                                <div className="text-center px-6 py-8 bg-[#56CCF2] hover:bg-[hsl(195,86%,50%)] transition-colors ">
-                                                    <div className="font-extrabold text-xl mb-2 text-white">Publicar Serviço</div>
-                                                </div>
+                                            <div className="h-full p-16">
+                                                <MdOutlineArrowForwardIos color='white' size={28}/>
                                             </div>
                                         </a>
                                     </Link>
