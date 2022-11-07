@@ -72,6 +72,11 @@ export default function PerfilCliente({ userData }: UserProps){
     async function handleSalvarInformacoes(e: FormEvent) {
         e.preventDefault();
 
+        if(nomeUsuario === null || telefone === null || endereco === null) {
+            toast.warn('Campos de Nome, Telefone, Email')
+            return;
+        }
+
         if(nomeUsuario === '' || telefone === '' || endereco === '' || endereco === null) {
             toast.warn('Campos de Nome, Telefone e Email não podem ser vazios')
             return;

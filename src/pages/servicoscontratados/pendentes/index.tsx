@@ -16,7 +16,6 @@ import { FiRefreshCw } from "react-icons/fi";
 import { ReturnButtonWithFunction } from "../../../components/ui/ReturnButtonWithFunction";
 import Router from "next/router";
 
-
 type ItemProps = {
     id: string;
     userCliente_id: string;
@@ -61,12 +60,13 @@ interface ListServicos {
 }
 
 export default function ServicosPendentes({ listServicos }: ListServicos){
-
+   
+    const [userLogadoId, setUserLogadoId] = useState('');
+    
     const [servicos, setServicos] = useState(listServicos || [])
     const [open, setOpen] = useState(false);
     const [role, setRole] = useState('');
     const [opcao, setOpcao] = useState('');
-
     let valorTotal = 0;
 
     const handleClickOpen = (op: number) => {
@@ -153,7 +153,7 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
             
             const { '@meautonomo.token': token } = parseCookies();
             const decodedJwt = jsonWebTokenService.decode(token)
-                
+                            
             if(decodedJwt.role === "CLIENTE"){
                 return(
                     setRole("CLIENTE")
@@ -162,10 +162,27 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
                 return(                
                     setRole("PROFISSIONAL")
                 )
-            }
+            }            
         } 
 
         loadRole()
+
+    }, [])
+
+    useEffect(() => {
+
+        async function loadUserLogadoId() {
+            
+            const api = setupAPIClient();
+
+            const response = await api.get('/userinfo');
+
+            const { id } = response.data
+
+            setUserLogadoId(id)
+        } 
+
+        loadUserLogadoId()
 
     }, [])
 
@@ -209,8 +226,10 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
                     <div>
                         {servicos.map((item) => {
                             
-                            const nomeCliente = item.userCliente.nome 
-                            const nomeProfissional = item.userProfissional.nome  
+                            const userCliente_id = item.userCliente_id;    
+                            const userProfissional_id = item.userProfissional_id;                       
+                            const nomeCliente = item.userCliente.nome;
+                            const nomeProfissional = item.userProfissional.nome;
 
                             return(
                                 <div key={item.id} className={styles.card}>
@@ -233,12 +252,14 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
                                                     {
                                                         role === "CLIENTE" ? (
                                                             <h2 className={styles.subTitle}>Nome do Profissional: {nomeProfissional}</h2>
-                                                        ) : (
-                                                            <h2 className={styles.subTitle}>Nome do Cliente: {nomeCliente}</h2> 
+                                                        ) : role === "PROFISSIONAL" && userCliente_id === userLogadoId ? (
+                                                            <h2 className={styles.subTitle}>Nome do Profissional: {nomeProfissional}</h2> 
+                                                            ) : (
+                                                            <h2 className={styles.subTitle}>Nome do Cliente: {nomeCliente}</h2>
                                                         )
                                                     }                                                    
                                                 </div>
-                                                
+
                                                 <div className={styles.titleServicoPrestado}>
                                                     <h2 className={styles.subTitle}>Serviço prestado: </h2>
                                                     
@@ -262,23 +283,18 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
                                                     let agenda_id = item.agenda_id
                                                     return(
                                                         <div className={styles.buttonFinalizarContainer} key={item.id}>
-                                                            { role === "CLIENTE" ? (
-                                                                    <div>                                                                        
-                                                                        <Button variant="outlined" onClick={e => handleClickOpen(0)} className={styles.buttonFinalizar}>
-                                                                            Cancelar servico
-                                                                        </Button>
-                                                                    </div>
-                                                                ) : (
-                                                                    <div>
-                                                                        <Button variant="outlined" onClick={e => handleClickOpen(0)} className={styles.buttonFinalizar} style={{marginRight:"10px"}}>
-                                                                            Cancelar servico
-                                                                        </Button>
-                                                                        <Button variant="outlined" onClick={e => handleClickOpen(1)} className={styles.buttonFinalizar}>
-                                                                            Finalizar servico
-                                                                        </Button>
-                                                                    </div>
-                                                                )}
-                                                            
+                                                            <div style={{paddingRight:"0.5rem"}}>                                                                        
+                                                                <Button variant="outlined" onClick={e => handleClickOpen(0)} className={styles.buttonFinalizar}>
+                                                                    Cancelar servico
+                                                                </Button>
+                                                            </div>                                                            
+                                                            { role === "PROFISSIONAL" && userProfissional_id === userLogadoId ? (
+                                                                <Button variant="outlined" onClick={e => handleClickOpen(1)} className={styles.buttonFinalizar}>
+                                                                    Finalizar servico
+                                                                </Button>
+                                                            ) : (
+                                                                <></>
+                                                            )}
 
                                                             <Dialog
                                                                 open={open}

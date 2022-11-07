@@ -53,9 +53,11 @@ interface ListServicos {
     listServicos: ItemProps[]
 }
 
+
 export default function ServicosFinalizados({ listServicos }: ListServicos){
 
     const [servicos, setServicos] = useState(listServicos || [])
+    const [userLogadoId, setUserLogadoId] = useState('');
     const [role, setRole] = useState('');
     let valorTotal = 0;
 
@@ -79,6 +81,23 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
 
         loadRole()
         
+
+    }, [])
+
+    useEffect(() => {
+
+        async function loadUserLogadoId() {
+            
+            const api = setupAPIClient();
+
+            const response = await api.get('/userinfo');
+
+            const { id } = response.data
+
+            setUserLogadoId(id)
+        } 
+
+        loadUserLogadoId()
 
     }, [])
 
@@ -115,6 +134,7 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
                     <div>
                         {servicos.map((item) => {
 
+                            const userCliente_id = item.userCliente_id;    
                             const nomeCliente = item.userCliente.nome 
                             const nomeProfissional = item.userProfissional.nome
                             
@@ -131,16 +151,18 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
                                                         </div>
                                                     )
                                                 })}
-                                                <div>
+
+                                                 <div>
                                                     {
                                                         role === "CLIENTE" ? (
                                                             <h2 className={styles.subTitle}>Nome do Profissional: {nomeProfissional}</h2>
-                                                        ) : (
-                                                            <h2 className={styles.subTitle}>Nome do Cliente: {nomeCliente}</h2> 
+                                                        ) : role === "PROFISSIONAL" && userCliente_id === userLogadoId ? (
+                                                            <h2 className={styles.subTitle}>Nome do Profissional: {nomeProfissional}</h2> 
+                                                            ) : (
+                                                            <h2 className={styles.subTitle}>Nome do Cliente: {nomeCliente}</h2>
                                                         )
                                                     }                                                    
                                                 </div>
-                                                
                                                 <div className={styles.titleServicoPrestado}>
                                                     <h2 className={styles.subTitle}>Serviço prestado: </h2>
                                                     

@@ -16,7 +16,7 @@ export function canSSRCliente<P>(fn: GetServerSideProps<P>){
         if(!token) {
             return{
                 redirect: {
-                    destination: '/',
+                    destination: '/signin',
                     permanent: false,
                 }
             }

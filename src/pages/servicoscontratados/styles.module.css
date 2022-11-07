@@ -2,11 +2,13 @@
     display: flex;
     justify-content: flex-start;
     max-width: 720px;    
-    height: 750px;
+    min-height: 750px;
+    height: auto;
     background-color: #fff;
     margin-left: 550px;
     border-radius: 20px;
     margin-top: 3rem;
+    padding-bottom: 1rem;
 }
 
 .itemContainer{
@@ -32,7 +34,7 @@
 }
 
 .card{
-    margin-top: 3rem;
+    margin-top: 1rem;
     background-color: #fff;
     height: auto; 
     width: auto;
@@ -60,7 +62,7 @@
 .buttonFinalizarContainer{
     display: flex;
     justify-content: flex-start;
-    margin: 1rem;
+    margin: 1rem;    
 }
 
 .buttonFinalizar:hover{ 

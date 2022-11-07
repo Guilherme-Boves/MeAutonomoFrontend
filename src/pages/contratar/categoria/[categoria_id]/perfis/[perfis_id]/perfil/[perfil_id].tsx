@@ -31,6 +31,7 @@ type ItemProps = {
             nome: string;
             imagem: string;
             endereco: string;
+            telefone: string;
             userProfissional: [{
                 descricaoSobreMim: string;
             }]
@@ -102,15 +103,9 @@ export default function Perfil({ perfilProf }: PerfilProps){
                     <div className={styles.bodyImagem}>
                         {perfil.map((item, index)=> {
 
-                            //const { imagem } = item.publicacao.user.imagem;
-                            //const { nome } = item.publicacao.user.nome;
-                            // const { tipoServico } = item.tipoDoServico.nome;
-                            // const { descricao } = item.descricao;
-                            // const { servicos } = item.servicosPrestadosProf.nome
-                            // const { agendaDia } = item.agenda.dia
-                            // const { agendaMes } = item.agenda.mes
-                            // const { agendaHorario } = item.agenda.horario
-                            //console.log("TESTE: " + item.publicacao.user.userProfissional.descricaoSobreMim)                           
+                            const profissionalTelefone = item.publicacao.user.telefone;
+                            console.log(profissionalTelefone)
+                                                  
                             return(
                                 <div key={item.id}>
                                     <div className={styles.containerMap}>                                    
@@ -139,7 +134,12 @@ export default function Perfil({ perfilProf }: PerfilProps){
 
                                                 <div className={styles.containerChat}>                                                                            
                                                     <button className={styles.buttonChat} onClick={() => {}}>
-                                                        <FiMail size={24}/>
+                                                        <a 
+                                                            target="_blank"
+                                                            rel="noreferrer"
+                                                            href={`https://api.whatsapp.com/send?l=pt_BR&phone=55${profissionalTelefone}&text=Olá! Sou cliente do MeAutonomo! `}>                                                                
+                                                            <FiMail size={24}/>
+                                                        </a>
                                                     </button>
                                                 </div>
 

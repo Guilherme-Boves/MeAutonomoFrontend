@@ -78,11 +78,16 @@ export default function PerfilProfissional({ userData }: UserProps){
         //     // Se o usuário não inserir informações novas, a função será finalizada.           
         //     return;
         // }
+        if(nomeUsuario === null || telefone === null || endereco === null || descricaoSobreMim === null) {
+            toast.warn('Campos de Nome, Telefone, Email e Descrição não podem ser vazios')
+            return;
+        }
 
         if(nomeUsuario.length === 0 || telefone.length === 0 || endereco.length === 0 || descricaoSobreMim.length === 0) {
             toast.warn('Campos de Nome, Telefone, Email e Descrição não podem ser vazios')
             return;
         }
+
 
         if(nomeUsuario){
             if(!containsNumbers(nomeUsuario)){ // Verificando se o nome possui números ou caracteres inválidos.

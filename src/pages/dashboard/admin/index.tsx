@@ -130,7 +130,7 @@ export default function Dashboard() {
                                         </a>
                                     </Link>                                 
                             
-                                    <Link href={"/gerenciarservicos"}>
+                                    <Link href={""}>
                                         <a href="">
                                             <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
 
@@ -145,7 +145,7 @@ export default function Dashboard() {
                                         </a>
                                     </Link>
 
-                                    <Link href={"/perfil/profissional"}>
+                                    <Link href={""}>
                                         <a href="">
                                             <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
 
@@ -192,7 +192,7 @@ export default function Dashboard() {
                                         </a>
                                     </Link>
 
-                                    <Link href={"/perfil/profissional"}>
+                                    <Link href={""}>
                                         <a href="">
                                             <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
 
