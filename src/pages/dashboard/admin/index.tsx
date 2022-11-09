@@ -167,7 +167,7 @@ export default function Dashboard() {
                                             <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
 
                                                 <div className=" bg-[#ccf0fb] w-full max-h-full">
-                                                    <img src="/images/MeuPerfil.png" alt="" />
+                                                    <img src="/images/GerenciarCategorias.png" alt="" />
                                                 </div> 
 
                                                 <div className="text-center px-6 py-8 bg-[#56CCF2] hover:bg-[hsl(195,86%,50%)] transition-colors ">
@@ -182,7 +182,7 @@ export default function Dashboard() {
                                             <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
 
                                                 <div className=" bg-[#ccf0fb] w-full max-h-full">
-                                                    <img src="/images/MeuPerfil.png" alt="" />
+                                                    <img src="/images/GerenciarServicos2.png" alt="" />
                                                 </div> 
 
                                                 <div className="text-center px-6 py-8 bg-[#56CCF2] hover:bg-[hsl(195,86%,50%)] transition-colors ">
@@ -197,7 +197,7 @@ export default function Dashboard() {
                                             <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
 
                                                 <div className=" bg-[#ccf0fb] w-full max-h-full">
-                                                    <img src="/images/MeuPerfil.png" alt="" />
+                                                    <img src="/images/GerenciarUsuarios.png" alt="" />
                                                 </div> 
 
                                                 <div className="text-center px-6 py-8 bg-[#56CCF2] hover:bg-[hsl(195,86%,50%)] transition-colors ">

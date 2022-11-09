@@ -12,6 +12,7 @@ export default function VideoHome(){
         <div className='absolute -top-32 left-0 right-0'>
           <div className='h-full w-full max-w-[1100px] max-h-[60vh] aspect-video mx-auto'>
             <Player/>
+            
           </div>
         </div>
     </section>

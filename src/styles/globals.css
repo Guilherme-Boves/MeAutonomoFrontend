@@ -6,3 +6,9 @@ body{
 	@apply bg-[#29B6D1];
 	-webkit-font-smoothing: antialiased;
 }
+
+@layer utilities {
+  .scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
