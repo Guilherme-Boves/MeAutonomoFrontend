@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { canSSRAuth } from '../../../../../../../utils/canSSRAuth';
 import { setupAPIClient } from '../../../../../../../services/api';
 import Image from 'next/image';
@@ -6,14 +6,16 @@ import styles from './styles.module.css'
 import { ReturnButton } from '../../../../../../../components/ui/ReturnButton';
 import { useRouter } from 'next/router';
 import { AuthContext } from '../../../../../../../contexts/AuthContext';
-import { DateFormat } from '../../../../../../../utils/Functions';
-import { FiCheck, FiMail, FiMapPin } from 'react-icons/fi';
+import { DateFormat, ShortDateFormat } from '../../../../../../../utils/Functions';
+import { FiAward, FiCheck, FiMail, FiMapPin } from 'react-icons/fi';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import { DialogContent } from '@mui/material';
+import { Rating } from '@mui/material'
+import { toast } from 'react-toastify';
 
 type ItemProps = {
     id: string;
@@ -49,6 +51,21 @@ type ItemProps = {
     }]
 }
 
+type ItemAvaliacaoProps = {
+    id: string;
+    descricao: string;
+    nota: string;
+    userProfissional_id: string;
+    created_at: string;
+    contrato_id: string;
+    contrato:{
+        userCliente:{
+            nome: string;
+        }
+    }
+    avaliacao_id: string;
+}
+
 interface PerfilProps {
     perfilProf: ItemProps[];
 }
@@ -60,12 +77,44 @@ export default function Perfil({ perfilProf }: PerfilProps){
     const router = useRouter();
 
     const [perfil, setPerfil] = useState(perfilProf || [])
+    const [avaliacao, setAvaliacao] = useState<number | null>(0)
+    const [avaliacoes, setAvaliacoes] = useState<ItemAvaliacaoProps[]>([])
     const [open, setOpen] = useState(false);
     const [opcao, setOpcao] = useState('');
+    const [descricao, setDescricao] = useState('')
 
     const categoria_id = router.query.categoria_id;
     const tipoServico_id = router.query.perfis_id;
     const perfil_id = router.query.perfil_id;
+
+    useEffect(() => {
+        
+        async function loadRating() {
+
+            const userProfissional_id = router.query.perfil_id
+
+            try{
+                const api = setupAPIClient();
+                
+                const response = await api.get("/avaliacoes/id", {
+                    params:{
+                        userProfissional_id: userProfissional_id
+                    }
+                })
+
+                setAvaliacoes(response.data)
+                const data = [] = response.data;                    
+                let notasSomadas = 0;
+                notasSomadas = data.reduce( (valorAnterior, valorAtual) => valorAnterior + parseFloat(valorAtual.nota), 0);
+                setAvaliacao(notasSomadas / data.length)
+
+            } catch(err) {
+                toast.error("Ops! Erro inesperado!");
+            }
+        }
+
+        loadRating();
+    }, [router.query.perfil_id, avaliacao])
 
     async function handleCriarContrato(){
 
@@ -85,6 +134,8 @@ export default function Perfil({ perfilProf }: PerfilProps){
             setOpcao("Descrição do Profissional")
         } else if(op === 1){
             setOpcao("Endereço")
+        } else if(op === 2){
+            setOpcao("Avaliações")
         }
 
         setOpen(true);
@@ -104,8 +155,7 @@ export default function Perfil({ perfilProf }: PerfilProps){
                         {perfil.map((item, index)=> {
 
                             const profissionalTelefone = item.publicacao.user.telefone;
-                            console.log(profissionalTelefone)
-                                                  
+                                                                              
                             return(
                                 <div key={item.id}>
                                     <div className={styles.containerMap}>                                    
@@ -123,6 +173,9 @@ export default function Perfil({ perfilProf }: PerfilProps){
 
                                                 <div className={styles.containerNomeServico}>
                                                     <h1 className={styles.Profnome}> { item.publicacao.user.nome } <FiCheck className={styles.check}/></h1>
+                                                    <div onClick={e => handleClickOpen(2)} style={{cursor:'pointer'}}>
+                                                        <Rating value={avaliacao} readOnly size={'small'} precision={0.5}/>
+                                                    </div>                                                    
                                                     <h1 className={styles.tipoServicoTitle}>{ item.tipoDoServico.nome }</h1>
                                                 </div>
 
@@ -148,6 +201,7 @@ export default function Perfil({ perfilProf }: PerfilProps){
                                                         <FiMapPin size={24}/>
                                                     </button> 
                                                 </div>
+
                                             </div>
                                         </div>
 
@@ -190,6 +244,7 @@ export default function Perfil({ perfilProf }: PerfilProps){
                                     <Dialog
                                         open={open}
                                         onClose={handleClose}
+                                        fullWidth
                                     >
                                         {opcao.startsWith('D') ? (
                                             <div>
@@ -200,13 +255,44 @@ export default function Perfil({ perfilProf }: PerfilProps){
                                                     {item.publicacao.user.userProfissional.map(item => item.descricaoSobreMim)}
                                                 </DialogContent>
                                             </div>
-                                        ) : (
+                                        ) : opcao.startsWith('E') ? (
                                             <div>
                                                 <DialogTitle>
                                                     {"Endereço"}
                                                 </DialogTitle>
                                                     <DialogContent>
                                                     {item.publicacao.user.endereco}
+                                                </DialogContent>
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <DialogTitle>
+                                                    {"Avaliações"}
+                                                </DialogTitle>
+                                                    <DialogContent>
+                                                        {avaliacoes.length === 0 ? (
+                                                            <h1>O profissional ainda não avaliações</h1>
+                                                        ) : (
+                                                            avaliacoes.map((item) => {
+                                                                return(
+                                                                    <div key={item.id}>
+                                                                        <div className={styles.cardAvaliacao}>                                                                        
+                                                                            <Rating value={Number(item.nota)} readOnly precision={0.5}/>
+    
+                                                                            <h1 className={styles.titleAvaliacao}>Descrição</h1>
+                                                                            <textarea 
+                                                                                maxLength={400} 
+                                                                                className={styles.textAreaAvaliacao} 
+                                                                                value={item.descricao}
+                                                                                readOnly
+                                                                            />
+                                                                            <h1>- {item.contrato.userCliente.nome}</h1>
+                                                                            <h2>{ShortDateFormat(item.created_at)}</h2>
+                                                                        </div>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        )}
                                                 </DialogContent>
                                             </div>
                                         )}

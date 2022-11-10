@@ -67,14 +67,19 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
     const [open, setOpen] = useState(false);
     const [role, setRole] = useState('');
     const [opcao, setOpcao] = useState('');
+    const [contratoId, setContratoId] = useState('');
     let valorTotal = 0;
 
-    const handleClickOpen = (op: number) => {
+    const handleClickOpen = (op: number, contrato_id: string) => {
         
+        //setContratoId(contrato_id);
+
         if(op === 0){
             setOpcao("Cancelar Serviço")
+            //setContratoId(contrato_id);
         } else if(op === 1) {
             setOpcao("Finalizar Serviço")
+            //setContratoId(contrato_id);
         }
 
         setOpen(true);
@@ -98,14 +103,14 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
         }
     }
 
-    async function handleFinalizar(contrato_id: string, agenda_id: string) {
+    async function handleFinalizar(agenda_id: string) {
         
         const api = setupAPIClient();
 
         try{
 
             const response = await api.put('/servicos/finalizar', {
-                contrato_id: contrato_id,
+                contrato_id: contratoId,
                 agenda_id: agenda_id
             })
 
@@ -124,11 +129,11 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
     async function handleCancelar(contrato_id: string, itemContrato_id: string, agenda_id: string) {
         
         const api = setupAPIClient();
-
+        //console.log(contratoId)
         try{
             const response = await api.delete('/servicos/delete', {
                 data:{
-                    contrato_id,
+                    contratoId,
                     itemContrato_id,
                     agenda_id,
                 }
@@ -142,7 +147,8 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
             setOpen(false)
             
         } catch(err){
-            toast.error("Ops, erro inesperado!")
+            const { error } = err.response.data
+            toast.error("Ops, erro inesperado!" + error)
         }
 
     }
@@ -221,11 +227,10 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
                             Nenhum serviço pendente
                         </>
                     ) : (
-                        <></>
-                    )}
                     <div>
                         {servicos.map((item) => {
                             
+                            const contrato_id = item.id;
                             const userCliente_id = item.userCliente_id;    
                             const userProfissional_id = item.userProfissional_id;                       
                             const nomeCliente = item.userCliente.nome;
@@ -235,8 +240,7 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
                                 <div key={item.id} className={styles.card}>
                                     {item.item.map((item) => {
 
-                                        let contrato_id = item.contrato_id
-                                        let itemContrato_id = item.id
+                                        const itemContrato_id = item.id
                                         
                                         return(
                                             <div key={item.id}>
@@ -284,12 +288,12 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
                                                     return(
                                                         <div className={styles.buttonFinalizarContainer} key={item.id}>
                                                             <div style={{paddingRight:"0.5rem"}}>                                                                        
-                                                                <Button variant="outlined" onClick={e => handleClickOpen(0)} className={styles.buttonFinalizar}>
+                                                                <Button variant="outlined" onClick={e => handleClickOpen(0, contrato_id)} className={styles.buttonFinalizar}>
                                                                     Cancelar servico
                                                                 </Button>
                                                             </div>                                                            
                                                             { role === "PROFISSIONAL" && userProfissional_id === userLogadoId ? (
-                                                                <Button variant="outlined" onClick={e => handleClickOpen(1)} className={styles.buttonFinalizar}>
+                                                                <Button variant="outlined" onClick={e => handleClickOpen(1, contrato_id)} className={styles.buttonFinalizar}>
                                                                     Finalizar servico
                                                                 </Button>
                                                             ) : (
@@ -317,9 +321,9 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
                                                                     { opcao.startsWith('C') ? (
                                                                         <Button onClick={(e) => handleCancelar(contrato_id, itemContrato_id, agenda_id)} autoFocus>
                                                                             Confirmar
-                                                                        </Button>  
+                                                                        </Button>
                                                                     ) : (
-                                                                        <Button onClick={(e) => handleFinalizar(contrato_id, agenda_id)} autoFocus>
+                                                                        <Button onClick={(e) => handleFinalizar(agenda_id)} autoFocus>
                                                                             Confirmar
                                                                         </Button>
                                                                     )}
@@ -335,7 +339,7 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
                             )
                         })}                        
                     </div>
-
+                    )}
                 </div>
             </div>
         </>

@@ -69,3 +69,17 @@
     background-color: #29B6D1;
     color: #fff;
 }
+
+.titleAvaliacao{
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.textAreaAvaliacao{
+    padding: 1rem;
+    border: 1px solid black;
+    resize: none;
+    min-height: 10rem;
+    border-radius: 8px;
+    
+}

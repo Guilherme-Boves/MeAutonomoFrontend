@@ -78,7 +78,7 @@ export default function GerenciarServicos({listPublicacoes}: list) {
         setOpen(false);
     };
 
-    async function criarNovaPublicacao() {
+    async function handleCriarNovaPublicacao() {
 
         const user_id = user.user.id
         
@@ -190,7 +190,7 @@ export default function GerenciarServicos({listPublicacoes}: list) {
                 <div className={styles.containertitle}>
                     <h1>Meus Serviços</h1>
                     <div className={styles.novoServico}>
-                        <button onClick={criarNovaPublicacao}>
+                        <button onClick={handleCriarNovaPublicacao}>
                             Nova publicação
                         </button>
                     </div>

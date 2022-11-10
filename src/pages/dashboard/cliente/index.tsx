@@ -40,6 +40,10 @@ export default function Dashboard({ userData }: UserProps) {
     { name: 'Meu Perfil', href: '/perfil/cliente' },
     { name: 'Sair', onClick: signOut },
   ]
+  
+  function handleArmazenaNome(){    
+    localStorage.setItem("ls_NomeUsuario", nomeUsuario[0]);
+  }
 
   return (
     <>
@@ -118,7 +122,7 @@ export default function Dashboard({ userData }: UserProps) {
                 <div className="flex">
                   <div className='flex mx-auto space-x-12 p-4'>
                     <Link href={"/contratar/categoria"}>
-                        <a href="">
+                        <a href="" onClick={handleArmazenaNome}>
                             <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
 
                             <div className=" bg-[#ccf0fb] w-full max-h-full">
