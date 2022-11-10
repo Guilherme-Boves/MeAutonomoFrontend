@@ -15,6 +15,7 @@ import { DateFormat } from "../../../utils/Functions";
 import { FiRefreshCw } from "react-icons/fi";
 import { ReturnButtonWithFunction } from "../../../components/ui/ReturnButtonWithFunction";
 import Router from "next/router";
+import { Agent } from "http";
 
 type ItemProps = {
     id: string;
@@ -68,18 +69,20 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
     const [role, setRole] = useState('');
     const [opcao, setOpcao] = useState('');
     const [contratoId, setContratoId] = useState('');
+    const [itemContratoId, setItemContratoId] = useState('');
+    const [agendaId, setAgendaId] = useState('');
     let valorTotal = 0;
 
-    const handleClickOpen = (op: number, contrato_id: string) => {
+    const handleClickOpen = (op: number, contrato_id: string, itemContrato_id: string, agenda_id: string) => {
         
-        //setContratoId(contrato_id);
+        setContratoId(contrato_id);
+        setItemContratoId(itemContrato_id);
+        setAgendaId(agenda_id);
 
         if(op === 0){
             setOpcao("Cancelar Serviço")
-            //setContratoId(contrato_id);
         } else if(op === 1) {
             setOpcao("Finalizar Serviço")
-            //setContratoId(contrato_id);
         }
 
         setOpen(true);
@@ -103,15 +106,14 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
         }
     }
 
-    async function handleFinalizar(agenda_id: string) {
+    async function handleFinalizar() {
         
         const api = setupAPIClient();
 
         try{
-
-            const response = await api.put('/servicos/finalizar', {
+            await api.put('/servicos/finalizar', {
                 contrato_id: contratoId,
-                agenda_id: agenda_id
+                agenda_id: agendaId
             })
 
             toast.success('Serviço Finalizado com sucesso!')                        
@@ -126,16 +128,16 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
         }
     }
 
-    async function handleCancelar(contrato_id: string, itemContrato_id: string, agenda_id: string) {
+    async function handleCancelar() {
         
         const api = setupAPIClient();
-        //console.log(contratoId)
+        
         try{
-            const response = await api.delete('/servicos/delete', {
-                data:{
-                    contratoId,
-                    itemContrato_id,
-                    agenda_id,
+           await api.delete('/servicos/delete', {
+                params:{
+                    contrato_id: contratoId,
+                    itemContrato_id: itemContratoId,
+                    agenda_id: agendaId,
                 }
             })
 
@@ -288,12 +290,12 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
                                                     return(
                                                         <div className={styles.buttonFinalizarContainer} key={item.id}>
                                                             <div style={{paddingRight:"0.5rem"}}>                                                                        
-                                                                <Button variant="outlined" onClick={e => handleClickOpen(0, contrato_id)} className={styles.buttonFinalizar}>
+                                                                <Button variant="outlined" onClick={e => handleClickOpen(0, contrato_id, itemContrato_id, agenda_id)} className={styles.buttonFinalizar}>
                                                                     Cancelar servico
                                                                 </Button>
                                                             </div>                                                            
                                                             { role === "PROFISSIONAL" && userProfissional_id === userLogadoId ? (
-                                                                <Button variant="outlined" onClick={e => handleClickOpen(1, contrato_id)} className={styles.buttonFinalizar}>
+                                                                <Button variant="outlined" onClick={e => handleClickOpen(1, contrato_id, itemContrato_id, agenda_id)} className={styles.buttonFinalizar}>
                                                                     Finalizar servico
                                                                 </Button>
                                                             ) : (
@@ -319,11 +321,11 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
                                                                         Cancelar
                                                                     </Button>
                                                                     { opcao.startsWith('C') ? (
-                                                                        <Button onClick={(e) => handleCancelar(contrato_id, itemContrato_id, agenda_id)} autoFocus>
+                                                                        <Button onClick={(e) => handleCancelar()} autoFocus>
                                                                             Confirmar
                                                                         </Button>
                                                                     ) : (
-                                                                        <Button onClick={(e) => handleFinalizar(agenda_id)} autoFocus>
+                                                                        <Button onClick={(e) => handleFinalizar()} autoFocus>
                                                                             Confirmar
                                                                         </Button>
                                                                     )}

@@ -152,7 +152,7 @@ export default function Perfil({ perfilProf }: PerfilProps){
             <ReturnButton/>
                 <div className={styles.container}>
                     <div className={styles.bodyImagem}>
-                        {perfil.map((item, index)=> {
+                        {perfil.map((item)=> {
 
                             const profissionalTelefone = item.publicacao.user.telefone;
                                                                               
