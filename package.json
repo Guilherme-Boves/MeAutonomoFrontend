@@ -27,11 +27,13 @@
     "next": "12.3.0",
     "nookies": "^2.5.2",
     "react": "18.2.0",
+    "react-confetti": "^6.1.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.4.0",
     "react-input-mask": "^2.0.4",
     "react-toastify": "^9.0.8",
-    "react-typed": "^1.2.0"
+    "react-typed": "^1.2.0",
+    "react-use": "^17.4.0"
   },
   "devDependencies": {
     "@types/node": "^18.7.17",

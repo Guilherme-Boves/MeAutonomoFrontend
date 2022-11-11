@@ -7,7 +7,8 @@ module.exports = {
     extend: {
       backgroundImage: {
         fundo: "url(/Images/fundo.png)",
-        fundo2: "url(/Images/fundo2.png)"
+        fundo2: "url(/Images/fundo2.png)",
+        fundo3: "url(/Images/fundo3.png)"
       },
       fontFamily: {
         sans: 'Nunito, sans-serif',
