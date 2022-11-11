@@ -177,3 +177,22 @@
     border: solid 1px #1d1d2e;
     margin-bottom: 1rem;
 }
+
+.cardAvaliacao{
+    border: 1px solid black;
+    border-radius: 20px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.titleAvaliacao{
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.textAreaAvaliacao{
+    margin-top: 1rem;        
+    resize: none;
+    border-radius: 8px;
+    width: 100%;
+}

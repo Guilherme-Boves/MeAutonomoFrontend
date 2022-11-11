@@ -151,10 +151,11 @@ export default function Contrato({ perfilProf }: PerfilProps){
             let data = splittedAgendaIdData[1]
 
             await api.post('/contrato/addagenda', {
+                contrato_id: contrato_id,
                 itemContrato_id: id,
                 data: data,
                 agenda_id: agenda_id
-            })    
+            })
 
             toast.success('Contrato realizado com sucesso!')
             setPagina((paginaAtual) => paginaAtual + 1)

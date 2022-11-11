@@ -44,6 +44,10 @@ export default function Dashboard({ userData }: UserProps) {
     { name: 'Sair', onClick: signOut },
   ]
 
+  function handleArmazenaNome(){    
+    localStorage.setItem("ls_NomeUsuario", nomeUsuario[0]);
+  }
+
   return (
     <>
         <Head>        
@@ -124,7 +128,7 @@ export default function Dashboard({ userData }: UserProps) {
                             <div className="flex flex-col">
                                 <div className='flex mx-auto space-x-12 p-4'>
                                     <Link href={"/contratar/categoria"}>
-                                        <a href="">
+                                        <a href="" onClick={handleArmazenaNome}>
                                             <div className="w-64 2xl:w-64 rounded-2xl overflow-hidden shadow-lg">
 
                                             <div className=" bg-[#ccf0fb] w-full max-h-full">
