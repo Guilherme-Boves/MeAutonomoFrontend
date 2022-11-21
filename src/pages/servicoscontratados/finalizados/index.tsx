@@ -12,6 +12,8 @@ import Router from "next/router";
 
 import { Stack, Rating, Button, Dialog, DialogActions, DialogTitle, DialogContent} from '@mui/material'
 import { toast } from "react-toastify";
+import { NavServicos } from "../../../components/NavServicos";
+import { FaMedal } from "react-icons/fa";
 
 type ItemProps = {
     id: string;
@@ -215,146 +217,165 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
 
     return(
         <>
-            <ReturnButtonWithFunction onClick={handleReturn}/>
-            <div>
-                <Link href={'/servicoscontratados/pendentes'}>
-                    <a>
-                        Servicos Pendentes
-                    </a>
-                </Link>
-            </div>
-            <div className={styles.container}>
-                <div className={styles.itemContainer}>
-                    <h1 className={styles.title}>Serviços Finalizados</h1>
-                    {servicos.length === 0 ? (
-                        <div>
-                            Nenhum serviço finalizado
+            <div className="flex flex-row">
+                <div className="flex flex-col border-r-2 border-zinc-50">
+                    <div className="ml-8 pt-8">
+                        <ReturnButtonWithFunction onClick={handleReturn}/>
+                    </div>
+                    <NavServicos/>
+                </div>
+                <div className="mx-auto">
+                    <div className="p-8 bg-white shadow mt-24 rounded-2xl w-[1000px]">
+                        <div className="flex flex-row">
+                            <div>
+                                <h1 className="font-bold text-xl ml-1 ">Serviços Finalizados</h1>
+                            </div>
                         </div>
-                    ) : (
-                        <div>
-                        {servicos.map((item) => {
 
-                            const contrato_id = item.id
-                            const userCliente_id = item.userCliente_id;    
-                            const userProfissional_id = item.userProfissional_id;
-                            const nomeCliente = item.userCliente.nome 
-                            const nomeProfissional = item.userProfissional.nome
-                            
-                            return(
-                                <div key={item.id} className={styles.card}>
-                                    {item.item.map((item) => {
+                        <div className="pt-4 pb-2">
+                            <div className="flex-grow border-t-2 border-[#D3E2E5]"/>
+                        </div>
+                        
+                        {servicos.length === 0 ? (
+                            <div>
+                                Nenhum serviço finalizado
+                            </div>
+                        ) : (
+                            <div>
+                            {servicos.map((item) => {
 
-                                        const contratoAvaliacao = item.contrato.avaliacao;
+                                const contrato_id = item.id
+                                const userCliente_id = item.userCliente_id;    
+                                const userProfissional_id = item.userProfissional_id;
+                                const nomeCliente = item.userCliente.nome 
+                                const nomeProfissional = item.userProfissional.nome
+                                
+                                return(
+                                    <div key={item.id} className="mt-4 bg-white h-auto w-auto rounded-lg border-2 pr-4">
+                                        {item.item.map((item) => {
 
-                                        return(
-                                            <div key={item.id}>
-                                                {item.agendas.map((item) => {
-                                                    return(
-                                                        <div key={item.id}>
-                                                            <h1 className={styles.cardTitle}>{DateFormat(item.data)}</h1>
-                                                        </div>
-                                                    )
-                                                })}
+                                            const contratoAvaliacao = item.contrato.avaliacao;
 
-                                                 <div>
-                                                    {
-                                                        role === "CLIENTE" ? (
-                                                            <h2 className={styles.subTitle}>Nome do Profissional: {nomeProfissional}</h2>
-                                                        ) : role === "PROFISSIONAL" && userCliente_id === userLogadoId ? (
-                                                            <h2 className={styles.subTitle}>Nome do Profissional: {nomeProfissional}</h2> 
-                                                            ) : (
-                                                            <h2 className={styles.subTitle}>Nome do Cliente: {nomeCliente}</h2>
-                                                        )
-                                                    }                                                    
-                                                </div>
-                                                <div className={styles.titleServicoPrestado}>
-                                                    <h2 className={styles.subTitle}>Serviço prestado: </h2>
-                                                    
-                                                    {item.servicos.map((item) => {
+                                            return(
+                                                <div key={item.id}>
+                                                    {item.agendas.map((item) => {
                                                         return(
-                                                            <div key={item.id}>                                                                
-                                                                <h1 style={{marginLeft:'0.2rem'}}>{item.nome}, </h1>                                                                
+                                                            <div key={item.id}>
+                                                                <h1 className="font-bold p-3 pl-4">{DateFormat(item.data)}</h1>
+                                                                <div className="flex-grow w-[933px] border-t-2 border-[#D3E2E5]"/>
                                                             </div>
                                                         )
                                                     })}
-                                                </div>
 
-                                                <div className={styles.titleServicoPrestado}>
-                                                    <h2 className={styles.subTitle}>Valor total: R$ </h2>
-                                                    {valorTotal = item.servicos.reduce( (valorAnterior, valorAtual) => valorAnterior + Number(valorAtual.preco), 0)}
-                                                </div>
+                                                    <div className="pt-4">
+                                                        {
+                                                            role === "CLIENTE" ? (
+                                                                <div className="flex flex-row"><h2 className="pl-4 font-bold">Nome do Profissional:</h2> <h2 className="ml-1">{nomeProfissional}</h2></div>
+                                                            ) : role === "PROFISSIONAL" && userCliente_id === userLogadoId ? (
+                                                                <div className="flex flex-row"><h2 className="pl-4 font-bold">Nome do Profissional:</h2> <h2 className="ml-1">{nomeProfissional}</h2></div> 
+                                                                ) : (                                                           
+                                                                <div className="flex flex-row"><h2 className="pl-4 font-bold">Nome do Cliente:</h2> <h2 className="ml-2">{nomeCliente}</h2></div>
+                                                            )
+                                                        }                                                    
+                                                    </div>
+                                                    <div className={styles.titleServicoPrestado}>
+                                                        <h2 className="pl-4 font-bold">Serviço prestado:</h2>
+                                                        
+                                                        {item.servicos.map((item) => {
+                                                            return(
+                                                                <div key={item.id}>                                                                
+                                                                    <h1 style={{marginLeft:'0.2rem'}}>{item.nome} </h1>                                                                
+                                                                </div>
+                                                            )
+                                                        })}
+                                                    </div>
 
-                                                <div>
-                                                    { role === "CLIENTE" && contratoAvaliacao === false ? (
-                                                            <div className={styles.buttonFinalizarContainer} style={{paddingRight:"0.5rem"}}>                                                                        
-                                                            <Button variant="outlined" onClick={e => handleClickOpen(contrato_id, userProfissional_id)} className={styles.buttonFinalizar}>
-                                                                Avaliar Serviço
-                                                            </Button>
+                                                    <div className="flex flex-row">
+                                                        <h2 className="pl-4 font-bold">Valor total:</h2>
+                                                        <h2 className="ml-1">R$</h2>
+                                                        <div className="ml-0.5">
+                                                            {valorTotal = item.servicos.reduce((valorAnterior, valorAtual) => valorAnterior + Number(valorAtual.preco), 0)}
                                                         </div>
-                                                        ) : role === "PROFISSIONAL" && userCliente_id === userLogadoId && contratoAvaliacao === false ? (
-                                                            <div className={styles.buttonFinalizarContainer} style={{paddingRight:"0.5rem"}}>                                                                        
-                                                                <Button variant="outlined" onClick={e => handleClickOpen(contrato_id, userProfissional_id)} className={styles.buttonFinalizar}>
-                                                                    Avaliar Serviço
+                                                    </div>   
+
+                                                    <div>
+                                                        { role === "CLIENTE" && contratoAvaliacao === false ? (
+                                                                <div className={styles.buttonFinalizarContainer} style={{paddingRight:"0.5rem"}}>                                                                        
+                                                                <Button variant="outlined" onClick={e => handleClickOpen(contrato_id, userProfissional_id)} className="hover:bg-[#29B6D1] hover:text-white hover:transition-colors">
+                                                                    <FaMedal className="fill-current h-5 w-5"/>
+                                                                    <div className="ml-1">
+                                                                        Avaliar Serviço
+                                                                    </div>
                                                                 </Button>
                                                             </div>
-                                                            ) : (
-                                                            <></>
-                                                        )
-                                                    }                                                    
-                                                </div>
-                                                
-                                                <Dialog
-                                                    open={open}
-                                                    onClose={handleClose}
-                                                    fullWidth
-                                                >
-                                                    <div>
-                                                        <DialogTitle>
-                                                            {"O que achou do serviço? Deixe aqui a sua avaliação!"}
-                                                        </DialogTitle>
-
-                                                        <DialogContent>
-                                                            <div>
-                                                                <Stack spacing={2}>
-                                                                    <h1 className={styles.titleAvaliacao}>Nota</h1>
-                                                                    <Rating 
-                                                                        value={avaliacao}
-                                                                        onChange={handleChangeAvaliacao}
-                                                                        precision={0.5}
-                                                                        size="large"
-                                                                    />
-                                                                    
-                                                                    <h1 className={styles.titleAvaliacao}>Descrição</h1>
-                                                                    <textarea 
-                                                                        maxLength={400} 
-                                                                        className={styles.textAreaAvaliacao} 
-                                                                        value={descricao} 
-                                                                        onChange={(e) => setDescricao(e.target.value)}
-                                                                    />
-                                                                </Stack>
-                                                            </div>
-                                                        </DialogContent>
+                                                            ) : role === "PROFISSIONAL" && userCliente_id === userLogadoId && contratoAvaliacao === false ? (
+                                                                <div className={styles.buttonFinalizarContainer} style={{paddingRight:"0.5rem"}}>                                                                        
+                                                                    <Button variant="outlined" onClick={e => handleClickOpen(contrato_id, userProfissional_id)} className="hover:bg-[#29B6D1] hover:text-white hover:transition-colors">
+                                                                        <FaMedal className="fill-current h-5 w-5"/>
+                                                                        <div className="ml-1">
+                                                                            Avaliar Serviço
+                                                                        </div>
+                                                                    </Button>
+                                                                </div>
+                                                                ) : (
+                                                                <></>
+                                                            )
+                                                        }                                                    
                                                     </div>
                                                     
-                                                    <DialogActions>
-                                                        <Button onClick={handleClose}>
-                                                            Fechar
-                                                        </Button>
-                                                        <Button onClick={handleRealizarAvaliacao}>
-                                                            Enviar
-                                                        </Button>
-                                                    </DialogActions>
+                                                    <Dialog
+                                                        open={open}
+                                                        onClose={handleClose}
+                                                        fullWidth
+                                                    >
+                                                        <div>
+                                                            <DialogTitle>
+                                                                {"O que achou do serviço? Deixe aqui a sua avaliação!"}
+                                                            </DialogTitle>
 
-                                                </Dialog>                                               
-                                            </div>
-                                        )
-                                    })}                                    
-                                </div>
-                            )
-                        })}                        
+                                                            <DialogContent>
+                                                                <div>
+                                                                    <Stack spacing={2}>
+                                                                        <h1 className={styles.titleAvaliacao}>Nota</h1>
+                                                                        <Rating 
+                                                                            value={avaliacao}
+                                                                            onChange={handleChangeAvaliacao}
+                                                                            precision={0.5}
+                                                                            size="large"
+                                                                        />
+                                                                        
+                                                                        <h1 className={styles.titleAvaliacao}>Descrição</h1>
+                                                                        <textarea 
+                                                                            maxLength={400} 
+                                                                            className={styles.textAreaAvaliacao} 
+                                                                            value={descricao} 
+                                                                            onChange={(e) => setDescricao(e.target.value)}
+                                                                        />
+                                                                    </Stack>
+                                                                </div>
+                                                            </DialogContent>
+                                                        </div>
+                                                        
+                                                        <DialogActions>
+                                                            <Button onClick={handleClose}>
+                                                                Fechar
+                                                            </Button>
+                                                            <Button onClick={handleRealizarAvaliacao}>
+                                                                Enviar
+                                                            </Button>
+                                                        </DialogActions>
+
+                                                    </Dialog>                                               
+                                                </div>
+                                            )
+                                        })}                                    
+                                    </div>
+                                )
+                            })}                        
+                        </div>
+                        )}
+                        
                     </div>
-                    )}
-                    
                 </div>
             </div>
         </>

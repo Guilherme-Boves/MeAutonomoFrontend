@@ -16,6 +16,8 @@ import { FiRefreshCw } from "react-icons/fi";
 import { ReturnButtonWithFunction } from "../../../components/ui/ReturnButtonWithFunction";
 import Router from "next/router";
 import { Agent } from "http";
+import { NavServicos } from "../../../components/NavServicos";
+import { MdCancel, MdLibraryAddCheck } from "react-icons/md";
 
 type ItemProps = {
     id: string;
@@ -61,6 +63,23 @@ interface ListServicos {
 }
 
 export default function ServicosPendentes({ listServicos }: ListServicos){
+
+
+    const data = [
+        {
+          label: "HTML",
+          value: "html",
+          desc: `It really matters and then like it really doesn't matter.
+          What matters is the people who are sparked by it. And the people 
+          who are like offended by it, it doesn't matter.`,
+        },
+        {
+          label: "React",
+          value: "react",
+          desc: `Because it's about motivating the doers. Because I'm here
+          to follow my dreams and inspire other people to follow their dreams, too.`,
+        }
+      ];
    
     const [userLogadoId, setUserLogadoId] = useState('');
     
@@ -204,29 +223,38 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
         }
     }
 
-    return(
-        <>
-            <ReturnButtonWithFunction onClick={handleReturn}/>
-            <div>
-                <Link href={'/servicoscontratados/finalizados'}>
-                    <a style={{color: 'black'}}>
-                        Servicos Finalizados
-                    </a>
-                </Link>
+    return (
+      <>
+         <div className="flex flex-row">
+            <div className="flex flex-col border-r-2 border-zinc-50">
+                <div className="ml-8 pt-8">
+                    <ReturnButtonWithFunction onClick={handleReturn}/>
+                </div>
+                <NavServicos/>
             </div>
-            <div className={styles.container}>            
-                <div className={styles.itemContainer}>
-                    <div className={styles.ServicosRefreshIcon}>
+            <div className="mx-auto">            
+                <div className="p-8 bg-white shadow mt-24 rounded-2xl w-[1000px]">
+                    <div className="flex flex-row">
                         <div>
-                            <h1 className={styles.title}>Serviços Pendentes</h1>
+                            <h1 className="font-bold text-xl ml-1 ">Serviços Pendentes</h1>
                         </div>
-                        <div className={styles.refreshButton}>
-                            <FiRefreshCw size={20} onClick={handleRefresh}/>
+                        <div className="bg-[#12AFCB] rounded-md w-7 h-7 ml-5 cursor-pointer hover:bg-[#56CCF2] transition-colors">
+                            <FiRefreshCw className="mx-auto h-7" size={22} onClick={handleRefresh} color="white"/>
                         </div>
                     </div>
+
+                    <div className="pt-4 pb-2">
+                        <div className="flex-grow border-t-2 border-[#D3E2E5]"/>
+                    </div>
+
                     {servicos.length === 0 ? (
                         <>
-                            Nenhum serviço pendente
+                            <div className="flex justify-center p-5">
+                                <img src="/images/ErroEncontrar.png" alt="" width={100} height={100}/>
+                            </div>
+                            <div className="flex justify-center">
+                                <h1 className="font-bold text-base">Ops... Nenhum serviço pendente</h1>
+                            </div>
                         </>
                     ) : (
                     <div>
@@ -239,7 +267,7 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
                             const nomeProfissional = item.userProfissional.nome;
 
                             return(
-                                <div key={item.id} className={styles.card}>
+                                <div key={item.id} className="mt-4 bg-white h-auto w-auto rounded-lg border-2 pr-4">
                                     {item.item.map((item) => {
 
                                         const itemContrato_id = item.id
@@ -249,54 +277,62 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
                                                 {item.agendas.map((item) => {
                                                     return(
                                                         <div key={item.id}>                                                            
-                                                            <h1 className={styles.cardTitle}>{DateFormat(item.data)} </h1>
+                                                            <h1 className="font-bold p-3 pl-4">{DateFormat(item.data)} </h1>                                                           
+                                                            <div className="flex-grow w-[933px] border-t-2 border-[#D3E2E5]"/>
                                                         </div>
                                                     )
                                                 })}
 
-                                                <div>
+                                                <div className="pt-4">
                                                     {
                                                         role === "CLIENTE" ? (
-                                                            <h2 className={styles.subTitle}>Nome do Profissional: {nomeProfissional}</h2>
+                                                            <div className="flex flex-row"><h2 className="pl-4 font-bold">Nome do Profissional:</h2> <h2 className="ml-1">{nomeProfissional}</h2></div>
                                                         ) : role === "PROFISSIONAL" && userCliente_id === userLogadoId ? (
-                                                            <h2 className={styles.subTitle}>Nome do Profissional: {nomeProfissional}</h2> 
-                                                            ) : (
-                                                            <h2 className={styles.subTitle}>Nome do Cliente: {nomeCliente}</h2>
+                                                            <div className="flex flex-row"><h2 className="pl-4 font-bold">Nome do Profissional:</h2> <h2 className="ml-1">{nomeProfissional}</h2></div> 
+                                                            ) : (                                                           
+                                                            <div className="flex flex-row"><h2 className="pl-4 font-bold">Nome do Cliente:</h2> <h2 className="ml-2">{nomeCliente}</h2></div>
                                                         )
                                                     }                                                    
                                                 </div>
 
                                                 <div className={styles.titleServicoPrestado}>
-                                                    <h2 className={styles.subTitle}>Serviço prestado: </h2>
+                                                    <h2 className="pl-4 font-bold">Serviço prestado:</h2>
                                                     
                                                     {item.servicos.map((item) => {                                                        
                                                         return(
                                                             <div key={item.id}>                                                                
-                                                                <h1 style={{marginLeft:'0.2rem'}}>{item.nome}, </h1>                                                                
+                                                                <h1 style={{marginLeft:'0.2rem'}}>{item.nome} </h1>                                                                
                                                             </div>
                                                         )
                                                     })}
                                                 </div>
 
-                                                <div className={styles.titleServicoPrestado}>
-                                                    <h2 className={styles.subTitle}>Valor total: R$ </h2>
-
-                                                    {valorTotal = item.servicos.reduce( (valorAnterior, valorAtual) => valorAnterior + Number(valorAtual.preco), 0)}
-                                                     
+                                                <div className="flex flex-row">
+                                                    <h2 className="pl-4 font-bold">Valor total:</h2>
+                                                    <h2 className="ml-1">R$</h2>
+                                                    <div className="ml-0.5">
+                                                        {valorTotal = item.servicos.reduce( (valorAnterior, valorAtual) => valorAnterior + Number(valorAtual.preco), 0)}
+                                                    </div>
                                                 </div>                  
 
                                                 {item.agendas.map((item) => {
                                                     let agenda_id = item.agenda_id
                                                     return(
-                                                        <div className={styles.buttonFinalizarContainer} key={item.id}>
+                                                        <div className="flex flex-start m-4" key={item.id}>
                                                             <div style={{paddingRight:"0.5rem"}}>                                                                        
-                                                                <Button variant="outlined" onClick={e => handleClickOpen(0, contrato_id, itemContrato_id, agenda_id)} className={styles.buttonFinalizar}>
-                                                                    Cancelar servico
+                                                                <Button variant="outlined" onClick={e => handleClickOpen(0, contrato_id, itemContrato_id, agenda_id)} className="hover:bg-[#29B6D1] hover:text-white hover:transition-colors">
+                                                                    <MdCancel className="fill-current h-5 w-5"/>
+                                                                    <div className="ml-1">
+                                                                        Cancelar servico
+                                                                    </div>
                                                                 </Button>
                                                             </div>                                                            
                                                             { role === "PROFISSIONAL" && userProfissional_id === userLogadoId ? (
-                                                                <Button variant="outlined" onClick={e => handleClickOpen(1, contrato_id, itemContrato_id, agenda_id)} className={styles.buttonFinalizar}>
-                                                                    Finalizar servico
+                                                                <Button variant="outlined" onClick={e => handleClickOpen(1, contrato_id, itemContrato_id, agenda_id)} className="hover:bg-[#29B6D1] hover:text-white hover:transition-colors">
+                                                                    <MdLibraryAddCheck className="fill-current h-5 w-5"/>
+                                                                    <div className="ml-1">
+                                                                        Finalizar servico
+                                                                    </div>
                                                                 </Button>
                                                             ) : (
                                                                 <></>
@@ -308,11 +344,11 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
                                                             >
                                                                 { opcao.startsWith('C') ? (
                                                                     <DialogTitle>
-                                                                        {"Você tem certeza que deseja cancelar esse serviço?"}
+                                                                        {"Certeza que deseja cancelar esse serviço?"}
                                                                     </DialogTitle>  
                                                                 ) : (
                                                                     <DialogTitle>
-                                                                        {"Você tem certeza que deseja finalizar esse serviço?"}
+                                                                        {"Certeza que deseja finalizar esse serviço?"}
                                                                     </DialogTitle>
                                                                 )}   
 
@@ -343,9 +379,10 @@ export default function ServicosPendentes({ listServicos }: ListServicos){
                     </div>
                     )}
                 </div>
-            </div>
-        </>
-    )
+            </div> 
+        </div>
+      </>
+    );
 }
 
 export const getServerSideProps = canSSRAuth(async (ctx) => {
