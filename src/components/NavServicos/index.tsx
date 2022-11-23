@@ -15,7 +15,7 @@ export function NavServicos(){
                 </div>
                 <div className="mt-10 mb-4">
                     <ul className="ml-4">
-                        <li className="mb-2 px-4 py-4 text-white flex flex-row  border-gray-300  hover:bg-[#FFD666] hover:text-[#8D734B] hover:font-bold rounded rounded-lg">
+                        <li className="mb-2 px-4 py-4 text-white flex flex-row hover:bg-[#FFD666] hover:text-[#8D734B] hover:font-bold rounded rounded-lg">
                             <span>
                                 <BsUiChecksGrid className="fill-current h-5 w-5"/>
                             </span>
@@ -25,7 +25,7 @@ export function NavServicos(){
                                 </a>
                             </Link>
                         </li>
-                        <li className="mb-2 px-4 py-4 text-gray-100 flex flex-row  border-gray-300 hover:bg-[#FFD666] hover:text-[#8D734B]  hover:font-bold rounded rounded-lg">
+                        <li className="mb-2 px-4 py-4 text-gray-100 flex flex-row hover:bg-[#FFD666] hover:text-[#8D734B]  hover:font-bold rounded rounded-lg">
                             <span>
                                 <MdLibraryAddCheck className="fill-current h-5 w-5"/>
                             </span>

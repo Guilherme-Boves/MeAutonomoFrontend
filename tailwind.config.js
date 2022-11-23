@@ -6,8 +6,8 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        fundo: "url(/Images/Back.png)",
-        fundo2: "url(/Images/Back2.png)",
+        fundo: "url(/Images/Fundo.png)",
+        fundo2: "url(/Images/Fundo2.png)",
         fundo3: "url(/Images/fundo3.png)"
       },
       fontFamily: {
