@@ -13,6 +13,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import { toast } from 'react-toastify';
+import { MdLibraryAdd } from 'react-icons/md';
 
 type PublicacaoProps = {
     id: string;
@@ -185,19 +186,33 @@ export default function GerenciarServicos({listPublicacoes}: list) {
     return(
 
         <>
-        <ReturnButton/>
-            <div className={styles.container}>
-                <div className={styles.containertitle}>
-                    <h1>Meus Serviços</h1>
-                    <div className={styles.novoServico}>
-                        <button onClick={handleCriarNovaPublicacao}>
-                            Nova publicação
+        <div className='ml-10 p-3'>
+            <ReturnButton/>
+        </div>
+            <div className="bg-white w-[850px] mx-auto rounded-lg flex flex-col p-10 mb-10">
+                <div className="flex justify-between items-center">
+                    <h1 className='font-bold text-2xl'>Meus Serviços</h1>
+                    <div className="pb-5">
+                        <button onClick={handleCriarNovaPublicacao} className="group block max-w-xs mx-auto rounded-lg p-6 bg-[#12AFCB] ring-1 ring-slate-900/5 shadow-lg space-y-3 hover:bg-[#56CCF2] transition-colors">
+                            <div className="flex items-center space-x-3">
+                                <MdLibraryAdd color='white'/>
+                                <h3 className="text-white group-hover:text-white text-sm font-semibold">Nova Publicação</h3>
+                            </div>
+                            <p className="text-white group-hover:text-white text-sm">Publique um novo serviço! É rapidinho.</p>
                         </button>
                     </div>
                 </div>
-                <div className={styles.cardContainer} >                
+                <div className="flex-grow w-[773px] border-t-2 border-[#D3E2E5]"/>
+                <div className="pt-4 pb-2" >                
                     {publicacoes.length === 0 ? (
-                        <h1>Nenhum serviço foi publicado</h1>
+                        <>
+                        <div className="flex justify-center p-5">
+                            <img src="/images/ErroEncontrar.png" alt="" width={100} height={100}/>
+                        </div>
+                        <div className="flex justify-center">
+                            <h1 className="font-bold text-base">Ops... Parece que nenhum serviço foi publicado</h1>
+                        </div>
+                        </>
                     ) : (
                         publicacoes.map((item)=>{
                             const publicacao_id = item.id
@@ -211,44 +226,44 @@ export default function GerenciarServicos({listPublicacoes}: list) {
                                         const tipoServicoNome = item.tipoDoServico.nome; // Variável necessária para armazenar no localStorage qual categoria e tipo de serviço pertence aquela publicação.
                                         const categoriaNome = item.tipoDoServico.categoria.nome;
                                         return(
-                                                <div key={item.id} className={styles.card}>
-
-                                                    <div className={styles.fiButtonsContainer}>
+                                                <div key={item.id} className="p-4 mt-4 h-auto border-2 border-[#D3E2E5] rounded-lg w-auto shadow-md">
+                                                    <div className="flex justify-between">
                                                         <div>
-                                                            <div className={styles.tipoServicoText}>{item.tipoDoServico.nome}</div>
+                                                            <div className="font-bold text-xl">{item.tipoDoServico.nome}</div>
                                                         </div>
-                                                        <div className={styles.fiButtonContainer}>
-                                                            <button onClick={e => handleEditPublicacao(publicacao_id, itemPublicacao_id, descricao, tipoSerivcoId, tipoServicoNome, categoriaNome) }>
-                                                                <FiEdit size={24} />                                            
+                                                        <div className="space-x-5 pb-3">
+                                                            <button className='bg-[#12AFCB] rounded-lg h-7 w-7 hover:bg-[#56CCF2] transition-colors' onClick={e => handleEditPublicacao(publicacao_id, itemPublicacao_id, descricao, tipoSerivcoId, tipoServicoNome, categoriaNome) }>
+                                                                <FiEdit size={20} color="white" className='mx-auto'/>                                            
                                                             </button>                                                            
-                                                            <button onClick={e => {handleClickOpen(publicacao_id, itemPublicacao_id, nomePublicacao)}}>
-                                                                <FiTrash size={24} />                                            
+                                                            <button className='bg-[#12AFCB] rounded-lg h-7 w-7 hover:bg-[#56CCF2] transition-colors' onClick={e => {handleClickOpen(publicacao_id, itemPublicacao_id, nomePublicacao)}}>
+                                                                <FiTrash size={20} color="white" className='mx-auto' />                                            
                                                             </button>
                                                         </div>  
                                                     </div>                             
 
-                                                    <div className={styles.linhaHorizontal}></div>                                                    
-                                                    <div className={styles.itemsSubTitles}>Descrição</div>
-                                                    <div style={{marginBottom:'0.6rem'}}>{item.descricao}</div>
-                                                                                                        
-                                                    <h2 className={styles.itemsSubTitles}>Serviços prestados</h2>
-                                                    <div className={styles.linhaHorizontal}></div>
-                                                    <div className={styles.servicosAgendaContainer}>                                                        
+                                                    <div className="w-[100%] border-t-2 border-[#D3E2E5] pt-3"/>                                                                                      
+                                                    <div className="font-bold text-lg">Descrição</div>
+                                                    <div className="w-[100%] border-t-2 border-[#D3E2E5] pt-3"/> 
+                                                    <div style={{marginBottom:'0.6rem'}}>{item.descricao}</div>                                              
+                                                                                                    
+                                                    <h2 className="font-bold text-lg">Serviços prestados</h2>
+                                                    <div className="w-[100%] border-t-2 border-[#D3E2E5] pt-3"/> 
+                                                    <div className="">                                                        
                                                         {item.servicosPrestadosProf.map((item)=> {                                                        
                                                         return(
-                                                                <div key={item.id} className={styles.servicosAgenda}>
+                                                                <div key={item.id} className="w-[50%] m-[8px]">
                                                                     <div>{item.nome} - R${item.preco}</div>                                                                    
                                                                 </div>                                                                                                                            
                                                             )                                                            
                                                         })}                                                        
-                                                    </div>                                                    
+                                                    </div>                                        
                                                     
-                                                    <h2 className={styles.itemsSubTitles}>Agenda</h2>
-                                                    <div className={styles.linhaHorizontal}></div>
-                                                    <div className={styles.servicosAgendaContainer}>
+                                                    <h2 className="font-bold text-lg">Agenda</h2>
+                                                    <div className="w-[100%] border-t-2 border-[#D3E2E5] pt-3"/> 
+                                                    <div className="">
                                                         {item.agenda.map((item)=>{
                                                             return(
-                                                                <div key={item.id} className={styles.servicosAgenda}>
+                                                                <div key={item.id} className="w-[50%] m-[8px]">
                                                                     <div>{DateFormat(item.data)}</div>
                                                                 </div>
                                                             )
@@ -267,7 +282,7 @@ export default function GerenciarServicos({listPublicacoes}: list) {
                         onClose={handleClose}                                                                    
                     >
                         <DialogTitle>
-                            {`Você tem certeza que deseja excluir a publicação ${publicacaoSelecionadaNome}?`}
+                            {`Certeza que deseja excluir a publicação ${publicacaoSelecionadaNome}?`}
                         </DialogTitle>     
 
                         <DialogActions>

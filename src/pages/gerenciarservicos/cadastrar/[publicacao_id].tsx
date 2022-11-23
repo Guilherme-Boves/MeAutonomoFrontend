@@ -379,11 +379,13 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                 <form className={styles.form}>
                  
                     {categorias.length === 0 ? (
-                        <select className={styles.select}>                                                                    
-                            <option>
-                                {"Selecione uma categoria"}
-                            </option>    
-                        </select>
+                        <>
+                            <select className={styles.select}>                                                                    
+                                <option>
+                                    {"Selecione uma categoria"}
+                                </option>    
+                            </select>
+                        </>
                     ) : (
                         <select className={styles.select} value={categoriaSelecionada} onChange={handleChangeCategoria}>
                             {categorias.map( (item, index) => {
@@ -535,12 +537,14 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
 
     return(
 
-        <>            
-            <ReturnButtonWithFunction onClick={handleDeletePublicacao}/>
-            <main className={styles.container}>
-                <h1 className={styles.titulo}>Publicar Serviço</h1>
+        <>   
+            <div className='ml-10 p-3'>
+                <ReturnButtonWithFunction onClick={handleDeletePublicacao}/>
+            </div>
+            <main className="bg-white rounded-md shadow-md mx-auto w-[720px]">
+                <h1 className="font-semibold text-3xl ml-12 pt-10 ">Publicar Serviço</h1>
 
-                <div className={styles.body}>
+                <div className="{styles.body}">
                     {PageDisplay()}
                 </div>
 
@@ -564,8 +568,8 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                     <button 
                         className={styles.input}                        
                         style={{
-                            backgroundColor:'#12AFCB', 
-                            color:'#fff', 
+                            backgroundColor:'#FFD666', 
+                            color:'#8D734B', 
                             maxWidth:'100%', 
                             fontWeight:"bold"
                             }}

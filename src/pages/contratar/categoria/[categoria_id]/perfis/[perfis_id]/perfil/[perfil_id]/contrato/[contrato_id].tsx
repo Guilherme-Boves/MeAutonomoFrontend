@@ -281,6 +281,10 @@ export default function Contrato({ perfilProf }: PerfilProps){
                         <AiFillHome/>
                         Menu Principal
                     </button>
+
+                    <div className='text-xs text-white flex justify-center pt-20'>
+                        Illustration by <a href="https://icons8.com/illustrations/author/zD2oqC8lLBBA">Icons 8</a> from <a href="https://icons8.com/illustrations">Ouch!</a>
+                    </div>
                  </div>
              )
          }

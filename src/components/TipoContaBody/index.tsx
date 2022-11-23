@@ -14,7 +14,7 @@ export function TipoContaBody() {
                     O que você deseja?
                 </h1>
 
-                <div className='grid grid-cols-2 mx-auto space-x-3 p-4'>
+                <div className='grid grid-cols-2 mx-auto space-x-3 p-5'>
 
                     <Link href={"/signup/cliente"}>
                         <a href="">
@@ -38,7 +38,7 @@ export function TipoContaBody() {
 
                     <Link href={"/signup/profissional"}>
                         <a href="">
-                            <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg">
+                            <div className="w-72 2xl:w-80 rounded-2xl overflow-hidden shadow-lg ">
                                 
                                 <div className=" bg-[rgb(255,255,255,0.7)] w-full max-h-full">
                                     <img src="/images/tipoConta2.png" alt="" />
@@ -55,6 +55,9 @@ export function TipoContaBody() {
                             </div>
                         </a>
                     </Link>
+                </div>
+                <div className='text-xs text-white'>
+                    Illustration by <a href="https://icons8.com/illustrations/author/zD2oqC8lLBBA">Icons 8</a> from <a href="https://icons8.com/illustrations">Ouch!</a>
                 </div>
             </div>
         </div>

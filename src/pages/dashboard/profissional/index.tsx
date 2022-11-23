@@ -214,6 +214,10 @@ export default function Dashboard({ userData }: UserProps) {
                 </div>
             </main>
         </div>
+        
+        <div className='text-xs text-white flex justify-center p-5'>
+            Illustration by <a href="https://icons8.com/illustrations/author/zD2oqC8lLBBA">Icons 8</a> from <a href="https://icons8.com/illustrations">Ouch!</a>
+        </div>
     </>
   )
 }

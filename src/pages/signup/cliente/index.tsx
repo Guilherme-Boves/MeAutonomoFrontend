@@ -107,7 +107,7 @@ export default function SignUpCliente() {
             <div className='flex flex-row-reverse'>
                 <aside className="w-[1000px]">
                     <div className="mx-auto text-center justify-center">     
-                        <div className="flex justify-center mt-3 pb-3 2xl:mt-16 2xl:pb-6">                           
+                        <div className="flex justify-center pb-3 2xl:mt-16 2xl:pb-6">                           
                             <div className='fixed mr-96'>
                                 {formStep > 0 &&(
                                     <button 
