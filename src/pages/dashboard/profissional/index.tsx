@@ -77,7 +77,7 @@ export default function Dashboard({ userData }: UserProps) {
                             <Menu as="div" className="relative ml-3">
                                 <div>
                                 <Menu.Button className="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-zinc-400">
-                                    <img className="h-8 w-8 rounded-full" src={`http://localhost:3333/files/${imagem}`} alt="" />
+                                    <img className="h-8 w-8 rounded-full object-cover" src={`http://localhost:3333/files/${imagem}`} alt="" />
                                 </Menu.Button>
                                 </div>
                                 <Transition

@@ -50,7 +50,7 @@ export default function Dashboard() {
                             <Menu as="div" className="relative ml-3">
                                 <div>
                                 <Menu.Button className="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-zinc-400">
-                                    <img className="h-8 w-8 rounded-full" src={`https://www.diethelmtravel.com/wp-content/uploads/2016/04/bill-gates-wealthiest-person.jpg`} alt="" />
+                                    <img className="h-8 w-8 rounded-full object-cover" src={`https://www.diethelmtravel.com/wp-content/uploads/2016/04/bill-gates-wealthiest-person.jpg`} alt="" />
                                 </Menu.Button>
                                 </div>
                                 <Transition
