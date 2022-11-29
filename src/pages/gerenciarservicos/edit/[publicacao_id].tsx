@@ -436,11 +436,13 @@ export default function NovaPublicacao({publicacaoRecebida}: PublicacaoProps){
     return(
 
         <>
-            <ReturnButtonWithFunction onClick={handleReturn}/>
-            <main className={styles.container}>
-                <h1 className={styles.titulo}>Publicar Serviço</h1>
+            <div className='ml-10 p-3'>
+                <ReturnButtonWithFunction onClick={handleReturn}/>
+            </div>
+            <main className="bg-white rounded-md shadow-md mx-auto w-[720px]">
+                <h1 className="font-semibold text-3xl ml-12 pt-10 ">Publicar Serviço</h1>
 
-                <div className={styles.body}>
+                <div className="{styles.body}">
                     {PageDisplay()}
                 </div>
 
@@ -448,7 +450,7 @@ export default function NovaPublicacao({publicacaoRecebida}: PublicacaoProps){
                     {pagina == 0 ? (
                         <></>
                     ) : (
-                    <button 
+                        <button 
                         className={styles.input} 
                         style={{
                             backgroundColor:'#12AFCB', 
@@ -462,21 +464,21 @@ export default function NovaPublicacao({publicacaoRecebida}: PublicacaoProps){
                     </button>
                     )}
                     <button 
-                        className={styles.input} 
+                        className={styles.input}                        
                         style={{
-                            backgroundColor:'#12AFCB', 
-                            color:'#fff', 
+                            backgroundColor:'#FFD666', 
+                            color:'#8D734B', 
                             maxWidth:'100%', 
-                            fontWeight:"bold",
+                            fontWeight:"bold"
                             }}
-                        onClick={() => {
-                            if(pagina === 1){
-                                handleUpdateInfos();
-                            } else {
-                                handleNextForm();
-                            }
-                        }}
-                    >
+                            onClick={() => {
+                                if(pagina === 1){
+                                    handleUpdateInfos();
+                                } else {
+                                    handleNextForm();
+                                }
+                            }}
+                        >
                         {pagina === 0 ? "Continuar" : "Salvar informações"}
                     </button>
                 </div>
