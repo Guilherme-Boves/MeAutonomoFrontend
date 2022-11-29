@@ -138,7 +138,7 @@ export default function EditarCategoria({categoriaRecebida}: CategoriaProps){
                 <main className={styles.container}>
                     
                     <div>
-                        <h1 className={styles.title}>Editar Categoria</h1>
+                        <h1 className="text-white text-2xl font-bold">Editar Categoria</h1>
                     </div>
 
                     <form className={styles.form} onSubmit={handleEditCategoria}>

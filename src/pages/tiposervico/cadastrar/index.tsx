@@ -117,9 +117,11 @@ export default function CadastrarTipoServico({ listaCategorias }: CategoriaProps
             </Head>
 
             <div>
-                <ReturnButton/>
+                <div className='ml-10 p-3'>
+                    <ReturnButton/>
+                </div>
                 <main className={styles.container}>
-                    <h1 className={styles.title}>Novo Tipo de Serviço</h1>
+                    <h1 className="text-white text-2xl font-bold">Novo Tipo de Serviço</h1>
 
                     <form className={styles.form} onSubmit={handleRegister}>
                         <Input
@@ -165,7 +167,7 @@ export default function CadastrarTipoServico({ listaCategorias }: CategoriaProps
                             )}
                         </label>
 
-                        <Button type="submit" loading={loading} style={{maxWidth: '720px'}}>
+                        <Button className="rounded-lg bg-[#FFD666] p-1 text-[#8D734B] hover:text-[hsl(36,31%,60%)]" type="submit" loading={loading} style={{maxWidth: '720px'}}>
                             Cadastrar
                         </Button>
                     </form>
