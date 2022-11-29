@@ -65,6 +65,7 @@ type ItemAvaliacaoProps = {
     contrato: {
         userCliente: {
             nome: string;
+            imagem: string;
         }
     }
     avaliacao_id: string;
@@ -176,7 +177,7 @@ export default function Perfil({ perfilProf }: PerfilProps) {
                                                 target="_blank"
                                                 rel="noreferrer"
                                                 href={`https://api.whatsapp.com/send?l=pt_BR&phone=55${profissionalTelefone}&text=Olá! Sou cliente do MeAutonomo! `}>
-                                                    <BsWhatsapp size={28}/>                                                             
+                                                <BsWhatsapp size={28}/>                                                             
                                             </a>
                                         </button>
 
@@ -299,7 +300,7 @@ export default function Perfil({ perfilProf }: PerfilProps) {
                                                                     <div key={item.id}>
                                                                         <article>
                                                                             <div className="flex items-center mb-4 space-x-4">
-                                                                                <img className="w-10 h-10 rounded-full" src="http://localhost:3333/files/45781a73126e1bc22c58dbd683e427f4-business-3d-close-up-of-businessman-in-dark-blue-suit-waving-hello.png" alt=""/>
+                                                                                <img className="w-10 h-10 rounded-full object-cover" src={`http://localhost:3333/files/${item.contrato.userCliente.imagem}`} alt=""/>
                                                                                 <div className="space-y-1 font-medium dark:text-white">
                                                                                     <p className='text-[#4A4646]'>{item.contrato.userCliente.nome} <p className="block text-sm text-[#4A4646]"></p></p>
                                                                                 </div>
