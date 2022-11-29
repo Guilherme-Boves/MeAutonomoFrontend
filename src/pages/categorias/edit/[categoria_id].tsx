@@ -132,11 +132,13 @@ export default function EditarCategoria({categoriaRecebida}: CategoriaProps){
             </Head>
 
             <div>
-                <ReturnButton/>
+                <div className='ml-10 p-3'>
+                    <ReturnButton/>
+                </div>
                 <main className={styles.container}>
                     
                     <div>
-                        <h1 className={styles.title}>Editar Categoria</h1>
+                        <h1 className="text-white text-2xl font-bold">Editar Categoria</h1>
                     </div>
 
                     <form className={styles.form} onSubmit={handleEditCategoria}>
@@ -174,7 +176,7 @@ export default function EditarCategoria({categoriaRecebida}: CategoriaProps){
                             
                         </label>
 
-                        <Button type="submit" loading={loading} style={{maxWidth: '720px'}}>
+                        <Button className="rounded-lg bg-[#FFD666] p-1 text-[#8D734B] hover:text-[hsl(36,31%,60%)]" type="submit" loading={loading} style={{maxWidth: '720px'}}>
                             Salvar Informações
                         </Button>
                     </form>

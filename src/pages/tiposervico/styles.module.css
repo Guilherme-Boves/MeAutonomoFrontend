@@ -27,16 +27,15 @@
 }
 
 .select{
-    margin-top: 2rem;
-    margin-left: 3rem;
+    margin-top: 1rem;
     margin-bottom: 1rem;
     height: 55px;
     border: 0;
     border-radius: 0.5rem;
-    background-color: #1d1d2e;
+    background-color: #11A3BE;
     color: #fff;
     padding: 1rem;
-    width: 100%;
+    width: 770px;
 }
 
 .cardContainer{

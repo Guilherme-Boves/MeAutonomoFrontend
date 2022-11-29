@@ -191,9 +191,15 @@ export default function GerenciarServicos({listPublicacoes}: list) {
     return(
 
         <>
+<<<<<<< HEAD
         <div className='ml-10 p-3'>
             <ReturnButtonWithFunction onClick={handleReturn}/>
         </div>
+=======
+            <div className='ml-10 p-3'>
+                <ReturnButton/>
+            </div>
+>>>>>>> 0dc392b08b7feadf0b70b7804ac95fd452f260ec
             <div className="bg-white w-[850px] mx-auto rounded-lg flex flex-col p-10 mb-10">
                 <div className="flex justify-between items-center">
                     <h1 className='font-bold text-2xl'>Meus Serviços</h1>
