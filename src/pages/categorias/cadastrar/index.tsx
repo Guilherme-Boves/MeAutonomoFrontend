@@ -91,7 +91,9 @@ export default function CadastrarCategoria(){
             </Head>
 
             <div>
-                <ReturnButton/>
+                <div className='ml-10 p-3'>
+                    <ReturnButton/>
+                </div>
                 <main className={styles.container}>
                     <h1 className={styles.title}>Nova Categoria</h1>
 
@@ -121,7 +123,7 @@ export default function CadastrarCategoria(){
                             )}
                         </label>
 
-                        <Button type="submit" loading={loading} style={{maxWidth: '720px'}}>
+                        <Button className="border rounded-lg bg-[#FFD666] p-1 text-[#8D734B] hover:text-[hsl(36,31%,60%)]" type="submit" loading={loading} style={{maxWidth: '720px'}}>
                             Cadastrar
                         </Button>
                     </form>

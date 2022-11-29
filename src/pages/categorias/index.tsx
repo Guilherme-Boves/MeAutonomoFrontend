@@ -15,6 +15,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
+import { MdLibraryAdd } from "react-icons/md";
 
 type ItemCategoriaProps = {
     id: string;
@@ -80,39 +81,46 @@ export default function Categorias({ listaCategorias }: ListCategorias){
                 <title>Categorias</title>
             </Head>
             <div>
-                <ReturnButton/>
-                <div className={styles.container}>
-                    <div className={styles.containertitle}>
-                        <h1>Categorias cadastradas</h1>
-                        <div className={styles.novaCategoria}>
-                            <Link href={"/categorias/cadastrar"}>
-                                <a>
-                                    Nova categoria
-                                </a>
-                            </Link>
-                        </div>
+                <div className='ml-10 p-3'>
+                    <ReturnButton/>
+                </div>
+                <div className="bg-white w-[850px] mx-auto rounded-lg flex flex-col p-10 mb-10">
+                    <div className="flex justify-between items-center">
+                    <h1 className='font-bold text-2xl'>Categorias Cadastradas</h1>
+                    <div className="pb-5">
+                        <Link href={"/categorias/cadastrar"}>
+                            <button  className="group block max-w-xs mx-auto rounded-lg p-6 bg-[#12AFCB] ring-1 ring-slate-900/5 shadow-lg space-y-3 hover:bg-[#56CCF2] transition-colors">
+                                <div className="flex items-center space-x-3">
+                                    <MdLibraryAdd color='white'/>                              
+                                    <h3 className="text-white group-hover:text-white text-sm font-semibold">Nova Categoria</h3>
+                                </div>
+                                <p className="text-white group-hover:text-white text-sm">Adicione uma nova categoria!</p>
+                            </button>
+                        </Link>
                     </div>
+                </div>
                     <div className={styles.cardContainer} >
                         {categorias.length === 0 ? (
                             <h1>Nenhuma categoria foi encontrada</h1>
                         ) : (
                             categorias.map((item) => {
                                 return(
-                                    <div key={item.id} className={styles.card}>
-                                        <div className={styles.titleFiEditContainer}>
+                                    <div key={item.id} className="p-4 mt-4 h-auto border-2 border-[#D3E2E5] rounded-lg w-[770px] shadow-md">
+                                        <div className="flex justify-between">
                                             <div>
-                                                <h1 className={styles.title}>{item.nome}</h1>
+                                                <div className="font-bold text-xl">{item.nome}</div>
                                             </div>
-                                            <div className={styles.fiButtonsContainer}>
-                                                <button onClick={e => handleEditCategoria(item.id) }>
-                                                    <FiEdit size={24} />                                            
-                                                </button>
-                                                <button onClick={e => {handleClickOpen(item.id, item.nome)}}>
-                                                    <FiTrash size={24} />                                            
+                                            
+                                            <div className="space-x-5 pb-3">
+                                                <button className='bg-[#12AFCB] rounded-lg h-7 w-7 hover:bg-[#56CCF2] transition-colors' onClick={e => handleEditCategoria(item.id) }>
+                                                    <FiEdit size={20} color="white" className='mx-auto'/>                                            
+                                                </button>                                                            
+                                                <button className='bg-[#12AFCB] rounded-lg h-7 w-7 hover:bg-[#56CCF2] transition-colors' onClick={e => {handleClickOpen(item.id, item.nome)}}>
+                                                    <FiTrash size={20} color="white" className='mx-auto' />                                            
                                                 </button>
                                             </div>  
                                         </div>
-                                        <div className={styles.linhaHorizontal}></div>
+                                        <div className="w-[100%] border-t-2 border-[#D3E2E5] pt-3"/>
                                         <div className={styles.subtitleImagemContainer}>
                                             <div className={styles.subtitle}>
                                                 <h2>Imagem:</h2>
