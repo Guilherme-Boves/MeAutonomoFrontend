@@ -284,9 +284,9 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
                 publicacao_id: publicacao_id                
         }).then(function (response) {
             toast.success('Publicação criada com sucesso!')
-            router.back();
+            router.push("/gerenciarservicos");
         }).catch(function (error) {
-            console.log(error);
+            toast.error("Erro inesperado! Favor contatar o suporte!");
         });
 
     }
@@ -369,7 +369,7 @@ export default function NovaPublicacao({ listCategoria }: CategoriaProps){
             } 
         })
 
-        router.back();
+        router.push("/gerenciarservicos");
         
     }
 

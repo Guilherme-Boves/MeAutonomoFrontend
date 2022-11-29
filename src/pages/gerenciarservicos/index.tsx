@@ -14,6 +14,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import { toast } from 'react-toastify';
 import { MdLibraryAdd } from 'react-icons/md';
+import { ReturnButtonWithFunction } from '../../components/ui/ReturnButtonWithFunction';
 
 type PublicacaoProps = {
     id: string;
@@ -183,11 +184,15 @@ export default function GerenciarServicos({listPublicacoes}: list) {
         
     }
 
+    function handleReturn() {
+        Router.push("/dashboard/profissional");
+    }
+
     return(
 
         <>
         <div className='ml-10 p-3'>
-            <ReturnButton/>
+            <ReturnButtonWithFunction onClick={handleReturn}/>
         </div>
             <div className="bg-white w-[850px] mx-auto rounded-lg flex flex-col p-10 mb-10">
                 <div className="flex justify-between items-center">

@@ -7,6 +7,7 @@ import { canSSRProf } from '../../../utils/canSSRProf';
 import { AuthContext } from '../../../contexts/AuthContext';
 import { setupAPIClient } from '../../../services/api';
 import Head from 'next/head';
+import Router from 'next/router'
 
 type ItemUserProps = {
   id: string;
@@ -47,6 +48,18 @@ export default function Dashboard({ userData }: UserProps) {
   function handleArmazenaNome(){    
     localStorage.setItem("ls_NomeUsuario", nomeUsuario[0]);
   }
+  
+  async function handleCriarNovaPublicacao() {
+
+    const api = setupAPIClient();
+
+    const response = await api.post('/publicarservico') 
+
+    const { id } = response.data
+
+    Router.push(`/gerenciarservicos/cadastrar/${id}`)
+
+    }
 
   return (
     <>
@@ -196,10 +209,12 @@ export default function Dashboard({ userData }: UserProps) {
                                             </div>
                                             
                                             <div className="py-10 leading-relaxed">
-                                                <strong className="text-2xl text-white font-extrabold">Publicar Serviço</strong>
-                                                <p className="text-base text-white mt-2 mr-64">
-                                                    Publique o seu serviço agora mesmo! É super simples e prático. Vamos lá!
-                                                </p>
+                                                <button onClick={handleCriarNovaPublicacao}>
+                                                <strong className="flex text-2xl text-white font-extrabold">Publicar Serviço</strong>
+                                                    <p className="text-base text-white mt-2 mr-64">
+                                                        Publique o seu serviço agora mesmo! É super simples e prático. Vamos lá!
+                                                    </p>
+                                                </button>
                                             </div>
 
                                             <div className="h-full p-16">

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import { setupAPIClient } from "../../../services/api";
 import { canSSRAuth } from "../../../utils/canSSRAuth";
 import styles from '../styles.module.css'
@@ -15,7 +14,6 @@ import { DateFormat } from "../../../utils/Functions";
 import { FiRefreshCw } from "react-icons/fi";
 import { ReturnButtonWithFunction } from "../../../components/ui/ReturnButtonWithFunction";
 import Router from "next/router";
-import { Agent } from "http";
 import { NavServicos } from "../../../components/NavServicos";
 import { MdCancel, MdLibraryAddCheck } from "react-icons/md";
 

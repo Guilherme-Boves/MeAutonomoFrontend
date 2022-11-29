@@ -158,7 +158,7 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
         if(role === "CLIENTE"){
             Router.push("../dashboard/cliente")
         } else if(role === "PROFISSIONAL") {
-            Router.push("../dashboard/profissional")
+            Router.push("/dashboard/profissional")
         } else {
             Router.push("../dashboard/admin")
         }
@@ -321,51 +321,7 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
                                                                 <></>
                                                             )
                                                         }                                                    
-                                                    </div>
-                                                    
-                                                    <Dialog
-                                                        open={open}
-                                                        onClose={handleClose}
-                                                        fullWidth
-                                                    >
-                                                        <div>
-                                                            <DialogTitle>
-                                                                {"O que achou do serviço? Deixe aqui a sua avaliação!"}
-                                                            </DialogTitle>
-
-                                                            <DialogContent>
-                                                                <div>
-                                                                    <Stack spacing={2}>
-                                                                        <h1 className={styles.titleAvaliacao}>Nota</h1>
-                                                                        <Rating 
-                                                                            value={avaliacao}
-                                                                            onChange={handleChangeAvaliacao}
-                                                                            precision={0.5}
-                                                                            size="large"
-                                                                        />
-                                                                        
-                                                                        <h1 className={styles.titleAvaliacao}>Descrição</h1>
-                                                                        <textarea 
-                                                                            maxLength={400} 
-                                                                            className={styles.textAreaAvaliacao} 
-                                                                            value={descricao} 
-                                                                            onChange={(e) => setDescricao(e.target.value)}
-                                                                        />
-                                                                    </Stack>
-                                                                </div>
-                                                            </DialogContent>
-                                                        </div>
-                                                        
-                                                        <DialogActions>
-                                                            <Button onClick={handleClose}>
-                                                                Fechar
-                                                            </Button>
-                                                            <Button onClick={handleRealizarAvaliacao}>
-                                                                Enviar
-                                                            </Button>
-                                                        </DialogActions>
-
-                                                    </Dialog>                                               
+                                                    </div>                      
                                                 </div>
                                             )
                                         })}                                    
@@ -375,6 +331,49 @@ export default function ServicosFinalizados({ listServicos }: ListServicos){
                         </div>
                         )}
                         
+                        <Dialog
+                            open={open}
+                            onClose={handleClose}
+                            fullWidth
+                        >
+                            <div>
+                                <DialogTitle>
+                                    {"O que achou do serviço? Deixe aqui a sua avaliação!"}
+                                </DialogTitle>
+
+                                <DialogContent>
+                                    <div>
+                                        <Stack spacing={2}>
+                                            <h1 className={styles.titleAvaliacao}>Nota</h1>
+                                            <Rating 
+                                                value={avaliacao}
+                                                onChange={handleChangeAvaliacao}
+                                                precision={0.5}
+                                                size="large"
+                                            />
+                                            
+                                            <h1 className={styles.titleAvaliacao}>Descrição</h1>
+                                            <textarea 
+                                                maxLength={400} 
+                                                className={styles.textAreaAvaliacao} 
+                                                value={descricao} 
+                                                onChange={(e) => setDescricao(e.target.value)}
+                                            />
+                                        </Stack>
+                                    </div>
+                                </DialogContent>
+                            </div>
+                            
+                            <DialogActions>
+                                <Button onClick={handleClose}>
+                                    Fechar
+                                </Button>
+                                <Button onClick={handleRealizarAvaliacao}>
+                                    Enviar
+                                </Button>
+                            </DialogActions>
+
+                        </Dialog>                   
                     </div>
                 </div>
             </div>
