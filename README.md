@@ -7,10 +7,15 @@
 
 <div align="center" >
 
-<img alt="GitHub top language" src="https://img.shields.io/github/languages/top/Luiz-Camargo/HamburgueriaBurgerMobileADS?style=for-the-badge">
-<img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/Luiz-Camargo/HamburgueriaBurgerMobileADS?color=gree&style=for-the-badge">
-<img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Luiz-Camargo/HamburgueriaBurgerMobileADS?color=orange&style=for-the-badge">
+<img alt="GitHub top language" src="https://img.shields.io/github/languages/top/Guilherme-Boves/MeAutonomoFrontend?style=for-the-badge">
+<img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/Guilherme-Boves/MeAutonomoFrontend?style=for-the-badge">
+<img alt="GitHub language count" src="https://img.shields.io/github/languages/count/Guilherme-Boves/MeAutonomoFrontend?style=for-the-badge">
+<img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Guilherme-Boves/MeAutonomoFrontend?style=for-the-badge">
 </div>
+
+
+
+
 
 <p align="center" style="margin-bottom: 0px !important;">
   <h2 align="center" style="margin-top: 0px;">Projeto Integrado ao Back-End</h2>
@@ -18,9 +23,11 @@
 
 - Projeto Back-End: https://github.com/Guilherme-Boves/MeAutonomoBackend
 
-# Inicializando o projeto
+<p align="center" style="margin-bottom: 0px !important;">
+  <h2 align="center" style="margin-top: 0px;">Inicializando o Projeto</h2>
+</p>
 
-- git clone https://github.com/Guilherme-Boves/MeAutonomoFrontend.git
+- git clone: https://github.com/Guilherme-Boves/MeAutonomoFrontend.git
 
 - cd MeAutonomoFrontend
 
